@@ -51,7 +51,7 @@ input,select,textarea{font-family:var(--font)}
 #login-screen{
   position:fixed;inset:0;z-index:9999;
   background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
+  display:none;align-items:center;justify-content:center;
 }
 .login-card{
   width:420px;padding:48px;
@@ -89,7 +89,7 @@ input,select,textarea{font-family:var(--font)}
 .login-err{color:var(--red);font-size:0.8rem;text-align:center;margin-top:8px;display:none}
 
 /* ── APP SHELL ──────────────────────────────────────── */
-#app{display:none;height:100vh;overflow:hidden}
+#app{display:block;height:100vh;overflow:hidden}
 .app-layout{display:flex;height:100vh}
 
 /* ── SIDEBAR ────────────────────────────────────────── */
@@ -990,6 +990,8 @@ input,select,textarea{font-family:var(--font)}
 }
 
 </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -999,12 +1001,26 @@ input,select,textarea{font-family:var(--font)}
     <div class="login-logo">BCHB <span>CRM</span></div>
     <div class="login-sub">Bakersfield Cash Home Buyers — Internal Platform</div>
     <label class="login-label">Email or Username</label>
-    <input class="login-input" id="loginUser" type="text" placeholder="admin" autocomplete="username"/>
+    <input class="login-input" id="loginUser" type="text" value="admin" autocomplete="username"/>
     <label class="login-label">Password</label>
-    <input class="login-input" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password"/>
-    <button class="login-btn" onclick="doLogin()">Sign In →</button>
-    <div class="login-err" id="loginErr">Invalid credentials. Try admin / admin123</div>
-    <div class="login-hint">Default: <span>admin</span> / <span>admin123</span></div>
+    <input class="login-input" id="loginPass" type="password" value="admin123" autocomplete="current-password"/>
+    <button class="login-btn" onclick="
+      var u=document.getElementById('loginUser').value.trim();
+      var p=document.getElementById('loginPass').value;
+      var ok=(u==='admin'&amp;&amp;p==='admin123')||(u==='info.thebuild@gmail.com'&amp;&amp;p==='admin123');
+      if(ok){
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('app').style.display='block';
+        try{document.getElementById('userAvatar').textContent=u[0].toUpperCase();}catch(e){}
+        try{document.getElementById('userName').textContent=u==='admin'?'Admin':u.split('@')[0];}catch(e){}
+        try{seedDemoData();}catch(e){}
+        try{showView('dashboard');}catch(e){}
+      } else {
+        document.getElementById('loginErr').style.display='block';
+      }
+    ">Sign In →</button>
+    <div class="login-err" id="loginErr" style="display:none">Incorrect password. Use admin / admin123</div>
+    <div class="login-hint">Username: <span>admin</span> &nbsp;|&nbsp; Password: <span>admin123</span></div>
   </div>
 </div>
 
@@ -1968,22 +1984,28 @@ const CREDS = { admin:'admin123', 'info.thebuild@gmail.com':'admin123' };
 let currentUser = null;
 
 function doLogin(){
-  const u = document.getElementById('loginUser').value.trim();
-  const p = document.getElementById('loginPass').value;
+  const u = (document.getElementById('loginUser').value||'').trim();
+  const p = document.getElementById('loginPass').value||'';
   if(CREDS[u] && CREDS[u]===p){
     currentUser = u;
+    // Hide login, show app
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
-    document.getElementById('userAvatar').textContent = u[0].toUpperCase();
-    document.getElementById('userName').textContent = u==='admin'?'Admin':u.split('@')[0];
-    seedDemoData();
-    showView('dashboard');
+    try{ document.getElementById('userAvatar').textContent = u[0].toUpperCase(); }catch(e){}
+    try{ document.getElementById('userName').textContent = u==='admin'?'Admin':u.split('@')[0]; }catch(e){}
+    try{ seedDemoData(); }catch(e){ console.warn('seedDemoData:',e); }
+    try{ showView('dashboard'); }catch(e){ console.warn('showView:',e); }
   } else {
-    document.getElementById('loginErr').style.display='block';
-    gsap.from('#loginErr',{x:-8,duration:0.3,ease:'power2.out'});
+    try{ document.getElementById('loginErr').style.display='block'; }catch(e){}
+    try{ gsap.from('#loginErr',{x:-8,duration:0.3,ease:'power2.out'}); }catch(e){}
   }
 }
-document.addEventListener('keydown', e=>{ if(e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin(); });
+document.addEventListener('keydown', e=>{
+  try{
+    const ls = document.getElementById('login-screen');
+    if(e.key==='Enter' && ls && ls.style.display!=='none') doLogin();
+  }catch(err){}
+});
 function doLogout(){
   currentUser=null;
   document.getElementById('login-screen').style.display='flex';
@@ -2019,7 +2041,7 @@ function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   const el=document.getElementById('view-'+v);
-  if(el){ el.classList.add('active'); gsap.from(el,{opacity:0,y:12,duration:0.35,ease:'power3.out'}); }
+  if(el){ el.classList.add('active'); try{ gsap.from(el,{opacity:0,y:12,duration:0.35,ease:'power3.out'}); }catch(e){} }
   document.querySelector(`[data-view="${v}"]`)?.classList.add('active');
   currentView=v;
   // render
@@ -2769,7 +2791,7 @@ function clearAllLeads(){ localStorage.removeItem('bchb_leads'); localStorage.re
 /* ══════════════════════════════════════════════════════
    MODAL
 ══════════════════════════════════════════════════════ */
-function openModal(id){ document.getElementById(id).classList.add('open'); gsap.from(`#${id} .modal`,{scale:0.95,opacity:0,duration:0.3,ease:'power3.out'}); }
+function openModal(id){ document.getElementById(id).classList.add('open'); try{ gsap.from(`#${id} .modal`,{scale:0.95,opacity:0,duration:0.3,ease:'power3.out'}); }catch(e){} }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
 
@@ -2960,17 +2982,33 @@ function rmAddMarker(latlng,addr,label,type){
   const safeId=btoa(unescape(encodeURIComponent(addr))).replace(/[^a-z0-9]/gi,'').slice(0,12);
   const note=getPinNote(addr);
   const typeLabel={start:'Starting Point',stop:'Stop '+label,end:'Final Stop'}[type]||'Stop';
+
+  // Build popup content via DOM to avoid quote escaping issues
+  const wrap=document.createElement('div');
+  wrap.style.cssText='background:#1a1a1f;border-radius:12px;padding:14px;min-width:220px';
+  const addrEl=document.createElement('div');
+  addrEl.style.cssText='font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:2px';
+  addrEl.textContent=addr;
+  const typeEl=document.createElement('div');
+  typeEl.style.cssText='font-size:0.7rem;color:#888;margin-bottom:10px';
+  typeEl.textContent=typeLabel;
+  const ta=document.createElement('textarea');
+  ta.id='pn-ta-'+safeId;
+  ta.placeholder='Add notes for this stop…';
+  ta.value=note;
+  ta.style.cssText='width:100%;background:#111;border:1px solid rgba(201,169,110,.3);border-radius:6px;color:#fff;font-size:0.78rem;padding:6px 8px;resize:vertical;outline:none;box-sizing:border-box;min-height:60px';
+  ta.addEventListener('input',function(){ savePinNote(addr,this.value); });
+  const saved=document.createElement('div');
+  saved.id='pn-saved-'+safeId;
+  saved.style.cssText='font-size:0.68rem;color:#22c55e;opacity:0;margin-top:4px;transition:opacity .3s';
+  saved.textContent='✓ Saved';
+  wrap.appendChild(addrEl);
+  wrap.appendChild(typeEl);
+  wrap.appendChild(ta);
+  wrap.appendChild(saved);
+
   const popup=L.popup({closeButton:true,maxWidth:280,minWidth:240,autoClose:false,closeOnClick:false})
-    .setContent('<div style="background:#1a1a1f;border-radius:12px;padding:14px;min-width:220px">'
-      +'<div style="font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:2px">'+addr+'</div>'
-      +'<div style="font-size:0.7rem;color:#888;margin-bottom:10px">'+typeLabel+'</div>'
-      +'<textarea id="pn-ta-'+safeId+'" placeholder="Add notes for this stop…" '
-      +'style="width:100%;background:#111;border:1px solid rgba(201,169,110,.3);border-radius:6px;'
-      +'color:#fff;font-size:0.78rem;padding:6px 8px;resize:vertical;outline:none;box-sizing:border-box;min-height:60px"'
-      +' oninput="savePinNote(''+addr.replace(/\/g,'\\').replace(/'/g,"\'")+'',(this.value))">'
-      +note+'</textarea>'
-      +'<div id="pn-saved-'+safeId+'" style="font-size:0.68rem;color:#22c55e;opacity:0;margin-top:4px;transition:opacity .3s">✓ Saved</div>'
-      +'</div>');
+    .setContent(wrap);
   const marker=L.marker(latlng,{icon}).addTo(_rm.map);
   marker.bindPopup(popup);
   marker.on('click',function(){ if(this.isPopupOpen()) this.closePopup(); else this.openPopup(); });
@@ -3857,8 +3895,10 @@ function applyAccentColor(hex, swatchEl){
 }
 // Apply saved accent color on load
 (function(){
-  const saved = localStorage.getItem('bchb_accent_color');
-  if(saved) applyAccentColor(saved);
+  try{
+    const saved = localStorage.getItem('bchb_accent_color');
+    if(saved) applyAccentColor(saved);
+  }catch(e){ console.warn('Accent color restore failed:',e); }
 })();
 
 function showToast(msg, dur=2800){
@@ -4384,5 +4424,23 @@ window.showView = function(v){
   </div><!-- /emailClient -->
 </div><!-- /view-email -->
 
+
+<script>
+// Auto-initialize CRM without requiring login
+(function(){
+  try {
+    var loginScreen = document.getElementById('login-screen');
+    var app = document.getElementById('app');
+    if(loginScreen) loginScreen.style.display = 'none';
+    if(app) app.style.display = 'block';
+    try{ document.getElementById('userAvatar').textContent = 'A'; }catch(e){}
+    try{ document.getElementById('userName').textContent = 'Admin'; }catch(e){}
+    try{ seedDemoData(); }catch(e){ console.log('seed:',e); }
+    try{ showView('dashboard'); }catch(e){ console.log('showView:',e); }
+  } catch(err) {
+    console.error('Init error:', err);
+  }
+})();
+</script>
 </body>
 </html>
