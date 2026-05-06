@@ -1956,23 +1956,59 @@ function loadStreetView(addr){
   const a=addr||document.getElementById('sv-address').value.trim();
   if(!a)return;
   const frame=document.getElementById('svFrame');
-  const encodedSV=encodeURIComponent(a.includes('Bakersfield')?a:a+', Bakersfield CA');
+  const full=a.includes('Bakersfield')?a:a+', Bakersfield CA';
+  const enc=encodeURIComponent(full);
+  // Map embed URL (no street view layer — clean map)
+  const mapUrl='https://maps.google.com/maps?q='+enc+'&output=embed&z=16';
+  // Street view overlay URL — full Google Maps interface with pegman
+  const svUrl='https://www.google.com/maps?q='+enc+'&layer=c&output=embed&z=16';
   frame.innerHTML=`
     <div style="display:flex;flex-direction:column;height:100%">
-      <div style="background:var(--surface2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0">
+      <div style="background:var(--surface2);padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap">
         <span style="font-size:1rem">📍</span>
-        <span style="font-size:0.82rem;color:var(--white);font-weight:500">${a}</span>
-        <span style="font-size:0.75rem;color:var(--gray);margin-left:auto">Drag the 🧍 figure onto any street inside the map to enter Street View</span>
+        <span style="font-size:0.82rem;color:var(--white);font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a}</span>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button id="sv-mode-map" onclick="svSetMode('map','${enc}')"
+            style="padding:5px 12px;border-radius:6px;border:1px solid var(--gold);background:var(--gold);color:#0d0d0f;font-size:0.76rem;font-weight:600;cursor:pointer">
+            🗺 Map
+          </button>
+          <button id="sv-mode-sv" onclick="svSetMode('sv','${enc}')"
+            style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:0.76rem;font-weight:600;cursor:pointer">
+            🧍 Street View
+          </button>
+        </div>
       </div>
-      <iframe
-        src="https://maps.google.com/maps?q=${encodedSV}&output=embed&layer=c&z=18"
-        style="flex:1;border:none;width:100%"
+      <div id="sv-tip" style="background:rgba(201,169,110,0.08);border-bottom:1px solid rgba(201,169,110,0.2);padding:7px 16px;font-size:0.76rem;color:var(--gold);flex-shrink:0;display:none">
+        🧍 <strong>Street View active</strong> — look for the small yellow person icon in the <strong>bottom-right</strong> corner of the map. Drag it onto any street to walk that block.
+      </div>
+      <iframe id="sv-iframe"
+        src="${mapUrl}"
+        style="flex:1;border:none;width:100%;min-height:0"
         allowfullscreen
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"
         title="Street View: ${a}">
       </iframe>
     </div>`;
+}
+
+function svSetMode(mode, enc){
+  const iframe=document.getElementById('sv-iframe');
+  const btnMap=document.getElementById('sv-mode-map');
+  const btnSV=document.getElementById('sv-mode-sv');
+  const tip=document.getElementById('sv-tip');
+  if(!iframe||!btnMap||!btnSV) return;
+  if(mode==='map'){
+    iframe.src='https://maps.google.com/maps?q='+enc+'&output=embed&z=16';
+    btnMap.style.background='var(--gold)'; btnMap.style.color='#0d0d0f'; btnMap.style.borderColor='var(--gold)';
+    btnSV.style.background='transparent'; btnSV.style.color='var(--gray)'; btnSV.style.borderColor='var(--border)';
+    tip.style.display='none';
+  } else {
+    iframe.src='https://maps.google.com/maps?q='+enc+'&output=embed&layer=c&z=16';
+    btnSV.style.background='var(--gold)'; btnSV.style.color='#0d0d0f'; btnSV.style.borderColor='var(--gold)';
+    btnMap.style.background='transparent'; btnMap.style.color='var(--gray)'; btnMap.style.borderColor='var(--border)';
+    tip.style.display='block';
+  }
 }
 function renderStreetViewLeads(){
   const el=document.getElementById('sv-lead-list');
