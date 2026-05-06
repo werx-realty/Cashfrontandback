@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BCHB CRM — Bakersfield Cash Home Buyers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+/* ── RESET & ROOT ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0f;
+  --surface:#141418;
+  --surface2:#1a1a20;
+  --surface3:#202028;
+  --border:#2a2a35;
+  --border2:#333340;
+  --gold:#C9A96E;
+  --gold-dim:rgba(201,169,110,0.15);
+  --gold-glow:rgba(201,169,110,0.08);
+  --white:#ffffff;
+  --gray:#8888a0;
+  --gray2:#555568;
+  --hot:#ff5a5a;
+  --warm:#f5a623;
+  --cold:#5ab4ff;
+  --archive:#888;
+  --green:#4ade80;
+  --red:#f87171;
+  --blue:#60a5fa;
+  --purple:#a78bfa;
+  --sidebar-w:240px;
+  --sidebar-collapsed:64px;
+  --font:'Inter',sans-serif;
+  --serif:'Playfair Display',serif;
+  --radius:10px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--white);overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ── LOGIN ──────────────────────────────────────────── */
+#login-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-card{
+  width:420px;padding:48px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+}
+.login-logo{
+  font-family:var(--serif);font-size:1.4rem;
+  color:var(--white);margin-bottom:8px;
+  text-align:center;
+}
+.login-logo span{color:var(--gold)}
+.login-sub{text-align:center;font-size:0.8rem;color:var(--gray);margin-bottom:40px}
+.login-label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;display:block}
+.login-input{
+  width:100%;padding:12px 16px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;color:var(--white);font-size:0.9rem;
+  transition:border-color var(--transition);margin-bottom:16px;
+}
+.login-input:focus{outline:none;border-color:var(--gold)}
+.login-btn{
+  width:100%;padding:14px;
+  background:var(--gold);color:#0a0a0a;
+  font-size:0.85rem;font-weight:600;letter-spacing:0.08em;
+  border-radius:8px;
+  transition:box-shadow var(--transition),transform var(--transition);
+  margin-top:8px;
+}
+.login-btn:hover{box-shadow:0 0 30px rgba(201,169,110,0.4);transform:translateY(-1px)}
+.login-hint{text-align:center;font-size:0.75rem;color:var(--gray2);margin-top:20px}
+.login-hint span{color:var(--gold)}
+.login-err{color:var(--red);font-size:0.8rem;text-align:center;margin-top:8px;display:none}
+
+/* ── APP SHELL ──────────────────────────────────────── */
+#app{display:none;height:100vh;overflow:hidden}
+.app-layout{display:flex;height:100vh}
+
+/* ── SIDEBAR ────────────────────────────────────────── */
+#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transition:width var(--transition);
+  overflow:hidden;position:relative;z-index:100;
+}
+#sidebar.collapsed{width:var(--sidebar-collapsed)}
+.sidebar-header{
+  padding:20px 16px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  min-height:64px;
+}
+.sidebar-brand{
+  font-family:var(--serif);font-size:1rem;white-space:nowrap;overflow:hidden;
+  transition:opacity var(--transition);
+}
+.sidebar-brand span{color:var(--gold)}
+#sidebar.collapsed .sidebar-brand{opacity:0;width:0}
+.sidebar-toggle{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--gray);font-size:0.8rem;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:color var(--transition),background var(--transition);
+}
+.sidebar-toggle:hover{color:var(--white);background:var(--surface3)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px}
+.nav-section-label{
+  font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--gray2);padding:16px 8px 8px;white-space:nowrap;overflow:hidden;
+  transition:opacity var(--transition);
+}
+#sidebar.collapsed .nav-section-label{opacity:0}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:8px;
+  color:var(--gray);font-size:0.85rem;font-weight:500;
+  white-space:nowrap;overflow:hidden;
+  transition:background var(--transition),color var(--transition);
+  cursor:pointer;margin-bottom:2px;
+}
+.nav-item:hover{background:var(--surface2);color:var(--white)}
+.nav-item.active{background:var(--gold-dim);color:var(--gold)}
+.nav-icon{font-size:1.1rem;flex-shrink:0;width:20px;text-align:center}
+.nav-label{overflow:hidden;transition:opacity var(--transition),width var(--transition)}
+#sidebar.collapsed .nav-label{opacity:0;width:0}
+.nav-badge{
+  margin-left:auto;background:var(--hot);color:#fff;
+  font-size:0.65rem;font-weight:700;padding:2px 6px;
+  border-radius:10px;flex-shrink:0;
+}
+#sidebar.collapsed .nav-badge{display:none}
+.sidebar-footer{
+  padding:12px 8px;border-top:1px solid var(--border);
+}
+.user-chip{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:8px;
+  cursor:pointer;transition:background var(--transition);
+}
+.user-chip:hover{background:var(--surface2)}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),#8a6030);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;font-weight:700;color:var(--bg);
+}
+.user-info{overflow:hidden}
+.user-name{font-size:0.82rem;font-weight:600;white-space:nowrap}
+.user-role{font-size:0.7rem;color:var(--gray);white-space:nowrap}
+#sidebar.collapsed .user-info{display:none}
+
+/* ── MAIN CONTENT ───────────────────────────────────── */
+#main{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg)}
+.view{display:none;padding:28px 32px;min-height:100%}
+.view.active{display:block}
+
+/* ── TOP BAR ────────────────────────────────────────── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.page-title{font-family:var(--serif);font-size:1.6rem;font-weight:500}
+.page-title span{color:var(--gold)}
+.topbar-actions{display:flex;gap:10px;align-items:center}
+
+/* ── BUTTONS ────────────────────────────────────────── */
+.btn{
+  padding:9px 18px;border-radius:8px;
+  font-size:0.8rem;font-weight:600;letter-spacing:0.04em;
+  transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary{background:var(--gold);color:#0a0a0a}
+.btn-primary:hover{box-shadow:0 0 20px rgba(201,169,110,0.35);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--white);background:var(--surface2)}
+.btn-danger{background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.25)}
+.btn-danger:hover{background:rgba(248,113,113,0.25)}
+.btn-sm{padding:6px 12px;font-size:0.75rem}
+.btn-icon{width:34px;height:34px;padding:0;border-radius:8px;justify-content:center}
+
+/* ── KPI CARDS ──────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px 22px;
+  position:relative;overflow:hidden;
+  transition:border-color var(--transition),transform var(--transition);
+}
+.kpi-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.kpi-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent,var(--gold)),transparent);
+  opacity:0.5;
+}
+.kpi-label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
+.kpi-num{font-family:var(--serif);font-size:2.2rem;font-weight:500;color:var(--white)}
+.kpi-num span{color:var(--accent,var(--gold))}
+.kpi-sub{font-size:0.75rem;color:var(--gray);margin-top:6px}
+.kpi-bar{height:3px;background:var(--surface3);border-radius:3px;margin-top:14px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:3px;width:0;background:var(--accent,var(--gold));transition:width 1.5s ease}
+.kpi-icon{position:absolute;top:16px;right:16px;font-size:1.6rem;opacity:0.25}
+
+/* ── DATA TABLE ─────────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.card-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:0.9rem;font-weight:600}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{
+  padding:10px 16px;font-size:0.7rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--gray);
+  background:var(--surface2);text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.data-table td{
+  padding:12px 16px;font-size:0.84rem;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tbody tr{transition:background var(--transition);cursor:pointer}
+.data-table tbody tr:hover{background:var(--surface2)}
+
+/* ── STATUS BADGES ──────────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;
+}
+.badge-hot{background:rgba(255,90,90,0.15);color:var(--hot)}
+.badge-warm{background:rgba(245,166,35,0.15);color:var(--warm)}
+.badge-cold{background:rgba(90,180,255,0.15);color:var(--cold)}
+.badge-archive{background:rgba(136,136,136,0.15);color:var(--archive)}
+.badge-called{background:rgba(74,222,128,0.15);color:var(--green)}
+.badge-notcalled{background:rgba(248,113,113,0.15);color:var(--red)}
+.badge-willcall{background:rgba(167,139,250,0.15);color:var(--purple)}
+
+/* ── ACTIVITY FEED ──────────────────────────────────── */
+.activity-feed{max-height:320px;overflow-y:auto}
+.activity-item{
+  display:flex;gap:12px;padding:12px 20px;
+  border-bottom:1px solid var(--border);
+  transition:background var(--transition);
+}
+.activity-item:hover{background:var(--surface2)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{
+  width:8px;height:8px;border-radius:50%;
+  margin-top:5px;flex-shrink:0;
+}
+.activity-text{font-size:0.83rem;line-height:1.5}
+.activity-time{font-size:0.72rem;color:var(--gray);margin-top:2px}
+
+/* ── GRID LAYOUTS ───────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ── SEARCH + FILTER BAR ─────────────────────────────── */
+.filter-bar{
+  display:flex;gap:10px;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;
+}
+.search-box{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:8px 14px;flex:1;min-width:200px;
+  transition:border-color var(--transition);
+}
+.search-box:focus-within{border-color:var(--gold)}
+.search-box input{
+  background:transparent;border:none;color:var(--white);
+  font-size:0.85rem;flex:1;outline:none;
+}
+.search-box input::placeholder{color:var(--gray)}
+.filter-select{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;color:var(--white);
+  font-size:0.82rem;cursor:pointer;
+  transition:border-color var(--transition);
+}
+.filter-select:focus{outline:none;border-color:var(--gold)}
+.filter-select option{background:var(--surface2)}
+
+/* ── FORM ELEMENTS ──────────────────────────────────── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray)}
+.form-label .req{color:var(--gold)}
+.form-input,.form-select,.form-textarea{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;color:var(--white);
+  font-size:0.88rem;transition:border-color var(--transition);width:100%;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--gold)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--gray2)}
+.form-select option{background:var(--surface2)}
+.form-textarea{resize:vertical;min-height:100px}
+
+/* ── MODAL ──────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  z-index:500;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;width:600px;max-width:95vw;
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 40px 100px rgba(0,0,0,0.6);
+}
+.modal-header{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.modal-title{font-size:1rem;font-weight:600}
+.modal-close{
+  width:28px;height:28px;border-radius:6px;background:var(--surface2);
+  color:var(--gray);font-size:1rem;display:flex;align-items:center;justify-content:center;
+  transition:color var(--transition),background var(--transition);
+}
+.modal-close:hover{color:var(--white);background:var(--surface3)}
+.modal-body{padding:24px}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:10px;
+}
+
+/* ── KANBAN ─────────────────────────────────────────── */
+.kanban-board{
+  display:flex;gap:14px;overflow-x:auto;
+  padding-bottom:20px;min-height:calc(100vh - 200px);
+}
+.kanban-col{
+  flex-shrink:0;width:220px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);display:flex;flex-direction:column;
+}
+.kanban-col-header{
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.kanban-col-title{font-size:0.82rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.kanban-col-count{
+  background:var(--surface2);color:var(--gray);
+  font-size:0.7rem;font-weight:600;padding:2px 7px;border-radius:10px;
+}
+.kanban-cards{
+  flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;
+  overflow-y:auto;min-height:60px;
+}
+.kanban-cards.drag-over{background:var(--gold-glow);border-radius:8px}
+.kanban-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:12px;cursor:grab;
+  transition:border-color var(--transition),box-shadow var(--transition),transform var(--transition);
+  user-select:none;
+}
+.kanban-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+.kanban-card.dragging{opacity:0.5;transform:rotate(2deg)}
+.kanban-card-name{font-size:0.83rem;font-weight:600;margin-bottom:6px}
+.kanban-card-addr{font-size:0.72rem;color:var(--gray);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kanban-card-footer{display:flex;align-items:center;justify-content:space-between}
+.kanban-card-date{font-size:0.68rem;color:var(--gray2)}
+
+/* ── CALENDAR ───────────────────────────────────────── */
+.cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.cal-nav{display:flex;gap:8px}
+.cal-month-label{font-family:var(--serif);font-size:1.3rem}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:1px;background:var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.cal-day-name{
+  background:var(--surface2);padding:10px;
+  text-align:center;font-size:0.72rem;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--gray);
+}
+.cal-day{
+  background:var(--surface);padding:8px;min-height:90px;
+  cursor:pointer;transition:background var(--transition);
+  position:relative;
+}
+.cal-day:hover{background:var(--surface2)}
+.cal-day.today{background:var(--gold-glow)}
+.cal-day.today .cal-day-num{color:var(--gold);font-weight:700}
+.cal-day.other-month .cal-day-num{color:var(--gray2)}
+.cal-day-num{font-size:0.8rem;font-weight:500;margin-bottom:4px}
+.cal-event{
+  font-size:0.68rem;padding:2px 6px;border-radius:4px;
+  margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cal-event.call{background:rgba(74,222,128,0.2);color:var(--green)}
+.cal-event.appt{background:rgba(201,169,110,0.2);color:var(--gold)}
+.cal-event.follow{background:rgba(167,139,250,0.2);color:var(--purple)}
+
+/* ── LEAD DETAIL ────────────────────────────────────── */
+.lead-detail-layout{display:grid;grid-template-columns:1fr 340px;gap:20px}
+.detail-section{margin-bottom:20px}
+.detail-section-title{
+  font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.detail-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.detail-field{display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.detail-field:last-child{border-bottom:none}
+.detail-field-label{font-size:0.78rem;color:var(--gray)}
+.detail-field-value{font-size:0.85rem;font-weight:500}
+.note-item{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:14px;margin-bottom:10px;
+}
+.note-text{font-size:0.85rem;line-height:1.6;color:rgba(255,255,255,0.85)}
+.note-meta{font-size:0.7rem;color:var(--gray);margin-top:8px}
+.timeline-item{
+  display:flex;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.timeline-item:last-child{border-bottom:none}
+.timeline-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  margin-top:4px;border:2px solid;
+}
+.timeline-content{font-size:0.82rem}
+.timeline-time{font-size:0.7rem;color:var(--gray);margin-top:2px}
+
+/* ── STREET VIEW ────────────────────────────────────── */
+.sv-layout{display:grid;grid-template-columns:320px 1fr;gap:20px;height:calc(100vh - 160px)}
+.sv-sidebar{display:flex;flex-direction:column;gap:16px}
+.sv-frame{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;height:100%;position:relative;
+}
+.sv-frame iframe{width:100%;height:100%;border:none}
+.sv-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:16px;color:var(--gray);
+}
+.sv-placeholder .sv-icon{font-size:4rem;opacity:0.3}
+
+/* ── SETTINGS ───────────────────────────────────────── */
+.settings-grid{display:grid;grid-template-columns:220px 1fr;gap:24px}
+.settings-nav{display:flex;flex-direction:column;gap:4px}
+.settings-nav-item{
+  padding:9px 14px;border-radius:8px;font-size:0.84rem;
+  color:var(--gray);cursor:pointer;transition:background var(--transition),color var(--transition);
+}
+.settings-nav-item:hover{background:var(--surface2);color:var(--white)}
+.settings-nav-item.active{background:var(--gold-dim);color:var(--gold)}
+.settings-panel{display:none}
+.settings-panel.active{display:block}
+.settings-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;margin-bottom:16px;
+}
+.settings-section h3{font-size:0.9rem;font-weight:600;margin-bottom:6px}
+.settings-section p{font-size:0.82rem;color:var(--gray);margin-bottom:20px}
+.webhook-box{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:16px;font-family:monospace;font-size:0.8rem;
+  color:var(--green);word-break:break-all;
+}
+.api-key-row{
+  display:flex;gap:10px;align-items:center;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:12px 16px;
+}
+.api-key-val{flex:1;font-family:monospace;font-size:0.8rem;color:var(--gold);word-break:break-all}
+.copy-btn{
+  background:var(--surface3);border:1px solid var(--border);
+  color:var(--gray);font-size:0.75rem;padding:5px 12px;border-radius:6px;
+  transition:all var(--transition);flex-shrink:0;
+}
+.copy-btn:hover{color:var(--white);border-color:var(--gold)}
+.toggle-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info h4{font-size:0.85rem;font-weight:500}
+.toggle-info p{font-size:0.75rem;color:var(--gray);margin-top:2px}
+.toggle{
+  width:42px;height:24px;background:var(--border2);border-radius:12px;
+  position:relative;cursor:pointer;transition:background var(--transition);flex-shrink:0;
+}
+.toggle.on{background:var(--gold)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform var(--transition);
+}
+.toggle.on::after{transform:translateX(18px)}
+
+/* ── MISC ───────────────────────────────────────────── */
+.empty-state{
+  text-align:center;padding:60px 20px;
+}
+.empty-state .empty-icon{font-size:3rem;margin-bottom:16px;opacity:0.3}
+.empty-state p{color:var(--gray);font-size:0.9rem}
+.source-pill{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:0.68rem;font-weight:600;letter-spacing:0.05em;
+  background:var(--surface3);color:var(--gray);
+}
+.source-pill.zillow{background:rgba(90,180,255,0.1);color:var(--cold)}
+.source-pill.website{background:rgba(201,169,110,0.1);color:var(--gold)}
+.source-pill.manual{background:rgba(74,222,128,0.1);color:var(--green)}
+.source-pill.facebook{background:rgba(167,139,250,0.1);color:var(--purple)}
+.value-display{
+  font-family:var(--serif);color:var(--gold);font-size:1rem;font-weight:500;
+}
+.dot-sep{color:var(--gray2);margin:0 6px}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:6px;font-size:0.72rem;
+  background:var(--surface3);color:var(--gray);border:1px solid var(--border);
+}
+.quick-stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+/* ── PROGRESS RING ──────────────────────────────────── */
+.ring-wrap{display:flex;align-items:center;gap:16px}
+.ring-svg{transform:rotate(-90deg)}
+.ring-track{fill:none;stroke:var(--surface3);stroke-width:6}
+.ring-fill{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:163;stroke-dashoffset:163;transition:stroke-dashoffset 1.5s ease}
+.ring-label{text-align:center}
+.ring-num{font-family:var(--serif);font-size:1.5rem;color:var(--white)}
+.ring-desc{font-size:0.72rem;color:var(--gray);margin-top:2px}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .lead-detail-layout{grid-template-columns:1fr}
+  .sv-layout{grid-template-columns:1fr;grid-template-rows:auto 400px}
+  .settings-grid{grid-template-columns:1fr}
+  .two-col,.three-col{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">BCHB <span>CRM</span></div>
+    <div class="login-sub">Bakersfield Cash Home Buyers — Internal Platform</div>
+    <label class="login-label">Email or Username</label>
+    <input class="login-input" id="loginUser" type="text" placeholder="admin" autocomplete="username"/>
+    <label class="login-label">Password</label>
+    <input class="login-input" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="loginErr">Invalid credentials. Try admin / admin123</div>
+    <div class="login-hint">Default: <span>admin</span> / <span>admin123</span></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<div class="app-layout">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">BCHB <span>CRM</span></div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">MAIN</div>
+    <div class="nav-item active" onclick="showView('dashboard')" data-view="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></div>
+    <div class="nav-item" onclick="showView('leads')" data-view="leads"><span class="nav-icon">👥</span><span class="nav-label">All Leads</span><span class="nav-badge" id="leadsCountBadge">0</span></div>
+    <div class="nav-item" onclick="showView('add-lead')" data-view="add-lead"><span class="nav-icon">➕</span><span class="nav-label">Add Lead</span></div>
+    <div class="nav-item" onclick="showView('kanban')" data-view="kanban"><span class="nav-icon">🗂</span><span class="nav-label">Kanban Board</span></div>
+    <div class="nav-section-label">SCHEDULE</div>
+    <div class="nav-item" onclick="showView('calendar')" data-view="calendar"><span class="nav-icon">📅</span><span class="nav-label">Calendar</span></div>
+    <div class="nav-item" onclick="showView('daily')" data-view="daily"><span class="nav-icon">☀️</span><span class="nav-label">Daily Schedule</span></div>
+    <div class="nav-section-label">TOOLS</div>
+    <div class="nav-item" onclick="showView('streetview')" data-view="streetview"><span class="nav-icon">🗺</span><span class="nav-label">Street View</span></div>
+    <div class="nav-item" onclick="showView('integrations')" data-view="integrations"><span class="nav-icon">🔗</span><span class="nav-label">Integrations & API</span></div>
+    <div class="nav-item" onclick="showView('settings')" data-view="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-chip" onclick="doLogout()">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Admin</div>
+        <div class="user-role">Super Admin · Sign out</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+
+<!-- ══ DASHBOARD ══════════════════════════════════════ -->
+<div class="view active" id="view-dashboard">
+  <div class="topbar">
+    <div class="page-title">Dashboard <span>Overview</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="refreshDashboard()">⟳ Refresh</button>
+      <button class="btn btn-primary btn-sm" onclick="showView('add-lead')">+ Add Lead</button>
+    </div>
+  </div>
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card" style="--accent:var(--gold)">
+      <div class="kpi-icon">👥</div>
+      <div class="kpi-label">Total Leads This Month</div>
+      <div class="kpi-num"><span id="kpi-leads">0</span></div>
+      <div class="kpi-sub" id="kpi-leads-sub">All sources combined</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar-leads"></div></div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--hot)">
+      <div class="kpi-icon">🔥</div>
+      <div class="kpi-label">Hot Leads</div>
+      <div class="kpi-num"><span id="kpi-hot">0</span></div>
+      <div class="kpi-sub">Needs immediate follow-up</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar-hot" style="background:var(--hot)"></div></div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--green)">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-label">Total Estimated Value</div>
+      <div class="kpi-num">$<span id="kpi-vol">0</span></div>
+      <div class="kpi-sub">Across active pipeline</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar-vol" style="background:var(--green)"></div></div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--cold)">
+      <div class="kpi-icon">📞</div>
+      <div class="kpi-label">Not Called Yet</div>
+      <div class="kpi-num"><span id="kpi-uncalled">0</span></div>
+      <div class="kpi-sub">Awaiting first contact</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-bar-uncalled" style="background:var(--cold)"></div></div>
+    </div>
+  </div>
+  <!-- Two columns -->
+  <div class="two-col" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Recent Leads</span>
+        <button class="btn btn-ghost btn-sm" onclick="showView('leads')">View All →</button>
+      </div>
+      <table class="data-table" id="recentLeadsTable">
+        <thead><tr><th>Name</th><th>Status</th><th>Source</th><th>Value</th><th>Added</th></tr></thead>
+        <tbody id="recentLeadsTbody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Activity Feed</span></div>
+      <div class="activity-feed" id="activityFeed"></div>
+    </div>
+  </div>
+  <!-- Pipeline status -->
+  <div class="three-col">
+    <div class="card" style="padding:20px">
+      <div class="detail-section-title">Lead Status Breakdown</div>
+      <div id="statusBreakdown" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="card" style="padding:20px">
+      <div class="detail-section-title">Call Status</div>
+      <div id="callBreakdown" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="card" style="padding:20px">
+      <div class="detail-section-title">Lead Sources</div>
+      <div id="sourceBreakdown" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ALL LEADS ═══════════════════════════════════════ -->
+<div class="view" id="view-leads">
+  <div class="topbar">
+    <div class="page-title">Leads <span>Management</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="showView('add-lead')">+ Add Lead</button>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="leadSearch" placeholder="Search by name, phone, address…" oninput="renderLeads()"/>
+    </div>
+    <select class="filter-select" id="filterStatus" onchange="renderLeads()">
+      <option value="">All Status</option>
+      <option value="hot">🔥 Hot</option>
+      <option value="warm">🌤 Warm</option>
+      <option value="cold">❄ Cold</option>
+      <option value="archive">📦 Archived</option>
+    </select>
+    <select class="filter-select" id="filterCall" onchange="renderLeads()">
+      <option value="">All Call Status</option>
+      <option value="called">Called</option>
+      <option value="notcalled">Not Called</option>
+      <option value="willcall">Will Call</option>
+    </select>
+    <select class="filter-select" id="filterSource" onchange="renderLeads()">
+      <option value="">All Sources</option>
+      <option value="website">Website</option>
+      <option value="zillow">Zillow</option>
+      <option value="facebook">Facebook</option>
+      <option value="manual">Manual</option>
+    </select>
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>Phone</th><th>Address</th>
+          <th>Status</th><th>Call</th><th>Source</th>
+          <th>Est. Value</th><th>Last Contact</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="leadsTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ADD LEAD ════════════════════════════════════════ -->
+<div class="view" id="view-add-lead">
+  <div class="topbar">
+    <div class="page-title">Add <span>New Lead</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showView('leads')">← Back to Leads</button>
+    </div>
+  </div>
+  <div style="max-width:700px">
+    <div class="card" style="padding:28px">
+      <div class="detail-section-title">Contact Information</div>
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="form-group">
+          <label class="form-label">First Name <span class="req">*</span></label>
+          <input class="form-input" id="af-fname" placeholder="Maria" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name <span class="req">*</span></label>
+          <input class="form-input" id="af-lname" placeholder="Garcia" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number <span class="req">*</span></label>
+          <input class="form-input" id="af-phone" type="tel" placeholder="(661) 555-0000" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" id="af-email" type="email" placeholder="you@example.com"/>
+        </div>
+      </div>
+      <div class="detail-section-title">Property Details</div>
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="form-group full">
+          <label class="form-label">Property Address <span class="req">*</span></label>
+          <div style="position:relative">
+            <input class="form-input" id="af-address" placeholder="123 Main St, Bakersfield CA 93301" oninput="addressAutoComplete(this.value)" required/>
+            <div id="addr-suggestions" style="position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:0 0 8px 8px;z-index:50;display:none"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estimated Property Value</label>
+          <input class="form-input" id="af-value" type="number" placeholder="280000" oninput="updateEstimate()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Property Type</label>
+          <select class="form-select" id="af-type">
+            <option value="">Select type...</option>
+            <option>Single Family</option><option>Condo</option>
+            <option>Multi-Family</option><option>Land</option>
+          </select>
+        </div>
+      </div>
+      <div class="detail-section-title">Lead Details</div>
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="form-group">
+          <label class="form-label">Lead Status</label>
+          <select class="form-select" id="af-status">
+            <option value="warm">🌤 Warm</option>
+            <option value="hot">🔥 Hot</option>
+            <option value="cold">❄ Cold</option>
+            <option value="archive">📦 Archived</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Call Status</label>
+          <select class="form-select" id="af-callstatus">
+            <option value="notcalled">Not Called</option>
+            <option value="called">Called</option>
+            <option value="willcall">Will Call</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lead Source</label>
+          <select class="form-select" id="af-source">
+            <option value="manual">Manual Entry</option>
+            <option value="website">Website Form</option>
+            <option value="zillow">Zillow</option>
+            <option value="facebook">Facebook Ads</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Situation</label>
+          <select class="form-select" id="af-situation">
+            <option value="">Select...</option>
+            <option>Foreclosure</option><option>Inherited</option>
+            <option>Relocating</option><option>Rental Issues</option>
+            <option>Divorce</option><option>Downsizing</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Initial Notes</label>
+          <textarea class="form-textarea" id="af-notes" placeholder="First impressions, motivation level, key details..."></textarea>
+        </div>
+      </div>
+      <div id="af-estimate-box" style="display:none;background:var(--gold-glow);border:1px solid rgba(201,169,110,0.2);border-radius:8px;padding:14px;margin-bottom:20px">
+        <div style="font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Estimated Cash Offer Range</div>
+        <div style="font-family:var(--serif);font-size:1.4rem;color:var(--gold)" id="af-offer-range">—</div>
+        <div style="font-size:0.75rem;color:var(--gray);margin-top:4px">Based on 82–93% of stated value</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="saveLead()">Save Lead →</button>
+        <button class="btn btn-ghost" onclick="clearAddForm()">Clear Form</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEAD DETAIL ══════════════════════════════════════ -->
+<div class="view" id="view-lead-detail">
+  <div class="topbar">
+    <div class="page-title" id="detail-title">Lead <span>Detail</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showView('leads')">← Back</button>
+      <button class="btn btn-ghost btn-sm" onclick="openStreetViewForLead()">🗺 Street View</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteLead()">🗑 Delete</button>
+      <button class="btn btn-primary btn-sm" onclick="saveLeadDetail()">💾 Save Changes</button>
+    </div>
+  </div>
+  <div class="lead-detail-layout">
+    <!-- Left: main info -->
+    <div>
+      <div class="card" style="padding:24px;margin-bottom:20px">
+        <div class="detail-section-title">Contact Info</div>
+        <div class="form-grid" style="margin-bottom:0">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" id="d-fname"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" id="d-lname"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-input" id="d-phone" type="tel"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" id="d-email" type="email"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Property Address</label>
+            <input class="form-input" id="d-address"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Est. Property Value ($)</label>
+            <input class="form-input" id="d-value" type="number"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Property Type</label>
+            <select class="form-select" id="d-type">
+              <option value="">—</option>
+              <option>Single Family</option><option>Condo</option>
+              <option>Multi-Family</option><option>Land</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lead Status</label>
+            <select class="form-select" id="d-status">
+              <option value="hot">🔥 Hot</option>
+              <option value="warm">🌤 Warm</option>
+              <option value="cold">❄ Cold</option>
+              <option value="archive">📦 Archived</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Call Status</label>
+            <select class="form-select" id="d-callstatus">
+              <option value="called">Called</option>
+              <option value="notcalled">Not Called</option>
+              <option value="willcall">Will Call</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Situation</label>
+            <select class="form-select" id="d-situation">
+              <option value="">—</option>
+              <option>Foreclosure</option><option>Inherited</option>
+              <option>Relocating</option><option>Rental Issues</option>
+              <option>Divorce</option><option>Downsizing</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- Call Log -->
+      <div class="card" style="padding:24px;margin-bottom:20px">
+        <div class="detail-section-title">Log a Call</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Call Date</label>
+            <input class="form-input" id="d-calldate" type="date"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Call Time</label>
+            <input class="form-input" id="d-calltime" type="time"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Call Notes</label>
+            <textarea class="form-textarea" id="d-callnotes" placeholder="What was discussed?" style="min-height:80px"></textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="logCall()">📞 Log Call</button>
+      </div>
+      <!-- Add Note -->
+      <div class="card" style="padding:24px;margin-bottom:20px">
+        <div class="detail-section-title">Add Note</div>
+        <textarea class="form-textarea" id="d-newnote" placeholder="Add a note about this lead..."></textarea>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="addNote()">+ Add Note</button>
+        <div id="notes-list" style="margin-top:16px"></div>
+      </div>
+    </div>
+    <!-- Right: timeline + summary -->
+    <div>
+      <div class="card" style="padding:20px;margin-bottom:16px">
+        <div class="detail-section-title">Lead Summary</div>
+        <div style="text-align:center;padding:16px 0">
+          <div style="font-family:var(--serif);font-size:2rem;color:var(--gold)" id="d-value-display">—</div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-top:4px">Estimated Property Value</div>
+          <div style="font-family:var(--serif);font-size:1.2rem;color:var(--green);margin-top:12px" id="d-offer-display">—</div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-top:4px">Est. Cash Offer Range</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+          <span class="badge" id="d-status-badge">—</span>
+          <span class="badge" id="d-call-badge">—</span>
+          <span class="source-pill" id="d-source-pill">—</span>
+        </div>
+      </div>
+      <div class="card" style="padding:20px">
+        <div class="detail-section-title">Activity Timeline</div>
+        <div id="timeline-list" style="max-height:400px;overflow-y:auto"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KANBAN ═══════════════════════════════════════════ -->
+<div class="view" id="view-kanban">
+  <div class="topbar">
+    <div class="page-title">Kanban <span>Board</span></div>
+    <div class="topbar-actions">
+      <div style="font-size:0.8rem;color:var(--gray)">Drag leads between days to schedule follow-ups</div>
+    </div>
+  </div>
+  <div class="kanban-board" id="kanbanBoard">
+    <div class="kanban-col" data-day="monday">
+      <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--gold)">Monday</span><span class="kanban-col-count" id="cnt-monday">0</span></div>
+      <div class="kanban-cards" id="col-monday" ondragover="dragOver(event)" ondrop="drop(event,'monday')" ondragleave="dragLeave(event)"></div>
+    </div>
+    <div class="kanban-col" data-day="tuesday">
+      <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--cold)">Tuesday</span><span class="kanban-col-count" id="cnt-tuesday">0</span></div>
+      <div class="kanban-cards" id="col-tuesday" ondragover="dragOver(event)" ondrop="drop(event,'tuesday')" ondragleave="dragLeave(event)"></div>
+    </div>
+    <div class="kanban-col" data-day="wednesday">
+      <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--green)">Wednesday</span><span class="kanban-col-count" id="cnt-wednesday">0</span></div>
+      <div class="kanban-cards" id="col-wednesday" ondragover="dragOver(event)" ondrop="drop(event,'wednesday')" ondragleave="dragLeave(event)"></div>
+    </div>
+    <div class="kanban-col" data-day="thursday">
+      <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--purple)">Thursday</span><span class="kanban-col-count" id="cnt-thursday">0</span></div>
+      <div class="kanban-cards" id="col-thursday" ondragover="dragOver(event)" ondrop="drop(event,'thursday')" ondragleave="dragLeave(event)"></div>
+    </div>
+    <div class="kanban-col" data-day="friday">
+      <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--warm)">Friday</span><span class="kanban-col-count" id="cnt-friday">0</span></div>
+      <div class="kanban-cards" id="col-friday" ondragover="dragOver(event)" ondrop="drop(event,'friday')" ondragleave="dragLeave(event)"></div>
+    </div>
+    <div class="kanban-col" data-day="unscheduled">
+      <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--gray)">Unscheduled</span><span class="kanban-col-count" id="cnt-unscheduled">0</span></div>
+      <div class="kanban-cards" id="col-unscheduled" ondragover="dragOver(event)" ondrop="drop(event,'unscheduled')" ondragleave="dragLeave(event)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CALENDAR ═════════════════════════════════════════ -->
+<div class="view" id="view-calendar">
+  <div class="topbar">
+    <div class="page-title">Calendar <span>& Events</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="openAddEvent()">+ Add Event</button>
+    </div>
+  </div>
+  <div class="cal-header">
+    <div class="cal-month-label" id="calMonthLabel"></div>
+    <div class="cal-nav">
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="changeMonth(-1)">‹</button>
+      <button class="btn btn-ghost btn-sm" onclick="goToday()">Today</button>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="changeMonth(1)">›</button>
+    </div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+
+<!-- ══ DAILY SCHEDULE ════════════════════════════════════ -->
+<div class="view" id="view-daily">
+  <div class="topbar">
+    <div class="page-title">Daily <span>Schedule</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="changeDay(-1)">‹</button>
+      <div style="font-size:0.9rem;padding:0 12px" id="dailyDateLabel"></div>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="changeDay(1)">›</button>
+      <button class="btn btn-primary btn-sm" onclick="openAddEvent()">+ Event</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:80px 1fr;gap:0">
+    <div id="dailyTimeCol" style="border-right:1px solid var(--border)"></div>
+    <div id="dailyEvents"></div>
+  </div>
+</div>
+
+<!-- ══ STREET VIEW ════════════════════════════════════════ -->
+<div class="view" id="view-streetview">
+  <div class="topbar">
+    <div class="page-title">Street <span>View Explorer</span></div>
+  </div>
+  <div class="sv-layout">
+    <div class="sv-sidebar">
+      <div class="card" style="padding:20px">
+        <div class="detail-section-title">Search Address</div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">Property Address</label>
+          <input class="form-input" id="sv-address" placeholder="123 Main St, Bakersfield CA" onkeydown="if(event.key==='Enter')loadStreetView()"/>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="loadStreetView()">🗺 Open Street View</button>
+      </div>
+      <div class="card" style="padding:20px">
+        <div class="detail-section-title">Quick — Lead Addresses</div>
+        <div id="sv-lead-list" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
+      </div>
+      <div class="card" style="padding:16px;background:var(--gold-glow);border-color:rgba(201,169,110,0.2)">
+        <div style="font-size:0.75rem;color:var(--gold);margin-bottom:6px">💡 Tip</div>
+        <p style="font-size:0.78rem;color:var(--gray);line-height:1.6">Click any lead address to instantly open Street View for that property. Zoom in to inspect the exterior condition before making an offer.</p>
+      </div>
+    </div>
+    <div class="sv-frame" id="svFrame">
+      <div class="sv-placeholder">
+        <div class="sv-icon">🗺</div>
+        <div style="font-size:1rem;font-weight:500">Street View Explorer</div>
+        <p style="font-size:0.85rem;text-align:center;max-width:300px">Enter a property address or click a lead from your list to view Google Street View imagery.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INTEGRATIONS ════════════════════════════════════ -->
+<div class="view" id="view-integrations">
+  <div class="topbar">
+    <div class="page-title">Integrations <span>& API</span></div>
+  </div>
+  <div style="max-width:860px;display:flex;flex-direction:column;gap:20px">
+    <div class="settings-section">
+      <h3>📥 Inbound Webhook — Receive Leads</h3>
+      <p>POST lead data to this endpoint from your website, Zillow, Facebook Ads, or any external tool. Leads appear instantly in the CRM.</p>
+      <div style="font-size:0.72rem;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Endpoint URL</div>
+      <div class="api-key-row" style="margin-bottom:16px">
+        <div class="api-key-val">https://bchb-crm.vercel.app/api/leads/incoming</div>
+        <button class="copy-btn" onclick="copyText('https://bchb-crm.vercel.app/api/leads/incoming',this)">Copy</button>
+      </div>
+      <div style="font-size:0.72rem;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">JSON Payload Format</div>
+      <div class="webhook-box">{ "name": "Maria Garcia", "phone": "(661) 555-0000", "email": "m@gmail.com", "address": "123 Main St, Bakersfield CA 93301", "source": "zillow", "estimated_value": 285000 }</div>
+    </div>
+    <div class="settings-section">
+      <h3>🔑 API Key</h3>
+      <p>Use this key to authenticate outbound requests to other CRMs or Zapier.</p>
+      <div class="api-key-row">
+        <div class="api-key-val" id="apiKeyDisplay">bchb_live_••••••••••••••••••••••••••••••</div>
+        <button class="copy-btn" onclick="revealApiKey(this)">Reveal</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>⚡ Connected Sources</h3>
+      <p>Toggle which sources can push leads into your CRM.</p>
+      <div class="toggle-row"><div class="toggle-info"><h4>Website Form (bakersfieldcashhomebuyers.com)</h4><p>Auto-imports leads from your main site calculator</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="toggle-row"><div class="toggle-info"><h4>Zillow Premier Agent</h4><p>Webhook from Zillow lead notifications</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="toggle-row"><div class="toggle-info"><h4>Facebook Lead Ads</h4><p>Via Zapier → Webhook bridge</p></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      <div class="toggle-row"><div class="toggle-info"><h4>Realtor.com</h4><p>Coming soon — connect your Realtor.com agent account</p></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <div class="settings-section">
+      <h3>🧪 Test Incoming Lead</h3>
+      <p>Simulate a lead arriving from an external source to test your pipeline.</p>
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="test-name" value="Test Lead"/></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="test-phone" value="(661) 555-9999"/></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="test-email" value="test@zillow.com"/></div>
+        <div class="form-group"><label class="form-label">Address</label><input class="form-input" id="test-addr" value="456 Oak Ave, Bakersfield CA 93304"/></div>
+        <div class="form-group"><label class="form-label">Source</label><select class="form-select" id="test-source"><option value="zillow">Zillow</option><option value="website">Website</option><option value="facebook">Facebook</option></select></div>
+        <div class="form-group"><label class="form-label">Est. Value ($)</label><input class="form-input" id="test-value" type="number" value="320000"/></div>
+      </div>
+      <button class="btn btn-primary" onclick="injectTestLead()">⚡ Inject Test Lead</button>
+      <div id="inject-result" style="display:none;margin-top:12px;padding:12px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:8px;font-size:0.82rem;color:var(--green)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ═══════════════════════════════════════ -->
+<div class="view" id="view-settings">
+  <div class="topbar"><div class="page-title">CRM <span>Settings</span></div></div>
+  <div class="settings-grid">
+    <div class="settings-nav">
+      <div class="settings-nav-item active" onclick="showSettingsPanel('profile',this)">👤 Profile</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('company',this)">🏢 Company</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('notifications',this)">🔔 Notifications</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('users',this)">👥 Users</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('data',this)">💾 Data & Export</div>
+    </div>
+    <div>
+      <div class="settings-panel active" id="sp-profile">
+        <div class="settings-section">
+          <h3>Profile Settings</h3><p>Update your login credentials and display name.</p>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" value="Admin User"/></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="admin@bchb.com"/></div>
+            <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" placeholder="Leave blank to keep current"/></div>
+            <div class="form-group"><label class="form-label">Role</label><input class="form-input" value="Super Admin" disabled style="opacity:0.5"/></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:16px">Save Profile</button>
+        </div>
+      </div>
+      <div class="settings-panel" id="sp-company">
+        <div class="settings-section">
+          <h3>Company Details</h3><p>Shown on reports and outbound communications.</p>
+          <div class="form-grid">
+            <div class="form-group full"><label class="form-label">Company Name</label><input class="form-input" value="Bakersfield Cash Home Buyers"/></div>
+            <div class="form-group"><label class="form-label">Phone</label><input class="form-input" value="(661) 555-1234"/></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="offers@bakersfieldcashhomebuyers.com"/></div>
+            <div class="form-group full"><label class="form-label">Address</label><input class="form-input" value="1801 Chester Ave, Suite 200, Bakersfield CA 93301"/></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:16px">Save Company</button>
+        </div>
+      </div>
+      <div class="settings-panel" id="sp-notifications">
+        <div class="settings-section">
+          <h3>Notification Preferences</h3><p>Control when and how you receive alerts.</p>
+          <div class="toggle-row"><div class="toggle-info"><h4>New Lead Alert</h4><p>Get notified when a new lead comes in</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>Daily Lead Summary Email</h4><p>Morning digest of all active leads</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>Follow-up Reminders</h4><p>Get reminded to call "Will Call" leads</p></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><div class="toggle-info"><h4>Webhook Error Alerts</h4><p>Alert when an inbound webhook fails</p></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+      </div>
+      <div class="settings-panel" id="sp-users">
+        <div class="settings-section">
+          <h3>Team Members</h3><p>Manage who has access to this CRM.</p>
+          <div id="users-list" style="margin-bottom:20px"></div>
+          <button class="btn btn-primary btn-sm" onclick="addUserPrompt()">+ Invite User</button>
+        </div>
+      </div>
+      <div class="settings-panel" id="sp-data">
+        <div class="settings-section">
+          <h3>Data & Export</h3><p>Export your leads or reset the CRM data.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="exportCSV()">📥 Export Leads CSV</button>
+            <button class="btn btn-ghost" onclick="exportJSON()">📥 Export JSON</button>
+            <button class="btn btn-danger" onclick="if(confirm('Clear ALL leads? This cannot be undone.'))clearAllLeads()">🗑 Clear All Leads</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- CALENDAR EVENT MODAL -->
+<div class="modal-overlay" id="eventModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add Calendar Event</span>
+      <button class="modal-close" onclick="closeModal('eventModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">Event Title</label><input class="form-input" id="ev-title" placeholder="Call with Maria G."/></div>
+        <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="ev-date" type="date"/></div>
+        <div class="form-group"><label class="form-label">Time</label><input class="form-input" id="ev-time" type="time"/></div>
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-select" id="ev-type">
+            <option value="call">📞 Call</option>
+            <option value="appt">🏠 Appointment</option>
+            <option value="follow">🔁 Follow-up</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Linked Lead</label>
+          <select class="form-select" id="ev-lead">
+            <option value="">— None —</option>
+          </select>
+        </div>
+        <div class="form-group full"><label class="form-label">Notes</label><textarea class="form-textarea" id="ev-notes" style="min-height:80px" placeholder="Event details..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('eventModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DATA LAYER — localStorage
+══════════════════════════════════════════════════════ */
+const DB = {
+  get leads(){ return JSON.parse(localStorage.getItem('bchb_leads')||'[]') },
+  set leads(v){ localStorage.setItem('bchb_leads', JSON.stringify(v)) },
+  get events(){ return JSON.parse(localStorage.getItem('bchb_events')||'[]') },
+  set events(v){ localStorage.setItem('bchb_events', JSON.stringify(v)) },
+  get activity(){ return JSON.parse(localStorage.getItem('bchb_activity')||'[]') },
+  set activity(v){ localStorage.setItem('bchb_activity', JSON.stringify(v)) },
+  get users(){ return JSON.parse(localStorage.getItem('bchb_users')||JSON.stringify([{name:'Admin User',email:'admin@bchb.com',role:'Super Admin',initials:'AU'}])) },
+  set users(v){ localStorage.setItem('bchb_users', JSON.stringify(v)) },
+};
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7) }
+function fmt(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—' }
+function fmtMoney(n){ return n ? '$'+Number(n).toLocaleString() : '—' }
+function timeAgo(ts){
+  const s=(Date.now()-ts)/1000;
+  if(s<60)return 'just now';
+  if(s<3600)return Math.round(s/60)+'m ago';
+  if(s<86400)return Math.round(s/3600)+'h ago';
+  return Math.round(s/86400)+'d ago';
+}
+function logActivity(msg, color='var(--gold)'){
+  const act = DB.activity;
+  act.unshift({msg, color, ts: Date.now()});
+  DB.activity = act.slice(0,60);
+}
+
+/* ══════════════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════════════ */
+const CREDS = { admin:'admin123', 'info.thebuild@gmail.com':'admin123' };
+let currentUser = null;
+
+function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if(CREDS[u] && CREDS[u]===p){
+    currentUser = u;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('userAvatar').textContent = u[0].toUpperCase();
+    document.getElementById('userName').textContent = u==='admin'?'Admin':u.split('@')[0];
+    seedDemoData();
+    showView('dashboard');
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    gsap.from('#loginErr',{x:-8,duration:0.3,ease:'power2.out'});
+  }
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin(); });
+function doLogout(){
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+/* ══════════════════════════════════════════════════════
+   SEED DEMO DATA
+══════════════════════════════════════════════════════ */
+function seedDemoData(){
+  if(DB.leads.length>0) return;
+  const demo=[
+    {id:uid(),fname:'Maria',lname:'Garcia',phone:'(661)555-0100',email:'mgarcia@email.com',address:'1428 Oak St, Bakersfield CA 93301',value:285000,type:'Single Family',status:'hot',callstatus:'called',source:'website',situation:'Foreclosure',kanbanDay:'monday',notes:[],timeline:[],created:Date.now()-8*86400000,lastContact:Date.now()-86400000},
+    {id:uid(),fname:'James',lname:'Turner',phone:'(661)555-0200',email:'jturner@email.com',address:'3311 Rosedale Hwy, Bakersfield CA 93308',value:340000,type:'Single Family',status:'warm',callstatus:'willcall',source:'zillow',situation:'Inherited',kanbanDay:'tuesday',notes:[],timeline:[],created:Date.now()-5*86400000,lastContact:null},
+    {id:uid(),fname:'Sandra',lname:'Lopez',phone:'(661)555-0300',email:'slopez@email.com',address:'815 Niles St, Bakersfield CA 93305',value:195000,type:'Condo',status:'cold',callstatus:'notcalled',source:'facebook',situation:'Relocating',kanbanDay:'unscheduled',notes:[],timeline:[],created:Date.now()-12*86400000,lastContact:null},
+    {id:uid(),fname:'Derek',lname:'Morrison',phone:'(661)555-0400',email:'dmorrison@email.com',address:'2240 Ming Ave, Bakersfield CA 93304',value:410000,type:'Single Family',status:'hot',callstatus:'called',source:'website',situation:'Divorce',kanbanDay:'wednesday',notes:[],timeline:[],created:Date.now()-2*86400000,lastContact:Date.now()-7200000},
+    {id:uid(),fname:'Patricia',lname:'Wells',phone:'(661)555-0500',email:'',address:'5619 Stockdale Hwy, Bakersfield CA 93309',value:520000,type:'Multi-Family',status:'warm',callstatus:'willcall',source:'manual',situation:'Rental Issues',kanbanDay:'thursday',notes:[],timeline:[],created:Date.now()-18*86400000,lastContact:Date.now()-3*86400000},
+    {id:uid(),fname:'Robert',lname:'Kim',phone:'(661)555-0600',email:'rkim@email.com',address:'444 Chester Ave, Bakersfield CA 93301',value:155000,type:'Single Family',status:'cold',callstatus:'notcalled',source:'zillow',situation:'Other',kanbanDay:'friday',notes:[],timeline:[],created:Date.now()-25*86400000,lastContact:null},
+  ];
+  DB.leads = demo;
+  logActivity('CRM initialized with demo data','var(--gold)');
+  logActivity('6 sample leads imported','var(--green)');
+  logActivity('Webhook endpoint configured','var(--cold)');
+}
+
+/* ══════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════ */
+let currentView='dashboard';
+let currentLeadId=null;
+
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('view-'+v);
+  if(el){ el.classList.add('active'); gsap.from(el,{opacity:0,y:12,duration:0.35,ease:'power3.out'}); }
+  document.querySelector(`[data-view="${v}"]`)?.classList.add('active');
+  currentView=v;
+  // render
+  if(v==='dashboard') renderDashboard();
+  else if(v==='leads') renderLeads();
+  else if(v==='kanban') renderKanban();
+  else if(v==='calendar') renderCalendar();
+  else if(v==='daily') renderDaily();
+  else if(v==='streetview') renderStreetViewLeads();
+  else if(v==='settings') renderUsers();
+  // update badge
+  document.getElementById('leadsCountBadge').textContent = DB.leads.length;
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+/* ══════════════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════════════ */
+function renderDashboard(){
+  const leads=DB.leads;
+  const hot=leads.filter(l=>l.status==='hot').length;
+  const uncalled=leads.filter(l=>l.callstatus==='notcalled').length;
+  const vol=leads.reduce((s,l)=>s+(Number(l.value)||0),0);
+
+  animCount('kpi-leads',leads.length);
+  animCount('kpi-hot',hot);
+  animCount('kpi-uncalled',uncalled);
+  animMoney('kpi-vol',vol);
+
+  // bars
+  setTimeout(()=>{
+    setBar('kpi-bar-leads', leads.length, 50);
+    setBar('kpi-bar-hot', hot, leads.length||1);
+    setBar('kpi-bar-uncalled', uncalled, leads.length||1);
+    setBar('kpi-bar-vol', vol, 3000000);
+  },200);
+
+  // recent leads table
+  const tbody=document.getElementById('recentLeadsTbody');
+  const recent=[...leads].sort((a,b)=>b.created-a.created).slice(0,6);
+  tbody.innerHTML=recent.map(l=>`
+    <tr onclick="openLead('${l.id}')">
+      <td><strong>${l.fname} ${l.lname}</strong></td>
+      <td>${statusBadge(l.status)}</td>
+      <td><span class="source-pill ${l.source}">${l.source}</span></td>
+      <td class="value-display">${fmtMoney(l.value)}</td>
+      <td style="color:var(--gray);font-size:0.78rem">${fmt(l.created)}</td>
+    </tr>`).join('');
+
+  // activity feed
+  const feed=document.getElementById('activityFeed');
+  const acts=DB.activity.slice(0,12);
+  feed.innerHTML=acts.length?acts.map(a=>`
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div><div class="activity-text">${a.msg}</div><div class="activity-time">${timeAgo(a.ts)}</div></div>
+    </div>`).join(''):`<div class="empty-state"><p>No activity yet</p></div>`;
+
+  // breakdowns
+  renderBreakdown('statusBreakdown',[
+    {label:'🔥 Hot',val:leads.filter(l=>l.status==='hot').length,color:'var(--hot)'},
+    {label:'🌤 Warm',val:leads.filter(l=>l.status==='warm').length,color:'var(--warm)'},
+    {label:'❄ Cold',val:leads.filter(l=>l.status==='cold').length,color:'var(--cold)'},
+    {label:'📦 Archived',val:leads.filter(l=>l.status==='archive').length,color:'var(--gray)'},
+  ],leads.length||1);
+  renderBreakdown('callBreakdown',[
+    {label:'✅ Called',val:leads.filter(l=>l.callstatus==='called').length,color:'var(--green)'},
+    {label:'📵 Not Called',val:leads.filter(l=>l.callstatus==='notcalled').length,color:'var(--red)'},
+    {label:'📋 Will Call',val:leads.filter(l=>l.callstatus==='willcall').length,color:'var(--purple)'},
+  ],leads.length||1);
+  renderBreakdown('sourceBreakdown',[
+    {label:'Website',val:leads.filter(l=>l.source==='website').length,color:'var(--gold)'},
+    {label:'Zillow',val:leads.filter(l=>l.source==='zillow').length,color:'var(--cold)'},
+    {label:'Facebook',val:leads.filter(l=>l.source==='facebook').length,color:'var(--purple)'},
+    {label:'Manual',val:leads.filter(l=>l.source==='manual').length,color:'var(--green)'},
+  ],leads.length||1);
+}
+
+function renderBreakdown(id, items, total){
+  const el=document.getElementById(id);
+  el.innerHTML=items.map(i=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px">
+        <span>${i.label}</span><span style="color:${i.color};font-weight:600">${i.val}</span>
+      </div>
+      <div style="height:4px;background:var(--surface3);border-radius:4px;overflow:hidden">
+        <div style="height:100%;background:${i.color};width:${Math.round(i.val/total*100)}%;border-radius:4px;transition:width 1s ease"></div>
+      </div>
+    </div>`).join('');
+}
+
+function animCount(id, target){
+  const el=document.getElementById(id);
+  if(!el)return;
+  let s=0; const step=Math.ceil(target/30);
+  const t=setInterval(()=>{ s=Math.min(s+step,target); el.textContent=s; if(s>=target)clearInterval(t); },40);
+}
+function animMoney(id, target){
+  const el=document.getElementById(id);
+  if(!el)return;
+  let s=0; const step=Math.ceil(target/40);
+  const t=setInterval(()=>{ s=Math.min(s+step,target); el.textContent=(s/1000000).toFixed(2)+'M'; if(s>=target)clearInterval(t); },30);
+}
+function setBar(id,val,max){ const el=document.getElementById(id); if(el) el.style.width=Math.min(100,Math.round(val/max*100))+'%'; }
+function refreshDashboard(){ renderDashboard(); }
+
+/* ══════════════════════════════════════════════════════
+   LEADS TABLE
+══════════════════════════════════════════════════════ */
+function renderLeads(){
+  const q=(document.getElementById('leadSearch')?.value||'').toLowerCase();
+  const fs=document.getElementById('filterStatus')?.value||'';
+  const fc=document.getElementById('filterCall')?.value||'';
+  const fsrc=document.getElementById('filterSource')?.value||'';
+  let leads=[...DB.leads];
+  if(q) leads=leads.filter(l=>(l.fname+l.lname+l.phone+l.address).toLowerCase().includes(q));
+  if(fs) leads=leads.filter(l=>l.status===fs);
+  if(fc) leads=leads.filter(l=>l.callstatus===fc);
+  if(fsrc) leads=leads.filter(l=>l.source===fsrc);
+  leads.sort((a,b)=>b.created-a.created);
+  const tbody=document.getElementById('leadsTableBody');
+  if(!tbody)return;
+  tbody.innerHTML=leads.length?leads.map(l=>`
+    <tr onclick="openLead('${l.id}')">
+      <td><strong>${l.fname} ${l.lname}</strong></td>
+      <td>${l.phone}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gray)">${l.address}</td>
+      <td>${statusBadge(l.status)}</td>
+      <td>${callBadge(l.callstatus)}</td>
+      <td><span class="source-pill ${l.source}">${l.source}</span></td>
+      <td class="value-display">${fmtMoney(l.value)}</td>
+      <td style="color:var(--gray);font-size:0.78rem">${l.lastContact?fmt(l.lastContact):'Never'}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="openLead('${l.id}')" title="View">👁</button>
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="openStreetViewFor('${encodeURIComponent(l.address)}')" title="Street View">🗺</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteLeadById('${l.id}')" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`).join(''):`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">👥</div><p>No leads found matching your filters</p></div></td></tr>`;
+}
+
+function statusBadge(s){
+  const map={hot:'badge-hot',warm:'badge-warm',cold:'badge-cold',archive:'badge-archive'};
+  const lbl={hot:'🔥 Hot',warm:'🌤 Warm',cold:'❄ Cold',archive:'📦 Archived'};
+  return `<span class="badge ${map[s]||''}">${lbl[s]||s}</span>`;
+}
+function callBadge(s){
+  const map={called:'badge-called',notcalled:'badge-notcalled',willcall:'badge-willcall'};
+  const lbl={called:'✅ Called',notcalled:'📵 Not Called',willcall:'📋 Will Call'};
+  return `<span class="badge ${map[s]||''}">${lbl[s]||s}</span>`;
+}
+
+/* ══════════════════════════════════════════════════════
+   ADD LEAD
+══════════════════════════════════════════════════════ */
+function updateEstimate(){
+  const v=parseFloat(document.getElementById('af-value').value)||0;
+  const box=document.getElementById('af-estimate-box');
+  const range=document.getElementById('af-offer-range');
+  if(v>0){
+    box.style.display='block';
+    const lo=Math.round(v*0.82).toLocaleString();
+    const hi=Math.round(v*0.93).toLocaleString();
+    range.textContent=`$${lo} – $${hi}`;
+  } else { box.style.display='none'; }
+}
+
+function addressAutoComplete(val){
+  const box=document.getElementById('addr-suggestions');
+  if(val.length<3){box.style.display='none';return;}
+  const bk=['1428 Oak St','3311 Rosedale Hwy','815 Niles St','2240 Ming Ave','5619 Stockdale Hwy','444 Chester Ave','701 Union Ave','2100 White Ln'];
+  const matches=bk.filter(a=>a.toLowerCase().includes(val.toLowerCase())).slice(0,4);
+  if(!matches.length){box.style.display='none';return;}
+  box.style.display='block';
+  box.innerHTML=matches.map(a=>`<div onclick="pickAddr('${a}, Bakersfield CA')" style="padding:10px 14px;cursor:pointer;font-size:0.83rem;border-bottom:1px solid var(--border);transition:background 0.2s" onmouseenter="this.style.background='var(--surface3)'" onmouseleave="this.style.background='transparent'">${a}, Bakersfield CA</div>`).join('');
+}
+function pickAddr(a){ document.getElementById('af-address').value=a; document.getElementById('addr-suggestions').style.display='none'; }
+
+function saveLead(){
+  const fn=document.getElementById('af-fname').value.trim();
+  const ln=document.getElementById('af-lname').value.trim();
+  const ph=document.getElementById('af-phone').value.trim();
+  const addr=document.getElementById('af-address').value.trim();
+  if(!fn||!ln||!ph||!addr){ alert('Please fill in Name, Phone, and Address.'); return; }
+  const lead={
+    id:uid(), fname:fn, lname:ln,
+    phone:ph, email:document.getElementById('af-email').value.trim(),
+    address:addr, value:document.getElementById('af-value').value||0,
+    type:document.getElementById('af-type').value,
+    status:document.getElementById('af-status').value,
+    callstatus:document.getElementById('af-callstatus').value,
+    source:document.getElementById('af-source').value,
+    situation:document.getElementById('af-situation').value,
+    kanbanDay:'unscheduled', notes:[], timeline:[],
+    created:Date.now(), lastContact:null,
+  };
+  if(document.getElementById('af-notes').value.trim()){
+    lead.notes.push({id:uid(),text:document.getElementById('af-notes').value.trim(),ts:Date.now()});
+  }
+  lead.timeline.push({type:'created',msg:`Lead created — Source: ${lead.source}`,ts:Date.now(),color:'var(--gold)'});
+  const leads=DB.leads; leads.push(lead); DB.leads=leads;
+  logActivity(`New lead added: ${fn} ${ln} (${lead.source})`, 'var(--green)');
+  document.getElementById('leadsCountBadge').textContent=DB.leads.length;
+  clearAddForm();
+  showView('leads');
+}
+
+function clearAddForm(){
+  ['af-fname','af-lname','af-phone','af-email','af-address','af-value','af-notes'].forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
+  document.getElementById('af-estimate-box').style.display='none';
+}
+
+/* ══════════════════════════════════════════════════════
+   LEAD DETAIL
+══════════════════════════════════════════════════════ */
+function openLead(id){
+  currentLeadId=id;
+  const lead=DB.leads.find(l=>l.id===id);
+  if(!lead)return;
+  document.getElementById('detail-title').innerHTML=`${lead.fname} <span>${lead.lname}</span>`;
+  document.getElementById('d-fname').value=lead.fname;
+  document.getElementById('d-lname').value=lead.lname;
+  document.getElementById('d-phone').value=lead.phone;
+  document.getElementById('d-email').value=lead.email||'';
+  document.getElementById('d-address').value=lead.address;
+  document.getElementById('d-value').value=lead.value||'';
+  document.getElementById('d-type').value=lead.type||'';
+  document.getElementById('d-status').value=lead.status;
+  document.getElementById('d-callstatus').value=lead.callstatus;
+  document.getElementById('d-situation').value=lead.situation||'';
+  // summary
+  const v=Number(lead.value)||0;
+  document.getElementById('d-value-display').textContent=fmtMoney(v);
+  document.getElementById('d-offer-display').textContent=v?`$${Math.round(v*0.82).toLocaleString()} – $${Math.round(v*0.93).toLocaleString()}`:'—';
+  document.getElementById('d-status-badge').className='badge badge-'+lead.status;
+  document.getElementById('d-status-badge').textContent={hot:'🔥 Hot',warm:'🌤 Warm',cold:'❄ Cold',archive:'📦 Archived'}[lead.status];
+  document.getElementById('d-call-badge').className='badge badge-'+lead.callstatus;
+  document.getElementById('d-call-badge').textContent={called:'✅ Called',notcalled:'📵 Not Called',willcall:'📋 Will Call'}[lead.callstatus];
+  document.getElementById('d-source-pill').className='source-pill '+lead.source;
+  document.getElementById('d-source-pill').textContent=lead.source;
+  // default call date/time
+  const now=new Date();
+  document.getElementById('d-calldate').value=now.toISOString().split('T')[0];
+  document.getElementById('d-calltime').value=now.toTimeString().slice(0,5);
+  renderNotes(lead); renderTimeline(lead);
+  showView('lead-detail');
+}
+
+function renderNotes(lead){
+  const el=document.getElementById('notes-list');
+  el.innerHTML=(lead.notes||[]).slice().reverse().map(n=>`
+    <div class="note-item">
+      <div class="note-text">${n.text.replace(/\n/g,'<br>')}</div>
+      <div class="note-meta">${new Date(n.ts).toLocaleString()}</div>
+    </div>`).join('')||'<p style="color:var(--gray);font-size:0.82rem">No notes yet.</p>';
+}
+
+function renderTimeline(lead){
+  const el=document.getElementById('timeline-list');
+  const items=[...(lead.timeline||[])].reverse();
+  el.innerHTML=items.map(t=>`
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:${t.color||'var(--gold)'}"></div>
+      <div><div class="timeline-content">${t.msg}</div><div class="timeline-time">${timeAgo(t.ts)}</div></div>
+    </div>`).join('')||'<p style="color:var(--gray);font-size:0.82rem">No activity yet.</p>';
+}
+
+function saveLeadDetail(){
+  const leads=DB.leads;
+  const i=leads.findIndex(l=>l.id===currentLeadId);
+  if(i<0)return;
+  const l=leads[i];
+  l.fname=document.getElementById('d-fname').value;
+  l.lname=document.getElementById('d-lname').value;
+  l.phone=document.getElementById('d-phone').value;
+  l.email=document.getElementById('d-email').value;
+  l.address=document.getElementById('d-address').value;
+  l.value=document.getElementById('d-value').value;
+  l.type=document.getElementById('d-type').value;
+  l.status=document.getElementById('d-status').value;
+  l.callstatus=document.getElementById('d-callstatus').value;
+  l.situation=document.getElementById('d-situation').value;
+  l.timeline.push({type:'updated',msg:`Lead info updated`,ts:Date.now(),color:'var(--blue)'});
+  DB.leads=leads;
+  logActivity(`Updated lead: ${l.fname} ${l.lname}`, 'var(--blue)');
+  openLead(currentLeadId);
+}
+
+function addNote(){
+  const text=document.getElementById('d-newnote').value.trim();
+  if(!text)return;
+  const leads=DB.leads; const i=leads.findIndex(l=>l.id===currentLeadId); if(i<0)return;
+  const note={id:uid(),text,ts:Date.now()};
+  leads[i].notes.push(note);
+  leads[i].timeline.push({type:'note',msg:`Note added: "${text.slice(0,50)}${text.length>50?'…':''}"`,ts:Date.now(),color:'var(--purple)'});
+  DB.leads=leads;
+  document.getElementById('d-newnote').value='';
+  logActivity(`Note added to ${leads[i].fname} ${leads[i].lname}`,'var(--purple)');
+  renderNotes(leads[i]); renderTimeline(leads[i]);
+}
+
+function logCall(){
+  const date=document.getElementById('d-calldate').value;
+  const time=document.getElementById('d-calltime').value;
+  const notes=document.getElementById('d-callnotes').value.trim();
+  const leads=DB.leads; const i=leads.findIndex(l=>l.id===currentLeadId); if(i<0)return;
+  leads[i].callstatus='called';
+  leads[i].lastContact=Date.now();
+  leads[i].timeline.push({type:'call',msg:`Call logged — ${date} at ${time}${notes?' · '+notes.slice(0,60):''}`,ts:Date.now(),color:'var(--green)'});
+  if(notes) leads[i].notes.push({id:uid(),text:`📞 Call (${date} ${time}): ${notes}`,ts:Date.now()});
+  DB.leads=leads;
+  document.getElementById('d-callstatus').value='called';
+  document.getElementById('d-callnotes').value='';
+  logActivity(`Call logged for ${leads[i].fname} ${leads[i].lname}`,'var(--green)');
+  renderNotes(leads[i]); renderTimeline(leads[i]);
+}
+
+function deleteLead(){
+  if(!confirm('Delete this lead? This cannot be undone.')) return;
+  deleteLeadById(currentLeadId);
+  showView('leads');
+}
+function deleteLeadById(id){
+  const leads=DB.leads.filter(l=>l.id!==id);
+  DB.leads=leads;
+  document.getElementById('leadsCountBadge').textContent=leads.length;
+  renderLeads();
+}
+
+function openStreetViewForLead(){
+  const leads=DB.leads; const l=leads.find(x=>x.id===currentLeadId);
+  if(l){ openStreetViewFor(encodeURIComponent(l.address)); }
+}
+function openStreetViewFor(addr){
+  document.getElementById('sv-address').value=decodeURIComponent(addr);
+  loadStreetView(decodeURIComponent(addr));
+  showView('streetview');
+}
+
+/* ══════════════════════════════════════════════════════
+   KANBAN
+══════════════════════════════════════════════════════ */
+let dragId=null;
+function renderKanban(){
+  const days=['monday','tuesday','wednesday','thursday','friday','unscheduled'];
+  days.forEach(day=>{
+    const col=document.getElementById('col-'+day);
+    const cnt=document.getElementById('cnt-'+day);
+    if(!col)return;
+    const cards=DB.leads.filter(l=>l.kanbanDay===day);
+    cnt.textContent=cards.length;
+    col.innerHTML=cards.map(l=>`
+      <div class="kanban-card" draggable="true" data-id="${l.id}"
+           ondragstart="dragStart(event,'${l.id}')" ondragend="dragEnd(event)"
+           onclick="openLead('${l.id}')">
+        <div class="kanban-card-name">${l.fname} ${l.lname}</div>
+        <div class="kanban-card-addr">${l.address.split(',')[0]}</div>
+        <div class="kanban-card-footer">
+          ${statusBadge(l.status)}
+          <span class="kanban-card-date">${l.lastContact?fmt(l.lastContact):'No contact'}</span>
+        </div>
+      </div>`).join('');
+  });
+}
+function dragStart(e,id){ dragId=id; setTimeout(()=>e.target.classList.add('dragging'),0); }
+function dragEnd(e){ e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-cards').forEach(c=>c.classList.remove('drag-over')); }
+function dragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function drop(e,day){
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if(!dragId)return;
+  const leads=DB.leads; const i=leads.findIndex(l=>l.id===dragId);
+  if(i>=0){ leads[i].kanbanDay=day; leads[i].timeline.push({type:'scheduled',msg:`Scheduled for ${day.charAt(0).toUpperCase()+day.slice(1)}`,ts:Date.now(),color:'var(--warm)'}); DB.leads=leads; }
+  dragId=null; renderKanban();
+}
+
+/* ══════════════════════════════════════════════════════
+   CALENDAR
+══════════════════════════════════════════════════════ */
+let calDate=new Date();
+function changeMonth(d){ calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1); renderCalendar(); }
+function goToday(){ calDate=new Date(); renderCalendar(); }
+function renderCalendar(){
+  const y=calDate.getFullYear(), m=calDate.getMonth();
+  document.getElementById('calMonthLabel').textContent=new Date(y,m,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const grid=document.getElementById('calGrid');
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html=days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const first=new Date(y,m,1).getDay();
+  const total=new Date(y,m+1,0).getDate();
+  const today=new Date();
+  // prev month filler
+  for(let i=0;i<first;i++){
+    const d=new Date(y,m,-(first-i-1));
+    html+=`<div class="cal-day other-month"><div class="cal-day-num">${d.getDate()}</div></div>`;
+  }
+  const events=DB.events;
+  for(let d=1;d<=total;d++){
+    const isToday=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayEvs=events.filter(e=>e.date===dateStr);
+    html+=`<div class="cal-day${isToday?' today':''}" onclick="openAddEvent('${dateStr}')">
+      <div class="cal-day-num">${d}</div>
+      ${dayEvs.map(e=>`<div class="cal-event ${e.type}" title="${e.title}">${e.title}</div>`).join('')}
+    </div>`;
+  }
+  grid.innerHTML=html;
+}
+
+let dailyDate=new Date();
+function changeDay(d){ dailyDate=new Date(dailyDate); dailyDate.setDate(dailyDate.getDate()+d); renderDaily(); }
+function renderDaily(){
+  const ds=dailyDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('dailyDateLabel').textContent=ds;
+  const dateStr=dailyDate.toISOString().split('T')[0];
+  const evs=DB.events.filter(e=>e.date===dateStr).sort((a,b)=>a.time>b.time?1:-1);
+  const timeCol=document.getElementById('dailyTimeCol');
+  const evCol=document.getElementById('dailyEvents');
+  let tHtml='',eHtml='';
+  for(let h=7;h<=20;h++){
+    const t=h<=12?`${h}:00 ${h<12?'AM':'PM'}`:`${h-12}:00 PM`;
+    tHtml+=`<div style="height:60px;padding:4px 8px;font-size:0.68rem;color:var(--gray2);border-bottom:1px solid var(--border)">${t}</div>`;
+    const hourEvs=evs.filter(e=>{const eh=parseInt(e.time||'0'); return eh===h;});
+    eHtml+=`<div style="height:60px;border-bottom:1px solid var(--border);padding:4px 8px;position:relative">${hourEvs.map(e=>`
+      <div class="cal-event ${e.type}" style="position:absolute;left:8px;right:8px;top:4px;padding:4px 8px;border-radius:6px;font-size:0.75rem">${e.title}${e.linkedLead?' · '+e.linkedLead:''}</div>`).join('')}</div>`;
+  }
+  timeCol.innerHTML=tHtml; evCol.innerHTML=eHtml;
+}
+
+function openAddEvent(date){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('ev-date').value=date||today;
+  document.getElementById('ev-time').value='10:00';
+  document.getElementById('ev-title').value='';
+  document.getElementById('ev-notes').value='';
+  // populate lead select
+  const sel=document.getElementById('ev-lead');
+  sel.innerHTML='<option value="">— None —</option>'+DB.leads.map(l=>`<option value="${l.fname} ${l.lname}">${l.fname} ${l.lname}</option>`).join('');
+  openModal('eventModal');
+}
+function saveEvent(){
+  const ev={
+    id:uid(),
+    title:document.getElementById('ev-title').value||'Event',
+    date:document.getElementById('ev-date').value,
+    time:document.getElementById('ev-time').value,
+    type:document.getElementById('ev-type').value,
+    linkedLead:document.getElementById('ev-lead').value,
+    notes:document.getElementById('ev-notes').value,
+    created:Date.now()
+  };
+  const evs=DB.events; evs.push(ev); DB.events=evs;
+  logActivity(`Event added: ${ev.title} on ${ev.date}`,'var(--warm)');
+  closeModal('eventModal');
+  if(currentView==='calendar') renderCalendar();
+  else if(currentView==='daily') renderDaily();
+}
+
+/* ══════════════════════════════════════════════════════
+   STREET VIEW
+══════════════════════════════════════════════════════ */
+function loadStreetView(addr){
+  const a=addr||document.getElementById('sv-address').value.trim();
+  if(!a)return;
+  const frame=document.getElementById('svFrame');
+  const encoded=encodeURIComponent(a);
+  frame.innerHTML=`<iframe src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&location=${encoded}&heading=210&pitch=10&fov=90" allowfullscreen loading="lazy" title="Street View: ${a}"></iframe>`;
+}
+function renderStreetViewLeads(){
+  const el=document.getElementById('sv-lead-list');
+  el.innerHTML=DB.leads.map(l=>`
+    <div onclick="openStreetViewFor('${encodeURIComponent(l.address)}')" style="padding:8px 10px;border-radius:6px;cursor:pointer;transition:background 0.2s;border:1px solid var(--border);background:var(--surface2)" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:0.82rem;font-weight:500">${l.fname} ${l.lname}</div>
+      <div style="font-size:0.73rem;color:var(--gray);margin-top:2px">${l.address.split(',')[0]}</div>
+    </div>`).join('')||'<p style="color:var(--gray);font-size:0.8rem">No leads yet</p>';
+}
+
+/* ══════════════════════════════════════════════════════
+   INTEGRATIONS
+══════════════════════════════════════════════════════ */
+function injectTestLead(){
+  const lead={
+    id:uid(),
+    fname:document.getElementById('test-name').value.split(' ')[0]||'Test',
+    lname:document.getElementById('test-name').value.split(' ').slice(1).join(' ')||'Lead',
+    phone:document.getElementById('test-phone').value,
+    email:document.getElementById('test-email').value,
+    address:document.getElementById('test-addr').value,
+    value:document.getElementById('test-value').value||0,
+    source:document.getElementById('test-source').value,
+    status:'warm', callstatus:'notcalled', situation:'',
+    kanbanDay:'unscheduled', notes:[], timeline:[{type:'webhook',msg:`Received via webhook (${document.getElementById('test-source').value})`,ts:Date.now(),color:'var(--blue)'}],
+    created:Date.now(), lastContact:null,
+  };
+  const leads=DB.leads; leads.push(lead); DB.leads=leads;
+  document.getElementById('leadsCountBadge').textContent=DB.leads.length;
+  logActivity(`Webhook lead received: ${lead.fname} ${lead.lname} (${lead.source})`,'var(--blue)');
+  const res=document.getElementById('inject-result');
+  res.style.display='block';
+  res.innerHTML=`✅ Lead "${lead.fname} ${lead.lname}" successfully injected from ${lead.source}. <a href="#" onclick="openLead('${lead.id}');return false;" style="color:var(--gold);text-decoration:underline">View lead →</a>`;
+}
+function copyText(text,btn){ navigator.clipboard.writeText(text).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',2000); }); }
+function revealApiKey(btn){ document.getElementById('apiKeyDisplay').textContent='bchb_live_sk_c8f2a91b4d3e7f6a0e52b84d71c9f3a8'; btn.textContent='Copy'; btn.onclick=()=>copyText('bchb_live_sk_c8f2a91b4d3e7f6a0e52b84d71c9f3a8',btn); }
+
+/* ══════════════════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════════════════ */
+function showSettingsPanel(id,el){
+  document.querySelectorAll('.settings-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.settings-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sp-'+id)?.classList.add('active');
+  el.classList.add('active');
+}
+function renderUsers(){
+  const el=document.getElementById('users-list');
+  if(!el)return;
+  el.innerHTML=DB.users.map(u=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:8px">
+      <div class="user-avatar" style="width:36px;height:36px;font-size:0.85rem">${u.initials}</div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:500">${u.name}</div><div style="font-size:0.75rem;color:var(--gray)">${u.email} · ${u.role}</div></div>
+    </div>`).join('');
+}
+function addUserPrompt(){
+  const name=prompt('New user full name:'); if(!name)return;
+  const email=prompt('Email:'); if(!email)return;
+  const users=DB.users;
+  users.push({name,email,role:'Agent',initials:name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)});
+  DB.users=users; renderUsers();
+}
+function exportCSV(){
+  const rows=[['Name','Phone','Email','Address','Value','Status','Call Status','Source','Created'],...DB.leads.map(l=>[`${l.fname} ${l.lname}`,l.phone,l.email,l.address,l.value,l.status,l.callstatus,l.source,new Date(l.created).toLocaleDateString()])];
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='bchb_leads.csv'; a.click();
+}
+function exportJSON(){
+  const a=document.createElement('a'); a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(DB.leads,null,2)); a.download='bchb_leads.json'; a.click();
+}
+function clearAllLeads(){ localStorage.removeItem('bchb_leads'); localStorage.removeItem('bchb_activity'); location.reload(); }
+
+/* ══════════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════════ */
+function openModal(id){ document.getElementById(id).classList.add('open'); gsap.from(`#${id} .modal`,{scale:0.95,opacity:0,duration:0.3,ease:'power3.out'}); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+</script>
+</body>
+</html>

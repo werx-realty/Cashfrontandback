@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bakersfield Cash Home Buyers | Sell Your Home Fast For Cash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+/* ── ROOT VARIABLES ─────────────────────────────────────── */
+:root{
+  --black:#0A0A0A;
+  --flat-black:#111111;
+  --charcoal:#1A1A1A;
+  --gold:#C9A96E;
+  --gold-light:#E2C896;
+  --gold-dim:#8a6f3e;
+  --white:#FFFFFF;
+  --gray:#888888;
+  --border:#2a2a2a;
+  --font-serif:'Playfair Display',serif;
+  --font-sans:'Inter',sans-serif;
+  --transition:0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--black);
+  color:var(--white);
+  font-family:var(--font-sans);
+  overflow-x:hidden;
+  cursor:none;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{cursor:none;border:none;background:none;font-family:var(--font-sans)}
+
+/* ── CUSTOM CURSOR ──────────────────────────────────────── */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--gold);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.3s,height 0.3s,background 0.3s;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1px solid var(--gold);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s,width 0.3s,height 0.3s,opacity 0.3s;
+  opacity:0.5;
+}
+body:hover #cursor{opacity:1}
+
+/* ── SCROLL PROGRESS ────────────────────────────────────── */
+#scroll-progress{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));
+  z-index:9997;width:0%;
+  transition:width 0.1s;
+}
+
+/* ── NAVIGATION ─────────────────────────────────────────── */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:24px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background var(--transition),padding var(--transition),backdrop-filter var(--transition);
+}
+#navbar.scrolled{
+  background:rgba(10,10,10,0.95);
+  backdrop-filter:blur(20px);
+  padding:16px 60px;
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:var(--font-serif);
+  font-size:1.2rem;font-weight:600;
+  letter-spacing:0.02em;
+  color:var(--white);
+}
+.nav-logo span{color:var(--gold)}
+.nav-links{display:flex;gap:36px;align-items:center}
+.nav-links a{
+  font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);
+  transition:color var(--transition);
+  position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;
+  background:var(--gold);transition:width var(--transition);
+}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-links a.active{color:var(--white)}
+.nav-cta{
+  padding:10px 24px;
+  border:1px solid var(--gold);
+  color:var(--gold) !important;
+  border-radius:2px;
+  font-size:0.75rem !important;
+  letter-spacing:0.15em !important;
+  text-transform:uppercase;
+  transition:background var(--transition),color var(--transition),box-shadow var(--transition) !important;
+}
+.nav-cta:hover{
+  background:var(--gold) !important;
+  color:var(--black) !important;
+  box-shadow:0 0 30px rgba(201,169,110,0.3) !important;
+}
+.nav-cta::after{display:none !important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:none}
+.hamburger span{display:block;width:24px;height:1px;background:var(--white);transition:var(--transition)}
+
+/* ── PAGE SYSTEM ────────────────────────────────────────── */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* ── BUTTONS ────────────────────────────────────────────── */
+.btn-gold{
+  display:inline-block;
+  padding:16px 40px;
+  background:var(--gold);
+  color:var(--black);
+  font-size:0.8rem;font-weight:600;
+  letter-spacing:0.15em;text-transform:uppercase;
+  border-radius:2px;
+  transition:box-shadow var(--transition),transform var(--transition),background var(--transition);
+  position:relative;overflow:hidden;
+}
+.btn-gold::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.15) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform 0.6s;
+}
+.btn-gold:hover{
+  box-shadow:0 0 40px rgba(201,169,110,0.5),0 8px 30px rgba(0,0,0,0.4);
+  transform:translateY(-2px);
+}
+.btn-gold:hover::before{transform:translateX(100%)}
+.btn-outline{
+  display:inline-block;
+  padding:14px 36px;
+  border:1px solid var(--gold);
+  color:var(--gold);
+  font-size:0.8rem;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  border-radius:2px;
+  transition:background var(--transition),color var(--transition),box-shadow var(--transition);
+}
+.btn-outline:hover{
+  background:var(--gold);color:var(--black);
+  box-shadow:0 0 30px rgba(201,169,110,0.3);
+}
+
+/* ── SECTION COMMONS ────────────────────────────────────── */
+.section{padding:120px 60px}
+.section-label{
+  font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px;
+}
+.section-title{
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4vw,3.5rem);
+  font-weight:500;line-height:1.15;
+  margin-bottom:24px;
+}
+.section-sub{
+  font-size:1rem;color:rgba(255,255,255,0.6);
+  line-height:1.8;max-width:560px;
+}
+.gold-line{
+  width:60px;height:1px;background:var(--gold);
+  margin:24px 0;
+}
+.reveal{opacity:0;transform:translateY(40px)}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE 1 — HOME
+══════════════════════════════════════════════════════════ */
+
+/* HERO */
+#hero{
+  position:relative;height:100vh;min-height:700px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(160deg,rgba(10,10,10,0.85) 0%,rgba(10,10,10,0.5) 50%,rgba(10,10,10,0.9) 100%),
+    url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1800&q=80') center/cover no-repeat;
+  transform-origin:center;
+}
+.hero-bg::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:300px;
+  background:linear-gradient(to top,var(--black),transparent);
+}
+.hero-content{
+  position:relative;z-index:2;
+  text-align:center;max-width:900px;padding:0 20px;
+}
+.hero-label{
+  font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:28px;opacity:0;
+}
+.hero-title{
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,5.5vw,5rem);
+  font-weight:500;line-height:1.1;
+  margin-bottom:24px;
+}
+.hero-title span{color:var(--gold)}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line-inner{display:block;transform:translateY(110%)}
+.hero-sub{
+  font-size:1.1rem;color:rgba(255,255,255,0.7);
+  letter-spacing:0.08em;margin-bottom:48px;opacity:0;
+}
+.hero-cta{opacity:0;transform:translateY(20px)}
+.hero-cta .btn-gold{
+  font-size:0.85rem;padding:18px 52px;
+  box-shadow:0 0 60px rgba(201,169,110,0.2);
+}
+.hero-scroll-hint{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:rgba(255,255,255,0.4);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  opacity:0;
+}
+.hero-scroll-hint .mouse{
+  width:22px;height:36px;border:1px solid rgba(255,255,255,0.3);
+  border-radius:12px;display:flex;justify-content:center;padding-top:6px;
+}
+.hero-scroll-hint .wheel{
+  width:3px;height:6px;background:var(--gold);border-radius:2px;
+  animation:scrollWheel 2s infinite;
+}
+@keyframes scrollWheel{
+  0%{transform:translateY(0);opacity:1}
+  100%{transform:translateY(10px);opacity:0}
+}
+
+/* STATS BAR */
+.stats-bar{
+  background:var(--charcoal);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:40px 60px;
+  display:flex;justify-content:space-around;align-items:center;
+  flex-wrap:wrap;gap:32px;
+}
+.stat-item{text-align:center}
+.stat-num{
+  font-family:var(--font-serif);font-size:2.5rem;
+  color:var(--gold);font-weight:500;
+}
+.stat-label{font-size:0.75rem;letter-spacing:0.1em;color:rgba(255,255,255,0.5);margin-top:4px;text-transform:uppercase}
+
+/* BENEFITS */
+.benefits-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin-top:60px;
+}
+.benefit-card{
+  background:var(--flat-black);padding:48px 40px;
+  border:1px solid var(--border);
+  transition:border-color var(--transition),transform var(--transition),box-shadow var(--transition);
+  position:relative;overflow:hidden;
+}
+.benefit-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);transition:transform 0.5s;
+}
+.benefit-card:hover{
+  border-color:rgba(201,169,110,0.3);
+  transform:translateY(-4px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+}
+.benefit-card:hover::before{transform:scaleX(1)}
+.benefit-icon{
+  font-size:2rem;margin-bottom:24px;
+  filter:grayscale(1) brightness(1.5);
+}
+.benefit-title{
+  font-family:var(--font-serif);font-size:1.3rem;
+  margin-bottom:12px;color:var(--white);
+}
+.benefit-text{font-size:0.9rem;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* CALCULATOR PREVIEW */
+.calc-preview{
+  background:var(--flat-black);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:60px;
+  max-width:700px;margin:0 auto;
+  text-align:center;
+}
+.calc-preview .section-title{margin-bottom:16px}
+.calc-preview .section-sub{margin:0 auto 40px;text-align:center}
+
+/* HORIZONTAL SCROLL PROCESS */
+.process-wrapper{
+  position:relative;
+}
+.process-sticky{
+  height:100vh;
+  overflow:hidden;
+  display:flex;align-items:center;
+  will-change:transform;
+}
+.process-track{
+  display:flex;height:100%;
+  will-change:transform;
+}
+.process-panel{
+  width:100vw;height:100%;flex-shrink:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:80px;
+  position:relative;
+}
+.process-panel:nth-child(1){background:var(--black)}
+.process-panel:nth-child(2){background:var(--flat-black)}
+.process-panel:nth-child(3){background:var(--charcoal)}
+.process-panel:nth-child(4){background:var(--flat-black)}
+.process-num{
+  font-family:var(--font-serif);
+  font-size:clamp(5rem,12vw,10rem);
+  color:rgba(201,169,110,0.12);
+  font-weight:700;
+  position:absolute;top:40px;left:60px;
+  line-height:1;
+}
+.process-step-label{
+  font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px;
+}
+.process-step-title{
+  font-family:var(--font-serif);
+  font-size:clamp(2.5rem,5vw,4.5rem);
+  font-weight:500;text-align:center;
+  line-height:1.15;margin-bottom:24px;
+  max-width:600px;
+}
+.process-step-text{
+  font-size:1rem;color:rgba(255,255,255,0.55);
+  text-align:center;max-width:480px;line-height:1.8;
+}
+.process-step-icon{
+  font-size:3.5rem;margin-bottom:32px;
+  filter:sepia(1) saturate(2) hue-rotate(-10deg) brightness(0.9);
+}
+.process-progress{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;gap:12px;
+}
+.process-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,0.2);
+  transition:background 0.3s,transform 0.3s;
+}
+.process-dot.active{background:var(--gold);transform:scale(1.4)}
+
+/* TESTIMONIALS */
+.testimonials-track{
+  display:flex;gap:24px;margin-top:60px;
+  overflow:hidden;
+}
+.testimonial-card{
+  flex-shrink:0;width:380px;
+  background:var(--flat-black);
+  border:1px solid var(--border);
+  border-radius:4px;padding:40px;
+  transition:border-color var(--transition),transform var(--transition);
+}
+.testimonial-card:hover{
+  border-color:rgba(201,169,110,0.3);
+  transform:translateY(-4px);
+}
+.testimonial-stars{
+  color:var(--gold);font-size:0.9rem;letter-spacing:4px;
+  margin-bottom:20px;
+}
+.testimonial-quote{
+  font-family:var(--font-serif);font-size:1.1rem;
+  line-height:1.7;color:rgba(255,255,255,0.85);
+  margin-bottom:28px;
+  font-style:italic;
+}
+.testimonial-author{font-size:0.8rem;font-weight:600;color:var(--white);letter-spacing:0.05em}
+.testimonial-detail{font-size:0.75rem;color:var(--gold);margin-top:4px}
+.carousel-controls{
+  display:flex;gap:12px;margin-top:40px;
+}
+.carousel-btn{
+  width:44px;height:44px;border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.6);font-size:1.1rem;cursor:none;
+  transition:border-color var(--transition),color var(--transition),background var(--transition);
+}
+.carousel-btn:hover{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(201,169,110,0.05);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CALCULATOR PAGE
+══════════════════════════════════════════════════════════ */
+.calc-hero{
+  padding:160px 60px 80px;
+  text-align:center;
+}
+.calc-container{
+  max-width:760px;margin:0 auto;
+  padding:0 60px 120px;
+}
+.calc-step{display:none}
+.calc-step.active{display:block}
+.step-indicator{
+  display:flex;justify-content:center;gap:8px;margin-bottom:60px;
+}
+.step-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border);transition:background 0.4s,transform 0.4s;
+}
+.step-dot.done{background:var(--gold-dim)}
+.step-dot.current{background:var(--gold);transform:scale(1.4)}
+.step-question{
+  font-family:var(--font-serif);
+  font-size:clamp(1.6rem,3vw,2.4rem);
+  font-weight:500;text-align:center;
+  margin-bottom:12px;
+}
+.step-hint{
+  font-size:0.85rem;color:var(--gray);text-align:center;margin-bottom:48px;
+}
+.step-options{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+.step-option{
+  background:var(--flat-black);
+  border:1px solid var(--border);
+  border-radius:4px;padding:42px 28px;
+  text-align:center;cursor:none;
+  transition:border-color var(--transition),background var(--transition),transform var(--transition);
+  font-size:1rem;font-weight:500;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  min-height:160px;justify-content:center;
+}
+.step-option .opt-icon{font-size:2.4rem}
+.step-option:hover,.step-option.selected{
+  border-color:var(--gold);
+  background:rgba(201,169,110,0.07);
+  transform:translateY(-3px);
+}
+.step-option.selected{
+  box-shadow:0 0 30px rgba(201,169,110,0.15);
+}
+.price-input-wrapper{
+  display:flex;flex-direction:column;align-items:center;gap:24px;
+}
+.price-input-group{
+  position:relative;width:100%;max-width:400px;
+}
+.price-input-group span{
+  position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-serif);font-size:1.5rem;color:var(--gold);
+}
+.price-input{
+  width:100%;background:var(--flat-black);
+  border:1px solid var(--border);border-radius:4px;
+  padding:24px 24px 24px 48px;
+  font-family:var(--font-serif);font-size:2rem;color:var(--white);
+  transition:border-color var(--transition);
+  cursor:none;
+}
+.price-input:focus{outline:none;border-color:var(--gold)}
+.price-input::placeholder{color:rgba(255,255,255,0.2)}
+.email-input{
+  width:100%;max-width:400px;
+  background:var(--flat-black);border:1px solid var(--border);
+  border-radius:4px;padding:16px 20px;
+  color:var(--white);font-size:1rem;
+  transition:border-color var(--transition);cursor:none;
+}
+.email-input:focus{outline:none;border-color:var(--gold)}
+.email-input::placeholder{color:rgba(255,255,255,0.3)}
+.calc-nav{
+  display:flex;justify-content:center;gap:16px;margin-top:40px;
+}
+
+/* RESULTS */
+#calc-results{display:none}
+.results-hero-text{
+  text-align:center;padding:60px 0 40px;
+}
+.results-hero-text h2{
+  font-family:var(--font-serif);font-size:clamp(1.8rem,3.5vw,3rem);
+  font-weight:500;margin-bottom:12px;
+}
+.results-hero-text p{color:var(--gray)}
+.results-comparison{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  margin:0 0 60px;
+}
+.results-col{
+  padding:48px 40px;
+  border:1px solid var(--border);
+}
+.results-col.gold-col{
+  border-color:rgba(201,169,110,0.4);
+  background:rgba(201,169,110,0.04);
+  position:relative;
+}
+.results-col.gold-col::before{
+  content:'RECOMMENDED';
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--gold);color:var(--black);
+  font-size:0.6rem;font-weight:700;letter-spacing:0.2em;
+  padding:4px 16px;border-radius:0 0 4px 4px;
+}
+.results-col-label{
+  font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--gray);margin-bottom:16px;
+}
+.results-col.gold-col .results-col-label{color:var(--gold)}
+.results-big-num{
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:500;margin-bottom:8px;
+}
+.results-col.gold-col .results-big-num{color:var(--gold)}
+.results-col-sub{font-size:0.8rem;color:var(--gray);margin-bottom:32px}
+.results-line{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:0.85rem;
+}
+.results-line:last-child{border-bottom:none}
+.results-line .label{color:rgba(255,255,255,0.6)}
+.results-line .value{font-weight:500}
+.results-line .value.neg{color:#e05a5a}
+.results-line .value.pos{color:#5acea7}
+.savings-box{
+  background:rgba(201,169,110,0.08);
+  border:1px solid rgba(201,169,110,0.3);
+  border-radius:4px;padding:32px;text-align:center;margin-bottom:40px;
+}
+.savings-box p{font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.savings-box .big{
+  font-family:var(--font-serif);font-size:3rem;
+  color:var(--gold);font-weight:500;
+}
+.results-actions{
+  display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:80px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE 2 — HOW IT WORKS
+══════════════════════════════════════════════════════════ */
+.hiw-hero{padding:160px 60px 80px;text-align:center}
+.hiw-steps{
+  max-width:860px;margin:0 auto;
+  padding:0 60px 120px;
+}
+.hiw-step{
+  display:grid;grid-template-columns:80px 1fr;gap:40px;
+  margin-bottom:60px;padding-bottom:60px;
+  border-bottom:1px solid var(--border);
+  align-items:start;
+}
+.hiw-step:last-child{border-bottom:none}
+.hiw-step-num{
+  font-family:var(--font-serif);font-size:3.5rem;
+  color:var(--gold);font-weight:500;line-height:1;
+  opacity:0.8;
+}
+.hiw-step-content h3{
+  font-family:var(--font-serif);font-size:1.6rem;
+  margin-bottom:12px;
+}
+.hiw-step-content p{
+  font-size:0.95rem;color:rgba(255,255,255,0.6);line-height:1.8;
+  margin-bottom:16px;
+}
+.hiw-step-tag{
+  display:inline-block;
+  padding:4px 12px;
+  background:rgba(201,169,110,0.1);
+  border:1px solid rgba(201,169,110,0.25);
+  color:var(--gold);font-size:0.72rem;
+  letter-spacing:0.1em;border-radius:2px;
+}
+.timeline-cta{
+  text-align:center;padding:80px 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE 3 — COMPARE
+══════════════════════════════════════════════════════════ */
+.compare-hero{padding:160px 60px 80px;text-align:center}
+.compare-table-wrap{padding:0 60px 60px;overflow-x:auto}
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  min-width:700px;
+}
+.compare-table th{
+  padding:20px 28px;font-size:0.75rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  border-bottom:2px solid var(--border);
+  text-align:left;
+}
+.compare-table th:nth-child(2){
+  background:rgba(201,169,110,0.07);
+  border-bottom-color:var(--gold);
+  color:var(--gold);
+}
+.compare-table td{
+  padding:16px 28px;font-size:0.9rem;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:nth-child(2){
+  background:rgba(201,169,110,0.05);
+  border-left:1px solid rgba(201,169,110,0.2);
+  border-right:1px solid rgba(201,169,110,0.2);
+}
+.compare-table tr:last-child td:nth-child(2){
+  border-bottom:1px solid rgba(201,169,110,0.2);
+}
+.check{color:#5acea7;font-weight:700}
+.cross{color:#e05a5a}
+.compare-chart-section{
+  padding:80px 60px;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+}
+.bar-chart{display:flex;flex-direction:column;gap:20px}
+.bar-item{display:flex;flex-direction:column;gap:8px}
+.bar-label{
+  display:flex;justify-content:space-between;
+  font-size:0.8rem;color:rgba(255,255,255,0.7);
+}
+.bar-label span:last-child{color:var(--gold);font-weight:500}
+.bar-track{
+  height:8px;background:var(--border);border-radius:4px;overflow:hidden;
+}
+.bar-fill{
+  height:100%;border-radius:4px;width:0;
+  transition:width 1.5s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.bar-fill.gold{background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+.bar-fill.gray{background:var(--border)}
+.bar-fill.red{background:#8a3a3a}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE 4 — ABOUT
+══════════════════════════════════════════════════════════ */
+.about-hero{
+  padding:160px 60px 80px;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  align-items:start;
+}
+.about-img{
+  position:relative;
+}
+.about-img-main{
+  width:100%;aspect-ratio:3/2;
+  border-radius:2px;
+  background:rgba(201,169,110,0.08);
+  border:1px dashed rgba(201,169,110,0.35);
+}
+.about-img-accent{
+  position:absolute;bottom:-30px;right:-30px;
+  width:60%;aspect-ratio:1;object-fit:cover;
+  background:rgba(201,169,110,0.1);border:1px solid var(--gold);
+  border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-serif);font-size:2.5rem;color:var(--gold);
+  padding:24px;text-align:center;line-height:1.3;
+}
+.about-values{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  padding:0 60px 120px;
+}
+.value-card{
+  background:var(--flat-black);border:1px solid var(--border);
+  padding:36px;border-radius:2px;
+  transition:border-color var(--transition);
+}
+.value-card:hover{border-color:rgba(201,169,110,0.3)}
+.value-card h4{
+  font-family:var(--font-serif);font-size:1.1rem;
+  margin-bottom:10px;color:var(--white);
+}
+.value-card p{font-size:0.85rem;color:rgba(255,255,255,0.5);line-height:1.7}
+.value-icon{font-size:1.5rem;margin-bottom:16px}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE 5 — TESTIMONIALS
+══════════════════════════════════════════════════════════ */
+.test-hero{padding:160px 60px 80px;text-align:center}
+.test-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  padding:0 60px 60px;
+}
+.test-card-full{
+  background:var(--flat-black);border:1px solid var(--border);
+  border-radius:4px;padding:40px;
+  transition:border-color var(--transition),transform var(--transition),box-shadow var(--transition);
+}
+.test-card-full:hover{
+  border-color:rgba(201,169,110,0.3);transform:translateY(-6px);
+  box-shadow:0 24px 60px rgba(0,0,0,0.3);
+}
+.test-card-full.featured{
+  border-color:rgba(201,169,110,0.4);
+  background:rgba(201,169,110,0.04);
+  grid-column:span 1;
+}
+.test-video-thumb{
+  width:100%;aspect-ratio:16/9;
+  background:var(--charcoal);border-radius:2px;
+  margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;position:relative;overflow:hidden;
+}
+.test-video-thumb img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(0.6);
+}
+.play-btn{
+  position:absolute;
+  width:56px;height:56px;
+  background:rgba(201,169,110,0.9);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--black);font-size:1.2rem;
+  transition:transform var(--transition),box-shadow var(--transition);
+}
+.test-card-full:hover .play-btn{
+  transform:scale(1.1);box-shadow:0 0 30px rgba(201,169,110,0.5);
+}
+.rating-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.stars{color:var(--gold);font-size:0.85rem}
+.rating-num{font-size:0.8rem;color:var(--gray)}
+.review-text{
+  font-size:0.9rem;line-height:1.7;
+  color:rgba(255,255,255,0.75);margin-bottom:20px;
+  font-style:italic;
+}
+.reviewer-name{font-size:0.85rem;font-weight:600}
+.reviewer-detail{font-size:0.78rem;color:var(--gold);margin-top:2px}
+.trust-badges{
+  display:flex;justify-content:center;gap:40px;flex-wrap:wrap;
+  padding:60px;border-top:1px solid var(--border);
+}
+.trust-badge{
+  text-align:center;
+}
+.trust-badge .badge-icon{font-size:2rem;margin-bottom:8px}
+.trust-badge p{font-size:0.75rem;color:var(--gray);letter-spacing:0.05em}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE 6 — CONTACT
+══════════════════════════════════════════════════════════ */
+.contact-wrap{
+  display:grid;grid-template-columns:1fr 1fr;min-height:100vh;
+}
+.contact-left{
+  background:var(--flat-black);padding:120px 60px;
+  border-right:1px solid var(--border);
+}
+.contact-left .section-title{margin-bottom:40px}
+.contact-info{display:flex;flex-direction:column;gap:32px;margin-top:48px}
+.contact-info-item{
+  display:flex;gap:20px;align-items:flex-start;
+}
+.contact-icon{
+  width:44px;height:44px;border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+  transition:border-color var(--transition);
+}
+.contact-info-item:hover .contact-icon{border-color:var(--gold)}
+.contact-info-item h4{font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);margin-bottom:4px}
+.contact-info-item p{font-size:0.95rem;color:var(--white)}
+.contact-right{padding:120px 60px}
+.contact-form{display:flex;flex-direction:column;gap:20px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group label{font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray)}
+.form-input,.form-select,.form-textarea{
+  background:var(--flat-black);border:1px solid var(--border);
+  border-radius:2px;padding:14px 18px;
+  color:var(--white);font-family:var(--font-sans);font-size:0.9rem;
+  transition:border-color var(--transition);cursor:none;
+  width:100%;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  outline:none;border-color:var(--gold);
+}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,0.25)}
+.form-select option{background:var(--flat-black)}
+.form-textarea{min-height:120px;resize:vertical}
+.map-embed{
+  width:100%;height:300px;margin-top:60px;
+  border:1px solid var(--border);border-radius:2px;overflow:hidden;
+}
+.map-embed iframe{width:100%;height:100%;filter:grayscale(1) invert(0.9) contrast(0.85)}
+
+/* ── MOBILE STICKY CTA ──────────────────────────────────── */
+.mobile-sticky-cta{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:900;
+  padding:12px 20px;
+  background:var(--flat-black);border-top:1px solid var(--border);
+}
+.mobile-sticky-cta .btn-gold{width:100%;text-align:center;padding:14px;font-size:0.8rem}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer{
+  background:var(--flat-black);
+  border-top:1px solid var(--border);
+  padding:60px;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;
+}
+.footer-brand p{
+  font-size:0.85rem;color:rgba(255,255,255,0.4);
+  line-height:1.7;margin-top:16px;max-width:280px;
+}
+.footer-col h4{
+  font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px;
+}
+.footer-col a{
+  display:block;font-size:0.85rem;
+  color:rgba(255,255,255,0.45);margin-bottom:10px;
+  transition:color var(--transition);
+}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{
+  padding:24px 60px;
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.75rem;color:rgba(255,255,255,0.3);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1024px){
+  .section{padding:80px 40px}
+  #navbar{padding:20px 40px}
+  #navbar.scrolled{padding:14px 40px}
+  .benefits-grid{grid-template-columns:1fr 1fr}
+  .test-grid{grid-template-columns:1fr 1fr}
+  .compare-chart-section{grid-template-columns:1fr}
+  footer{grid-template-columns:1fr 1fr;gap:32px}
+  .about-values{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  body{cursor:auto}
+  #cursor,#cursor-ring{display:none}
+  #navbar{padding:16px 24px}
+  #navbar.scrolled{padding:12px 24px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .nav-links.open{
+    display:flex;flex-direction:column;
+    position:fixed;inset:0;background:var(--flat-black);
+    align-items:center;justify-content:center;gap:32px;
+    z-index:999;
+  }
+  .nav-links.open a{font-size:1.1rem}
+  .section{padding:60px 24px}
+  .stats-bar{padding:32px 24px}
+  .benefits-grid{grid-template-columns:1fr}
+  .about-hero{grid-template-columns:1fr;padding:120px 24px 60px}
+  .about-img{display:none}
+  .about-values{grid-template-columns:1fr;padding:0 24px 60px}
+  .contact-wrap{grid-template-columns:1fr}
+  .contact-left{padding:80px 24px 40px}
+  .contact-right{padding:40px 24px 80px}
+  .form-row{grid-template-columns:1fr}
+  .results-comparison{grid-template-columns:1fr}
+  .compare-chart-section{padding:60px 24px;grid-template-columns:1fr}
+  .compare-table-wrap{padding:0 24px 60px}
+  .test-grid{grid-template-columns:1fr}
+  footer{grid-template-columns:1fr;padding:40px 24px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center;padding:20px 24px}
+  .mobile-sticky-cta{display:block}
+  .hiw-steps{padding:0 24px 80px}
+  .process-panel{padding:40px 24px}
+  .process-step-title{font-size:2rem}
+  .calc-container{padding:0 24px 80px}
+  .step-options{grid-template-columns:1fr 1fr}
+  .hero-title{font-size:2.2rem}
+  .calc-hero,.hiw-hero,.compare-hero,.test-hero{padding:120px 24px 60px}
+}
+</style>
+</head>
+<body>
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div>
+  <div class="nav-links" id="navLinks">
+    <a href="#" onclick="showPage('home');return false;" class="active" data-page="home">Home</a>
+    <a href="#" onclick="showPage('how');return false;" data-page="how">How It Works</a>
+    <a href="#" onclick="showPage('compare');return false;" data-page="compare">Compare</a>
+    <a href="#" onclick="showPage('about');return false;" data-page="about">About</a>
+    <a href="#" onclick="showPage('testimonials');return false;" data-page="testimonials">Testimonials</a>
+    <a href="#" onclick="showPage('contact');return false;" data-page="contact">Contact</a>
+    <a href="#" onclick="showPage('calculator');return false;" class="nav-cta" data-page="calculator">Get Cash Offer</a>
+    <a href="/crm" style="font-size:0.7rem;color:rgba(255,255,255,0.3);letter-spacing:0.08em;text-transform:uppercase;margin-left:4px;transition:color 0.3s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Staff ↗</a>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE STICKY CTA -->
+<div class="mobile-sticky-cta">
+  <a href="#" onclick="showPage('calculator');return false;" class="btn-gold">Get My Cash Offer</a>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content">
+      <div class="hero-label">Bakersfield's #1 Cash Home Buyer</div>
+      <h1 class="hero-title">
+        <span class="line"><span class="line-inner">Sell Your Bakersfield</span></span>
+        <span class="line"><span class="line-inner">Home Fast —</span></span>
+        <span class="line"><span class="line-inner" style="color:var(--gold)">Get a Cash Offer Today</span></span>
+      </h1>
+      <p class="hero-sub">No fees. No repairs. No agents.</p>
+      <div class="hero-cta">
+        <a href="#" onclick="showPage('calculator');return false;" class="btn-gold">See My Cash Offer</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint" id="scrollHint">
+      <div class="mouse"><div class="wheel"></div></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item reveal">
+      <div class="stat-num" data-count="847">0</div>
+      <div class="stat-label">Homes Purchased</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-num">$<span data-count="2.4">0</span>M+</div>
+      <div class="stat-label">Paid to Homeowners</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-num"><span data-count="7">0</span> Days</div>
+      <div class="stat-label">Average Closing Time</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-num"><span data-count="98">0</span>%</div>
+      <div class="stat-label">Offers Accepted</div>
+    </div>
+  </div>
+
+  <!-- BENEFITS -->
+  <section class="section">
+    <div class="section-label reveal">Why Choose Us</div>
+    <h2 class="section-title reveal">The Smarter Way<br>to Sell in Bakersfield</h2>
+    <div class="gold-line reveal"></div>
+    <div class="benefits-grid">
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">⚡</div>
+        <h3 class="benefit-title">Close in 7 Days</h3>
+        <p class="benefit-text">No waiting for bank approvals or loan processing. We pay cash and can close on your timeline — as fast as one week.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🏚</div>
+        <h3 class="benefit-title">As-Is Purchase</h3>
+        <p class="benefit-text">We buy homes in any condition. Damaged, outdated, or in foreclosure — we handle everything so you don't have to.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">💰</div>
+        <h3 class="benefit-title">Zero Fees or Commissions</h3>
+        <p class="benefit-text">No realtor commissions (6%), no closing costs, no hidden fees. The offer we make is the amount you receive.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">📋</div>
+        <h3 class="benefit-title">Simple Paperwork</h3>
+        <p class="benefit-text">Our team handles all the documentation. No stacks of forms, no confusing legal language — we make it seamless.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🔒</div>
+        <h3 class="benefit-title">Guaranteed Offer</h3>
+        <p class="benefit-text">Unlike traditional buyers, we don't back out. Once we make an offer, it's firm — no last-minute price reductions.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">📍</div>
+        <h3 class="benefit-title">Bakersfield Locals</h3>
+        <p class="benefit-text">We live and work here. We know Kern County neighborhoods, market values, and what a fair deal looks like for you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR PREVIEW -->
+  <section class="section" style="padding-top:0">
+    <div class="calc-preview reveal">
+      <div class="section-label">Free Instant Estimate</div>
+      <h2 class="section-title">How Much Can You Get<br>For Your Home?</h2>
+      <p class="section-sub" style="margin:0 auto 40px">Answer 5 quick questions and see your estimated cash offer vs. a traditional sale — side by side.</p>
+      <a href="#" onclick="showPage('calculator');return false;" class="btn-gold">Start My Free Estimate →</a>
+    </div>
+  </section>
+
+  <!-- HORIZONTAL SCROLL PROCESS -->
+  <div class="process-wrapper" id="processWrapper">
+    <div class="process-sticky" id="processSticky">
+      <div class="process-track" id="processTrack">
+        <div class="process-panel">
+          <div class="process-num">01</div>
+          <div class="process-step-icon">📝</div>
+          <div class="process-step-label">Step One</div>
+          <h2 class="process-step-title">Submit Your Property Info</h2>
+          <p class="process-step-text">Answer a few quick questions about your home. Takes under 2 minutes. No commitment required.</p>
+          <div class="process-progress">
+            <div class="process-dot active" data-step="0"></div>
+            <div class="process-dot" data-step="1"></div>
+            <div class="process-dot" data-step="2"></div>
+            <div class="process-dot" data-step="3"></div>
+          </div>
+        </div>
+        <div class="process-panel">
+          <div class="process-num">02</div>
+          <div class="process-step-icon">💵</div>
+          <div class="process-step-label">Step Two</div>
+          <h2 class="process-step-title">Receive Your Cash Offer</h2>
+          <p class="process-step-text">We review your property and present a fair, no-obligation cash offer within 24 hours — often the same day.</p>
+          <div class="process-progress">
+            <div class="process-dot done" data-step="0"></div>
+            <div class="process-dot active" data-step="1"></div>
+            <div class="process-dot" data-step="2"></div>
+            <div class="process-dot" data-step="3"></div>
+          </div>
+        </div>
+        <div class="process-panel">
+          <div class="process-num">03</div>
+          <div class="process-step-icon">📅</div>
+          <div class="process-step-label">Step Three</div>
+          <h2 class="process-step-title">Pick Your Closing Date</h2>
+          <p class="process-step-text">You choose when to close — whether that's 7 days or 60 days from now. We work entirely on your schedule.</p>
+          <div class="process-progress">
+            <div class="process-dot done" data-step="0"></div>
+            <div class="process-dot done" data-step="1"></div>
+            <div class="process-dot active" data-step="2"></div>
+            <div class="process-dot" data-step="3"></div>
+          </div>
+        </div>
+        <div class="process-panel">
+          <div class="process-num">04</div>
+          <div class="process-step-icon">🏦</div>
+          <div class="process-step-label">Step Four</div>
+          <h2 class="process-step-title">Get Paid — Cash in Hand</h2>
+          <p class="process-step-text">At closing, you walk away with cash in full. No waiting on wire transfers or loan disbursements. It's that simple.</p>
+          <div class="process-progress">
+            <div class="process-dot done" data-step="0"></div>
+            <div class="process-dot done" data-step="1"></div>
+            <div class="process-dot done" data-step="2"></div>
+            <div class="process-dot active" data-step="3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS PREVIEW -->
+  <section class="section">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px">
+      <div>
+        <div class="section-label reveal">What Homeowners Say</div>
+        <h2 class="section-title reveal">Real Results,<br>Real People</h2>
+      </div>
+      <a href="#" onclick="showPage('testimonials');return false;" class="btn-outline reveal">View All Reviews</a>
+    </div>
+    <div class="testimonials-track" id="carouselTrack">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"I needed to sell fast after my divorce. These guys gave me an offer the same day I called. Closed in 9 days. Stress-free from start to finish."</p>
+        <div class="testimonial-author">Maria G.</div>
+        <div class="testimonial-detail">East Bakersfield — Inherited Home</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"My house needed major foundation work. No realtor would touch it. Bakersfield Cash Buyers bought it as-is and I walked away with more than I expected."</p>
+        <div class="testimonial-author">James T.</div>
+        <div class="testimonial-detail">Oildale — Distressed Property</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"I was facing foreclosure. They moved quickly, kept me informed every step, and saved my credit. I'm so grateful I found them in time."</p>
+        <div class="testimonial-author">Sandra L.</div>
+        <div class="testimonial-detail">Rosedale — Pre-foreclosure</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"Relocated for work and needed to sell ASAP. Got a fair cash offer, no repairs needed, closed before I had to leave. Couldn't have asked for more."</p>
+        <div class="testimonial-author">Derek M.</div>
+        <div class="testimonial-detail">NW Bakersfield — Job Relocation</div>
+      </div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" onclick="carousel(-1)">←</button>
+      <button class="carousel-btn" onclick="carousel(1)">→</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div>
+      <p>Kern County's most trusted cash home buying company. We buy houses fast, in any condition, with zero hassle.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#" onclick="showPage('about');return false;">About Us</a>
+      <a href="#" onclick="showPage('how');return false;">How It Works</a>
+      <a href="#" onclick="showPage('testimonials');return false;">Testimonials</a>
+      <a href="#" onclick="showPage('contact');return false;">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Sellers</h4>
+      <a href="#" onclick="showPage('calculator');return false;">Get Cash Offer</a>
+      <a href="#" onclick="showPage('compare');return false;">Compare Options</a>
+      <a href="#">Foreclosure Help</a>
+      <a href="#">Inherited Homes</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="tel:6615551234">(661) 555-1234</a>
+      <a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a>
+      <a href="#">Bakersfield, CA 93301</a>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <span>© 2025 Bakersfield Cash Home Buyers. All rights reserved.</span>
+    <span>We Buy Houses Kern County · Cash for Homes Bakersfield</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: CALCULATOR
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-calculator">
+  <div class="calc-hero">
+    <div class="section-label">Free Instant Estimate</div>
+    <h1 class="section-title">What's Your Home Worth<br>as a Cash Sale?</h1>
+    <p class="section-sub" style="margin:0 auto;text-align:center">5 quick questions. No signup. Get your personalized comparison instantly.</p>
+  </div>
+
+  <div class="calc-container" id="calcContainer">
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step-dot current"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <!-- STEP 1: PROPERTY TYPE -->
+    <div class="calc-step active" id="step1">
+      <h2 class="step-question">What type of property are you selling?</h2>
+      <p class="step-hint">Select the option that best describes your home.</p>
+      <div class="step-options">
+        <div class="step-option" onclick="selectOption(this,'type','house')">
+          <span class="opt-icon">🏠</span>Single-Family House
+        </div>
+        <div class="step-option" onclick="selectOption(this,'type','condo')">
+          <span class="opt-icon">🏢</span>Condo / Townhome
+        </div>
+        <div class="step-option" onclick="selectOption(this,'type','multi')">
+          <span class="opt-icon">🏘</span>Multi-Family
+        </div>
+      </div>
+      <div class="calc-nav">
+        <button class="btn-gold" onclick="nextStep(2)" id="step1next" disabled style="opacity:0.4">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: CONDITION -->
+    <div class="calc-step" id="step2">
+      <h2 class="step-question">What condition is the property in?</h2>
+      <p class="step-hint">Be honest — we buy homes in any condition.</p>
+      <div class="step-options">
+        <div class="step-option" onclick="selectOption(this,'condition','good')">
+          <span class="opt-icon">✨</span>Move-In Ready
+        </div>
+        <div class="step-option" onclick="selectOption(this,'condition','fair')">
+          <span class="opt-icon">🔧</span>Needs Minor Work
+        </div>
+        <div class="step-option" onclick="selectOption(this,'condition','poor')">
+          <span class="opt-icon">🏚</span>Needs Major Repairs
+        </div>
+      </div>
+      <div class="calc-nav">
+        <button class="btn-outline" onclick="nextStep(1)">← Back</button>
+        <button class="btn-gold" onclick="nextStep(3)" id="step2next" disabled style="opacity:0.4">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: TIMELINE -->
+    <div class="calc-step" id="step3">
+      <h2 class="step-question">How quickly do you need to sell?</h2>
+      <p class="step-hint">No pressure either way — we work on your timeline.</p>
+      <div class="step-options">
+        <div class="step-option" onclick="selectOption(this,'timeline','asap')">
+          <span class="opt-icon">🚀</span>ASAP / Urgent
+        </div>
+        <div class="step-option" onclick="selectOption(this,'timeline','30days')">
+          <span class="opt-icon">📅</span>Within 30 Days
+        </div>
+        <div class="step-option" onclick="selectOption(this,'timeline','exploring')">
+          <span class="opt-icon">🔍</span>Just Exploring
+        </div>
+      </div>
+      <div class="calc-nav">
+        <button class="btn-outline" onclick="nextStep(2)">← Back</button>
+        <button class="btn-gold" onclick="nextStep(4)" id="step3next" disabled style="opacity:0.4">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: SITUATION -->
+    <div class="calc-step" id="step4">
+      <h2 class="step-question">What best describes your situation?</h2>
+      <p class="step-hint">This helps us tailor the best offer for you.</p>
+      <div class="step-options" style="grid-template-columns:repeat(5,1fr)">
+        <div class="step-option" onclick="selectOption(this,'situation','foreclosure')">
+          <span class="opt-icon">⚠️</span>Facing Foreclosure
+        </div>
+        <div class="step-option" onclick="selectOption(this,'situation','inherited')">
+          <span class="opt-icon">🏡</span>Inherited Property
+        </div>
+        <div class="step-option" onclick="selectOption(this,'situation','relocating')">
+          <span class="opt-icon">✈️</span>Relocating
+        </div>
+        <div class="step-option" onclick="selectOption(this,'situation','rental')">
+          <span class="opt-icon">🔑</span>Rental Issues
+        </div>
+        <div class="step-option" onclick="selectOption(this,'situation','other')">
+          <span class="opt-icon">💬</span>Other Reason
+        </div>
+      </div>
+      <div class="calc-nav">
+        <button class="btn-outline" onclick="nextStep(3)">← Back</button>
+        <button class="btn-gold" onclick="nextStep(5)" id="step4next" disabled style="opacity:0.4">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: PRICE -->
+    <div class="calc-step" id="step5">
+      <h2 class="step-question">How much do you want for your home?</h2>
+      <p class="step-hint">Enter your ideal price — we'll show you how a cash sale compares.</p>
+      <div class="price-input-wrapper">
+        <div class="price-input-group">
+          <span>$</span>
+          <input type="number" class="price-input" id="priceInput" placeholder="250,000" min="50000" max="5000000" required/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:480px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray)">First Name <span style="color:var(--gold)">*</span></label>
+            <input type="text" class="email-input" id="firstNameInput" placeholder="Maria" required style="max-width:100%"/>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray)">Last Name <span style="color:var(--gold)">*</span></label>
+            <input type="text" class="email-input" id="lastNameInput" placeholder="Garcia" required style="max-width:100%"/>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:480px">
+          <label style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray)">Email Address <span style="color:var(--gold)">*</span></label>
+          <input type="email" class="email-input" id="emailInput" placeholder="you@example.com" required style="max-width:100%"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:480px">
+          <label style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray)">Phone Number <span style="color:var(--gold)">*</span></label>
+          <input type="tel" class="email-input" id="phoneInput" placeholder="(661) 555-0000" required style="max-width:100%"/>
+        </div>
+        <p id="step5error" style="display:none;color:#e05a5a;font-size:0.8rem;margin-top:-8px">Please fill out all fields above.</p>
+      </div>
+      <div class="calc-nav">
+        <button class="btn-outline" onclick="nextStep(4)">← Back</button>
+        <button class="btn-gold" onclick="showResults()">See My Results →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="calc-results" style="max-width:860px;margin:0 auto;padding:0 40px 80px">
+    <div class="results-hero-text">
+      <h2>Your Personalized Comparison</h2>
+      <p>Based on your answers — here's what each selling option means for you.</p>
+    </div>
+
+    <div class="results-comparison">
+      <div class="results-col gold-col">
+        <div class="results-col-label">Cash Offer — Us</div>
+        <div class="results-big-num" id="cashOfferNum">$0</div>
+        <div class="results-col-sub">Estimated cash offer range</div>
+        <div class="results-line"><span class="label">Realtor Commission</span><span class="value pos">$0 saved</span></div>
+        <div class="results-line"><span class="label">Repair Costs</span><span class="value pos" id="repairsSaved">$0 saved</span></div>
+        <div class="results-line"><span class="label">Closing Costs</span><span class="value pos">$0 saved</span></div>
+        <div class="results-line"><span class="label">Closing Time</span><span class="value" style="color:var(--gold)">7 – 14 Days</span></div>
+        <div class="results-line"><span class="label">Contingencies</span><span class="value pos">None</span></div>
+      </div>
+      <div class="results-col">
+        <div class="results-col-label">Traditional Realtor Sale</div>
+        <div class="results-big-num" id="realtorSaleNum">$0</div>
+        <div class="results-col-sub">Estimated net after all costs</div>
+        <div class="results-line"><span class="label">Realtor Commission</span><span class="value neg" id="commissionCost">-$0</span></div>
+        <div class="results-line"><span class="label">Repair Costs</span><span class="value neg" id="repairCost">-$0</span></div>
+        <div class="results-line"><span class="label">Closing Costs</span><span class="value neg" id="closingCost">-$0</span></div>
+        <div class="results-line"><span class="label">Closing Time</span><span class="value" style="color:var(--gray)">60 – 90 Days</span></div>
+        <div class="results-line"><span class="label">Contingencies</span><span class="value neg">Financing, Inspection</span></div>
+      </div>
+    </div>
+
+    <div class="savings-box">
+      <p>Your Estimated Total Savings with Us</p>
+      <div class="big" id="totalSavings">$0</div>
+    </div>
+
+    <div class="results-actions">
+      <a href="#" onclick="showPage('contact');return false;" class="btn-gold">Claim My Cash Offer</a>
+      <button class="btn-outline" onclick="resetCalc()">Start Over</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">
+      <div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div>
+      <p>Estimates are for informational purposes. Actual offers depend on property inspection and market conditions.</p>
+    </div>
+    <div class="footer-col"><h4>Pages</h4>
+      <a href="#" onclick="showPage('home');return false;">Home</a>
+      <a href="#" onclick="showPage('how');return false;">How It Works</a>
+      <a href="#" onclick="showPage('contact');return false;">Contact</a>
+    </div>
+    <div class="footer-col"><h4>Contact</h4>
+      <a href="tel:6615551234">(661) 555-1234</a>
+      <a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a>
+    </div>
+    <div class="footer-col"></div>
+  </footer>
+  <div class="footer-bottom">
+    <span>© 2025 Bakersfield Cash Home Buyers.</span>
+    <span>Results are estimates only.</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: HOW IT WORKS
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-how">
+  <div class="hiw-hero">
+    <div class="section-label">The Process</div>
+    <h1 class="section-title">Simple. Fast. Transparent.</h1>
+    <p class="section-sub" style="margin:0 auto;text-align:center">Selling your home doesn't have to be complicated. Here's exactly how it works — no surprises.</p>
+  </div>
+  <div class="hiw-steps">
+    <div class="hiw-step reveal">
+      <div class="hiw-step-num">01</div>
+      <div class="hiw-step-content">
+        <h3>Submit Your Property Info</h3>
+        <p>Fill out our short 5-question form or call us directly at (661) 555-1234. We'll ask about your property type, condition, and what you're hoping to get for it. No personal financial info required at this stage.</p>
+        <span class="hiw-step-tag">⏱ Takes 2 Minutes</span>
+      </div>
+    </div>
+    <div class="hiw-step reveal">
+      <div class="hiw-step-num">02</div>
+      <div class="hiw-step-content">
+        <h3>We Analyze Your Property</h3>
+        <p>Our local Bakersfield team reviews your home using current Kern County market data, comparable sales, and repair estimates. No need for a formal appraisal — we handle the research.</p>
+        <span class="hiw-step-tag">📊 Data-Driven Valuation</span>
+      </div>
+    </div>
+    <div class="hiw-step reveal">
+      <div class="hiw-step-num">03</div>
+      <div class="hiw-step-content">
+        <h3>Receive Your Cash Offer</h3>
+        <p>Within 24 hours (often same-day), we present a firm, written cash offer. No lowball tactics. No pressure. Take your time reviewing it — there's zero obligation to accept.</p>
+        <span class="hiw-step-tag">💵 Fair Market Cash Offer</span>
+      </div>
+    </div>
+    <div class="hiw-step reveal">
+      <div class="hiw-step-num">04</div>
+      <div class="hiw-step-content">
+        <h3>Accept & Choose Your Closing Date</h3>
+        <p>If you accept, we open escrow immediately. You pick the closing date — it can be as fast as 7 days or as far as 60+ days out. We accommodate your schedule, even if you need time to move.</p>
+        <span class="hiw-step-tag">📅 You Choose the Timeline</span>
+      </div>
+    </div>
+    <div class="hiw-step reveal">
+      <div class="hiw-step-num">05</div>
+      <div class="hiw-step-content">
+        <h3>Close & Get Paid</h3>
+        <p>On closing day, you sign the paperwork at a local title company and receive your cash payment — via wire transfer or certified check. The whole process is done. No waiting, no delays.</p>
+        <span class="hiw-step-tag">🏦 Cash at Closing</span>
+      </div>
+    </div>
+    <div class="timeline-cta reveal">
+      <div class="section-label">Ready to Start?</div>
+      <h2 class="section-title" style="margin-bottom:32px">Get Your Offer Today</h2>
+      <a href="#" onclick="showPage('calculator');return false;" class="btn-gold">Get My Cash Offer →</a>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-brand"><div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div><p>Kern County's most trusted cash home buyer.</p></div>
+    <div class="footer-col"><h4>Pages</h4><a href="#" onclick="showPage('home');return false;">Home</a><a href="#" onclick="showPage('compare');return false;">Compare Options</a><a href="#" onclick="showPage('contact');return false;">Contact</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="tel:6615551234">(661) 555-1234</a><a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a></div>
+    <div class="footer-col"></div>
+  </footer>
+  <div class="footer-bottom"><span>© 2025 Bakersfield Cash Home Buyers.</span><span>Bakersfield, CA 93301</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: COMPARE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-compare">
+  <div class="compare-hero">
+    <div class="section-label">Side-by-Side</div>
+    <h1 class="section-title">Cash vs. Realtor vs. FSBO</h1>
+    <p class="section-sub" style="margin:0 auto;text-align:center">The real numbers behind each selling method — so you can make an informed decision.</p>
+  </div>
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Factor</th>
+          <th>🏆 Cash Offer (Us)</th>
+          <th>Traditional Realtor</th>
+          <th>FSBO (By Owner)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Closing Time</td><td><span class="check">7 – 14 Days</span></td><td>60 – 90 Days</td><td>Unpredictable</td></tr>
+        <tr><td>Realtor Commission</td><td><span class="check">$0</span></td><td><span class="cross">5 – 6%</span></td><td><span class="check">$0</span></td></tr>
+        <tr><td>Repairs Required</td><td><span class="check">None</span></td><td><span class="cross">Often Required</span></td><td><span class="cross">Often Required</span></td></tr>
+        <tr><td>Closing Costs Paid By Seller</td><td><span class="check">None</span></td><td><span class="cross">1 – 3%</span></td><td><span class="cross">1 – 3%</span></td></tr>
+        <tr><td>Financing Contingency Risk</td><td><span class="check">None</span></td><td><span class="cross">High (30% fall through)</span></td><td><span class="cross">Very High</span></td></tr>
+        <tr><td>Showings / Open Houses</td><td><span class="check">Zero</span></td><td><span class="cross">Multiple</span></td><td><span class="cross">Self-Managed</span></td></tr>
+        <tr><td>Holding Costs (mortgage, tax)</td><td><span class="check">Minimal</span></td><td><span class="cross">3 – 6 Months</span></td><td><span class="cross">Months of Carrying</span></td></tr>
+        <tr><td>Offer Guarantee</td><td><span class="check">Firm, Written</span></td><td><span class="cross">Can Fall Through</span></td><td><span class="cross">No Guarantee</span></td></tr>
+        <tr><td>Legal / Paperwork Help</td><td><span class="check">We Handle All</span></td><td>Agent Handles</td><td><span class="cross">You Handle All</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="compare-chart-section reveal">
+    <div>
+      <div class="section-label">The Real Numbers</div>
+      <h2 class="section-title">On a $300K Home,<br>Here's What You Net</h2>
+      <div class="gold-line"></div>
+      <p class="section-sub">After commissions, repairs, closing costs, and carrying costs — a cash sale often puts more money in your pocket faster.</p>
+    </div>
+    <div class="bar-chart" id="barChart">
+      <div class="bar-item">
+        <div class="bar-label"><span>Cash Offer (Us)</span><span>~$279,000</span></div>
+        <div class="bar-track"><div class="bar-fill gold" data-width="93%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Realtor (net after costs)</span><span>~$262,000</span></div>
+        <div class="bar-track"><div class="bar-fill gray" data-width="87%"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>FSBO (net after costs)</span><span>~$268,000</span></div>
+        <div class="bar-track"><div class="bar-fill red" data-width="89%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="text-align:center;padding-top:0">
+    <div class="section-label reveal">Bottom Line</div>
+    <h2 class="section-title reveal" style="margin-bottom:32px">See What We'll Pay<br>For Your Home</h2>
+    <a href="#" onclick="showPage('calculator');return false;" class="btn-gold reveal">Get My Cash Estimate →</a>
+  </section>
+
+  <footer>
+    <div class="footer-brand"><div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div><p>Kern County's most trusted cash home buyer.</p></div>
+    <div class="footer-col"><h4>Pages</h4><a href="#" onclick="showPage('home');return false;">Home</a><a href="#" onclick="showPage('how');return false;">How It Works</a><a href="#" onclick="showPage('contact');return false;">Contact</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="tel:6615551234">(661) 555-1234</a><a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a></div>
+    <div class="footer-col"></div>
+  </footer>
+  <div class="footer-bottom"><span>© 2025 Bakersfield Cash Home Buyers.</span><span>Numbers are estimates based on market averages.</span></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: ABOUT
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <div class="about-img">
+      <div class="about-img-main"></div>
+    </div>
+    <div>
+      <div class="section-label reveal">About Us</div>
+      <h1 class="section-title reveal">Bakersfield Locals<br>Who Buy Homes Right</h1>
+      <div class="gold-line reveal"></div>
+      <p class="section-sub reveal" style="margin-bottom:24px">We're not a national hedge fund or a faceless corporation. We're a local Bakersfield team that has been helping Kern County homeowners sell their homes on their terms since 2009.</p>
+      <p class="section-sub reveal" style="margin-bottom:40px">We started this business after watching friends and family struggle through the traditional sale process — months of stress, surprise costs, and deals that fell apart. There had to be a better way.</p>
+      <a href="#" onclick="showPage('contact');return false;" class="btn-gold reveal">Talk to Our Team</a>
+    </div>
+  </div>
+
+  <div class="about-values">
+    <div class="value-card reveal">
+      <div class="value-icon">🤝</div>
+      <h4>Honest Offers</h4>
+      <p>We won't lowball you. Our offers are based on real Bakersfield market data and reflect the true value of your property minus what it would cost us to resell it.</p>
+    </div>
+    <div class="value-card reveal">
+      <div class="value-icon">⏰</div>
+      <h4>Respect Your Time</h4>
+      <p>We know you have a life to run. We move fast, communicate clearly, and never leave you wondering what's happening next.</p>
+    </div>
+    <div class="value-card reveal">
+      <div class="value-icon">📍</div>
+      <h4>Local Knowledge</h4>
+      <p>From Oildale to Rosedale to the East Side — we know every neighborhood in Kern County and what makes each area unique.</p>
+    </div>
+    <div class="value-card reveal">
+      <div class="value-icon">🛡</div>
+      <h4>Zero Pressure</h4>
+      <p>Our offers are 100% no-obligation. Take time to decide. We will never call you multiple times a day or use high-pressure tactics.</p>
+    </div>
+  </div>
+
+  <section class="section" style="text-align:center;border-top:1px solid var(--border)">
+    <div class="section-label reveal">We Serve All Of</div>
+    <h2 class="section-title reveal" style="margin-bottom:40px">Kern County, CA</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:48px">
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Bakersfield</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Oildale</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Rosedale</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Arvin</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Tehachapi</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Delano</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">Wasco</span>
+      <span style="padding:8px 20px;border:1px solid var(--border);border-radius:2px;font-size:0.8rem;color:var(--gray)" class="reveal">McFarland</span>
+    </div>
+    <a href="#" onclick="showPage('calculator');return false;" class="btn-gold reveal">Get My Cash Offer</a>
+  </section>
+
+  <footer>
+    <div class="footer-brand"><div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div><p>Kern County's most trusted cash home buyer.</p></div>
+    <div class="footer-col"><h4>Pages</h4><a href="#" onclick="showPage('home');return false;">Home</a><a href="#" onclick="showPage('how');return false;">How It Works</a><a href="#" onclick="showPage('contact');return false;">Contact</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="tel:6615551234">(661) 555-1234</a><a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a></div>
+    <div class="footer-col"></div>
+  </footer>
+  <div class="footer-bottom"><span>© 2025 Bakersfield Cash Home Buyers.</span><span>Serving Kern County since 2009.</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: TESTIMONIALS
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-testimonials">
+  <div class="test-hero">
+    <div class="section-label">Real Stories</div>
+    <h1 class="section-title">Homeowners Who Chose Cash</h1>
+    <p class="section-sub" style="margin:0 auto;text-align:center">Hundreds of Bakersfield families have sold their homes to us. Here's what they have to say.</p>
+  </div>
+
+  <div class="test-grid" style="padding:0 60px 60px">
+    <div class="test-card-full featured reveal">
+      <div class="test-video-thumb" style="font-size:3rem;">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a,#0a0a0a);display:flex;align-items:center;justify-content:center;position:relative;">
+          🏠
+          <div class="play-btn">▶</div>
+        </div>
+      </div>
+      <div class="rating-row">
+        <div class="stars">★★★★★</div>
+        <div class="rating-num">5.0</div>
+      </div>
+      <p class="review-text">"After my husband passed, I couldn't keep up with the mortgage or the repairs. I was terrified. Bakersfield Cash Buyers came out, treated me with total respect, and gave me an offer I didn't expect. I closed in 10 days and used the money to move closer to my daughter. I can't thank them enough."</p>
+      <div class="reviewer-name">Patricia W.</div>
+      <div class="reviewer-detail">SW Bakersfield — Widowed, Needed Fast Sale</div>
+    </div>
+
+    <div class="test-card-full reveal">
+      <div class="rating-row"><div class="stars">★★★★★</div><div class="rating-num">5.0</div></div>
+      <p class="review-text">"My rental property had tenants who destroyed it. I thought I'd have to spend $40K fixing it before anyone would buy it. These guys bought it as-is. The process was fast, professional, and they never judged the state of the home."</p>
+      <div class="reviewer-name">Robert K.</div>
+      <div class="reviewer-detail">Oildale — Damaged Rental Property</div>
+    </div>
+
+    <div class="test-card-full reveal">
+      <div class="rating-row"><div class="stars">★★★★★</div><div class="rating-num">5.0</div></div>
+      <p class="review-text">"I was two months from foreclosure. Every agent I called told me the house wasn't worth listing. Bakersfield Cash Buyers made an offer in 6 hours. Closed in 8 days. Crisis averted. My credit is intact."</p>
+      <div class="reviewer-name">Michael A.</div>
+      <div class="reviewer-detail">East Bakersfield — Foreclosure Averted</div>
+    </div>
+
+    <div class="test-card-full reveal">
+      <div class="rating-row"><div class="stars">★★★★★</div><div class="rating-num">5.0</div></div>
+      <p class="review-text">"I inherited my parents' home and didn't know what to do with it. It needed work and I live out of state. Got a fair cash offer over the phone, e-signed the documents, and received the wire. Never had to fly back."</p>
+      <div class="reviewer-name">Jennifer R.</div>
+      <div class="reviewer-detail">NW Bakersfield — Out-of-State Inherited Home</div>
+    </div>
+
+    <div class="test-card-full reveal">
+      <div class="rating-row"><div class="stars">★★★★★</div><div class="rating-num">5.0</div></div>
+      <p class="review-text">"My military orders came in fast. I had 30 days to report to a new base. They worked with my timeline perfectly and made sure the sale was done before I had to leave. Absolute lifesavers."</p>
+      <div class="reviewer-name">Sgt. Carlos M.</div>
+      <div class="reviewer-detail">Rosedale — Military PCS Relocation</div>
+    </div>
+
+    <div class="test-card-full reveal">
+      <div class="rating-row"><div class="stars">★★★★★</div><div class="rating-num">5.0</div></div>
+      <p class="review-text">"I tried listing with a realtor for 4 months — two deals fell through due to financing. I was exhausted. Called these guys on a Monday, had a cash offer Tuesday, and keys handed over by the following Friday."</p>
+      <div class="reviewer-name">Linda S.</div>
+      <div class="reviewer-detail">Central Bakersfield — Failed Realtor Listing</div>
+    </div>
+  </div>
+
+  <div class="trust-badges reveal">
+    <div class="trust-badge"><div class="badge-icon">⭐</div><p>4.9 / 5 Average Rating</p></div>
+    <div class="trust-badge"><div class="badge-icon">🏆</div><p>BBB A+ Accredited</p></div>
+    <div class="trust-badge"><div class="badge-icon">📋</div><p>Licensed &amp; Insured</p></div>
+    <div class="trust-badge"><div class="badge-icon">🔒</div><p>No-Pressure Guarantee</p></div>
+    <div class="trust-badge"><div class="badge-icon">🏡</div><p>847+ Homes Purchased</p></div>
+  </div>
+
+  <section class="section" style="text-align:center;border-top:1px solid var(--border)">
+    <h2 class="section-title reveal" style="margin-bottom:32px">Ready to Write Your<br>Own Success Story?</h2>
+    <a href="#" onclick="showPage('calculator');return false;" class="btn-gold reveal">Get My Cash Offer →</a>
+  </section>
+
+  <footer>
+    <div class="footer-brand"><div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div><p>Kern County's most trusted cash home buyer.</p></div>
+    <div class="footer-col"><h4>Pages</h4><a href="#" onclick="showPage('home');return false;">Home</a><a href="#" onclick="showPage('how');return false;">How It Works</a><a href="#" onclick="showPage('contact');return false;">Contact</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="tel:6615551234">(661) 555-1234</a><a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a></div>
+    <div class="footer-col"></div>
+  </footer>
+  <div class="footer-bottom"><span>© 2025 Bakersfield Cash Home Buyers.</span></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE: CONTACT
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div class="contact-wrap">
+    <div class="contact-left">
+      <div class="section-label reveal">Get In Touch</div>
+      <h1 class="section-title reveal">Let's Talk About<br>Your Home</h1>
+      <div class="gold-line reveal"></div>
+      <p class="section-sub reveal">Whether you're ready to sell now or just exploring options, we're here to answer every question — no pressure, no obligation.</p>
+      <div class="contact-info">
+        <div class="contact-info-item reveal">
+          <div class="contact-icon">📞</div>
+          <div>
+            <h4>Phone</h4>
+            <p>(661) 555-1234</p>
+          </div>
+        </div>
+        <div class="contact-info-item reveal">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <h4>Email</h4>
+            <p>offers@bakersfieldcashhomebuyers.com</p>
+          </div>
+        </div>
+        <div class="contact-info-item reveal">
+          <div class="contact-icon">📍</div>
+          <div>
+            <h4>Office</h4>
+            <p>1801 Chester Avenue, Suite 200<br>Bakersfield, CA 93301</p>
+          </div>
+        </div>
+        <div class="contact-info-item reveal">
+          <div class="contact-icon">🕐</div>
+          <div>
+            <h4>Hours</h4>
+            <p>Mon–Sat: 8am – 7pm<br>Sun: 10am – 4pm</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-right">
+      <div class="section-label reveal">Request an Offer</div>
+      <h2 class="section-title reveal" style="font-size:1.8rem;margin-bottom:32px">Tell Us About<br>Your Property</h2>
+      <form class="contact-form" onsubmit="submitContact(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" class="form-input" placeholder="Maria"/>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" class="form-input" placeholder="Garcia"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" class="form-input" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" class="form-input" placeholder="(661) 555-0000"/>
+        </div>
+        <div class="form-group">
+          <label>Property Address</label>
+          <input type="text" class="form-input" placeholder="123 Main St, Bakersfield CA"/>
+        </div>
+        <div class="form-group">
+          <label>Your Situation</label>
+          <select class="form-select">
+            <option value="">Select one...</option>
+            <option>Facing Foreclosure</option>
+            <option>Inherited Property</option>
+            <option>Job Relocation</option>
+            <option>Rental Problems</option>
+            <option>Divorce</option>
+            <option>Downsizing</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tell Us More (Optional)</label>
+          <textarea class="form-textarea" placeholder="Any details about the property or your situation..."></textarea>
+        </div>
+        <button type="submit" class="btn-gold" style="width:100%;text-align:center;padding:18px;font-size:0.85rem">
+          Request My Cash Offer →
+        </button>
+      </form>
+      <div class="map-embed">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d105655.21363869986!2d-119.08786074999999!3d35.3732921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80ea6bc70d7c48eb%3A0x2e0d822f5a93e3c5!2sBakersfield%2C%20CA!5e0!3m2!1sen!2sus!4v1710000000000" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bakersfield CA Map"></iframe>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-brand"><div class="nav-logo">Bakersfield<span> Cash</span> Home Buyers</div><p>Kern County's most trusted cash home buyer. No fees. No repairs. No agents.</p></div>
+    <div class="footer-col"><h4>Pages</h4><a href="#" onclick="showPage('home');return false;">Home</a><a href="#" onclick="showPage('how');return false;">How It Works</a><a href="#" onclick="showPage('compare');return false;">Compare Options</a><a href="#" onclick="showPage('about');return false;">About Us</a></div>
+    <div class="footer-col"><h4>Sellers</h4><a href="#" onclick="showPage('calculator');return false;">Get Cash Offer</a><a href="#">Foreclosure Help</a><a href="#">Inherited Homes</a><a href="#">Divorce Sale</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="tel:6615551234">(661) 555-1234</a><a href="mailto:offers@bakersfieldcashhomebuyers.com">Email Us</a><a href="#">Bakersfield, CA 93301</a></div>
+  </footer>
+  <div class="footer-bottom"><span>© 2025 Bakersfield Cash Home Buyers. All rights reserved.</span><span>Privacy Policy · Terms of Service</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── STATE ──────────────────────────────────────────────── */
+const calcData = {type:null,condition:null,timeline:null,situation:null,price:0};
+let carouselOffset = 0;
+const CARD_W = 404; // 380 + 24 gap
+
+/* ── PAGE NAVIGATION ────────────────────────────────────── */
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById('page-'+name);
+  if(!pg) return;
+  pg.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+
+  // update nav
+  document.querySelectorAll('.nav-links a[data-page]').forEach(a=>{
+    a.classList.toggle('active', a.dataset.page === name);
+  });
+
+  // close mobile nav
+  document.getElementById('navLinks').classList.remove('open');
+
+  // run page-specific init
+  if(name==='home') initHome();
+  else if(name==='compare') initCompare();
+  else if(name==='calculator'){resetCalc();initCalcPage();}
+  else initRevealAnimations();
+}
+
+/* ── MOBILE NAV ─────────────────────────────────────────── */
+function toggleMobile(){
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+/* ── CURSOR ─────────────────────────────────────────────── */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  cursorRing.style.left=rx+'px';cursorRing.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button,.step-option,.benefit-card,.testimonial-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursor.style.transform='translate(-50%,-50%) scale(2.5)';
+    cursor.style.background='rgba(201,169,110,0.5)';
+    cursorRing.style.transform='translate(-50%,-50%) scale(1.8)';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursor.style.transform='translate(-50%,-50%) scale(1)';
+    cursor.style.background='var(--gold)';
+    cursorRing.style.transform='translate(-50%,-50%) scale(1)';
+  });
+});
+
+/* ── SCROLL PROGRESS ────────────────────────────────────── */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  document.getElementById('scroll-progress').style.width=pct+'%';
+  // navbar
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ══════════════════════════════════════════════════════════
+   HOME PAGE ANIMATIONS
+══════════════════════════════════════════════════════════ */
+function initHome(){
+  // hero line by line
+  gsap.set('.hero-label',{opacity:0,y:20});
+  gsap.set('.hero-title .line-inner',{y:'110%'});
+  gsap.set('.hero-sub',{opacity:0,y:20});
+  gsap.set('.hero-cta',{opacity:0,y:20});
+  gsap.set('#scrollHint',{opacity:0});
+
+  const tl = gsap.timeline({delay:0.3});
+  tl.to('.hero-label',{opacity:1,y:0,duration:0.8,ease:'power3.out'})
+    .to('.hero-title .line-inner',{y:'0%',duration:1,stagger:0.15,ease:'power4.out'},'-=0.4')
+    .to('.hero-sub',{opacity:1,y:0,duration:0.8,ease:'power3.out'},'-=0.4')
+    .to('.hero-cta',{opacity:1,y:0,duration:0.8,ease:'power3.out'},'-=0.5')
+    .to('#scrollHint',{opacity:1,duration:0.8},'-=0.2');
+
+  // CTA pulse
+  gsap.to('.hero-cta .btn-gold',{
+    boxShadow:'0 0 60px rgba(201,169,110,0.6)',
+    scale:1.02,
+    duration:1.5,
+    repeat:-1,yoyo:true,ease:'sine.inOut',
+    delay:2
+  });
+
+  // horizontal scroll — defer one frame so layout is painted
+  requestAnimationFrame(() => { requestAnimationFrame(initHorizontalScroll); });
+
+  // hero parallax
+  gsap.to('#heroBg',{
+    yPercent:30,
+    ease:'none',
+    scrollTrigger:{
+      trigger:'#hero',
+      start:'top top',
+      end:'bottom top',
+      scrub:true
+    }
+  });
+
+  // stat counters
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target = parseFloat(el.dataset.count);
+    ScrollTrigger.create({
+      trigger:el,
+      start:'top 85%',
+      once:true,
+      onEnter:()=>{
+        gsap.fromTo(el,{innerText:0},{
+          innerText:target,
+          duration:2,
+          snap:{innerText: target < 100 ? 0.1 : 1},
+          ease:'power2.out',
+          onUpdate:function(){
+            el.innerText = target < 100 ? parseFloat(el.innerText).toFixed(target%1!==0?1:0) : Math.round(parseFloat(el.innerText));
+          }
+        });
+      }
+    });
+  });
+
+  // reveal animations
+  initRevealAnimations();
+}
+
+/* ── REVEAL ANIMATIONS ──────────────────────────────────── */
+function initRevealAnimations(){
+  document.querySelectorAll('.page.active .reveal').forEach(el=>{
+    ScrollTrigger.create({
+      trigger:el,
+      start:'top 88%',
+      once:true,
+      onEnter:()=>{
+        gsap.to(el,{opacity:1,y:0,duration:0.9,ease:'power3.out'});
+      }
+    });
+    // make sure initially hidden
+    if(getComputedStyle(el).opacity === '0') return;
+    gsap.set(el,{opacity:0,y:40});
+  });
+  // re-run for already-visible elements
+  document.querySelectorAll('.page.active .reveal').forEach(el=>{
+    gsap.set(el,{opacity:0,y:40});
+    ScrollTrigger.create({
+      trigger:el,
+      start:'top 88%',
+      once:true,
+      onEnter:()=>gsap.to(el,{opacity:1,y:0,duration:0.9,ease:'power3.out'})
+    });
+  });
+}
+
+/* ── HORIZONTAL SCROLL ──────────────────────────────────── */
+function initHorizontalScroll(){
+  const track = document.getElementById('processTrack');
+  const sticky = document.getElementById('processSticky');
+  if(!track || !sticky) return;
+
+  // Kill any existing ScrollTriggers on this element first
+  ScrollTrigger.getAll().forEach(t => {
+    if(t.trigger === sticky) t.kill();
+  });
+
+  // Each panel is 100vw wide; total travel = 3 panels worth (4 panels - 1)
+  const panels = track.querySelectorAll('.process-panel');
+  const numPanels = panels.length; // 4
+
+  // Force track to exact pixel width so scrollWidth is reliable
+  track.style.width = (numPanels * 100) + 'vw';
+  panels.forEach(p => { p.style.width = '100vw'; p.style.flexShrink = '0'; });
+
+  gsap.to(track, {
+    x: () => -(track.scrollWidth - window.innerWidth),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: sticky,
+      start: 'top top',
+      end: () => '+=' + (track.scrollWidth - window.innerWidth),
+      pin: true,
+      scrub: 0.8,
+      invalidateOnRefresh: true,
+    }
+  });
+}
+
+/* ── COMPARE PAGE ───────────────────────────────────────── */
+function initCompare(){
+  initRevealAnimations();
+  ScrollTrigger.create({
+    trigger:'#barChart',
+    start:'top 80%',
+    once:true,
+    onEnter:()=>{
+      document.querySelectorAll('.bar-fill').forEach(bar=>{
+        gsap.to(bar,{width:bar.dataset.width,duration:1.4,ease:'power3.out',delay:0.2});
+      });
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   CALCULATOR
+══════════════════════════════════════════════════════════ */
+function initCalcPage(){
+  gsap.from('.calc-hero *',{opacity:0,y:30,stagger:0.15,duration:0.8,ease:'power3.out'});
+}
+
+function selectOption(el, key, val){
+  el.closest('.step-options').querySelectorAll('.step-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  calcData[key] = val;
+  const stepNum = Object.keys(calcData).indexOf(key)+1;
+  const btn = document.getElementById('step'+stepNum+'next');
+  if(btn){btn.disabled=false;gsap.to(btn,{opacity:1,duration:0.3});}
+}
+
+function nextStep(to){
+  const allSteps = document.querySelectorAll('.calc-step');
+  const current = document.querySelector('.calc-step.active');
+  allSteps.forEach(s=>s.classList.remove('active'));
+
+  if(to >= 1 && to <=5){
+    const target = document.getElementById('step'+to);
+    if(target){
+      target.classList.add('active');
+      gsap.from(target,{x:30,opacity:0,duration:0.5,ease:'power3.out'});
+      updateStepDots(to-1);
+    }
+  }
+}
+
+function updateStepDots(activeIdx){
+  document.querySelectorAll('.step-dot').forEach((dot,i)=>{
+    dot.classList.remove('done','current');
+    if(i < activeIdx) dot.classList.add('done');
+    else if(i === activeIdx) dot.classList.add('current');
+  });
+}
+
+function showResults(){
+  // Validate all required fields
+  const firstName = document.getElementById('firstNameInput').value.trim();
+  const lastName  = document.getElementById('lastNameInput').value.trim();
+  const email     = document.getElementById('emailInput').value.trim();
+  const phone     = document.getElementById('phoneInput').value.trim();
+  const errEl     = document.getElementById('step5error');
+
+  if(!firstName || !lastName || !email || !phone){
+    errEl.style.display='block';
+    gsap.from(errEl,{x:-6,duration:0.4,ease:'power2.out'});
+    return;
+  }
+  errEl.style.display='none';
+
+  const price = parseFloat(document.getElementById('priceInput').value) || 280000;
+  calcData.price = price;
+
+  // Calculations
+  const conditionMultiplier = calcData.condition==='good'?0.93 : calcData.condition==='fair'?0.88 : 0.82;
+  const cashOffer = Math.round(price * conditionMultiplier);
+  const commission = Math.round(price * 0.06);
+  const repairs = calcData.condition==='good'?0 : calcData.condition==='fair'? Math.round(price*0.03) : Math.round(price*0.08);
+  const closingCosts = Math.round(price * 0.02);
+  const holdingCosts = Math.round(price * 0.015);
+  const realtorNet = price - commission - repairs - closingCosts - holdingCosts;
+  const savings = cashOffer - realtorNet;
+
+  // Push calculator lead into CRM localStorage
+  try{
+    const leads = JSON.parse(localStorage.getItem('bchb_leads')||'[]');
+    const existing = leads.find(l=>l.email===email||l.phone===phone);
+    if(!existing){
+      leads.push({
+        id: Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+        fname:firstName, lname:lastName, phone, email,
+        address:'', value:price,
+        type: calcData.type==='house'?'Single Family':calcData.type==='condo'?'Condo':'Multi-Family',
+        status: calcData.timeline==='asap'?'hot':'warm',
+        callstatus:'notcalled', source:'website',
+        situation: calcData.situation||'',
+        kanbanDay:'unscheduled', notes:[], timeline:[{type:'created',msg:`Calculator lead — ${calcData.situation||'website'} — Asking $${price.toLocaleString()}`,ts:Date.now(),color:'#C9A96E'}],
+        created:Date.now(), lastContact:null,
+      });
+      localStorage.setItem('bchb_leads', JSON.stringify(leads));
+      const acts=JSON.parse(localStorage.getItem('bchb_activity')||'[]');
+      acts.unshift({msg:`Calculator lead: ${firstName} ${lastName} — $${price.toLocaleString()}`,color:'#C9A96E',ts:Date.now()});
+      localStorage.setItem('bchb_activity',JSON.stringify(acts.slice(0,60)));
+    }
+  }catch(err){}
+
+  // Hide form, show results
+  document.getElementById('calcContainer').style.display='none';
+  const results = document.getElementById('calc-results');
+  results.style.display='block';
+
+  // Animate numbers
+  const animNum = (el, target, prefix='$') => {
+    gsap.fromTo({val:0},{val:target},{
+      duration:2, ease:'power2.out',
+      onUpdate:function(){
+        el.textContent = prefix + Math.round(this.targets()[0].val).toLocaleString();
+      }
+    });
+  };
+
+  animNum(document.getElementById('cashOfferNum'), cashOffer);
+  animNum(document.getElementById('realtorSaleNum'), realtorNet);
+  animNum(document.getElementById('totalSavings'), savings);
+  document.getElementById('commissionCost').textContent = '-$'+commission.toLocaleString();
+  document.getElementById('repairCost').textContent = '-$'+repairs.toLocaleString();
+  document.getElementById('closingCost').textContent = '-$'+(closingCosts+holdingCosts).toLocaleString();
+  document.getElementById('repairsSaved').textContent = '$'+repairs.toLocaleString()+' saved';
+
+  gsap.from('#calc-results',{opacity:0,y:40,duration:0.8,ease:'power3.out'});
+}
+
+function resetCalc(){
+  Object.assign(calcData,{type:null,condition:null,timeline:null,situation:null,price:0});
+  document.getElementById('calcContainer').style.display='block';
+  document.getElementById('calc-results').style.display='none';
+  document.querySelectorAll('.calc-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step1').classList.add('active');
+  document.querySelectorAll('.step-option').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('.calc-step [disabled]').forEach(b=>{b.disabled=true;gsap.set(b,{opacity:0.4});});
+  updateStepDots(0);
+  document.getElementById('priceInput').value='';
+  document.getElementById('firstNameInput').value='';
+  document.getElementById('lastNameInput').value='';
+  document.getElementById('emailInput').value='';
+  document.getElementById('phoneInput').value='';
+  document.getElementById('step5error').style.display='none';
+}
+
+/* ── TESTIMONIALS CAROUSEL ──────────────────────────────── */
+function carousel(dir){
+  const track = document.getElementById('carouselTrack');
+  if(!track) return;
+  const cards = track.children.length;
+  const maxOffset = -(cards - 1) * CARD_W;
+  carouselOffset = Math.max(maxOffset, Math.min(0, carouselOffset - dir*CARD_W));
+  gsap.to(track,{x:carouselOffset,duration:0.7,ease:'power3.out'});
+}
+
+/* ── CONTACT FORM ───────────────────────────────────────── */
+function submitContact(e){
+  e.preventDefault();
+  const inputs = e.target.querySelectorAll('input,select,textarea');
+  const data = {};
+  inputs.forEach(i=>{ if(i.name||i.placeholder) data[i.placeholder||i.name]=i.value; });
+  // Push lead into CRM localStorage so it appears in crm.html instantly
+  try{
+    const leads = JSON.parse(localStorage.getItem('bchb_leads')||'[]');
+    const nameParts = (inputs[0]?.value+' '+inputs[1]?.value).trim().split(' ');
+    const lead = {
+      id: Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+      fname: inputs[0]?.value||'', lname: inputs[1]?.value||'',
+      phone: inputs[3]?.value||'', email: inputs[2]?.value||'',
+      address: inputs[4]?.value||'', value: 0,
+      type: '', status: 'warm', callstatus: 'notcalled',
+      source: 'website', situation: inputs[5]?.value||'',
+      kanbanDay: 'unscheduled', notes: [], timeline: [{type:'created',msg:'Lead submitted via website contact form',ts:Date.now(),color:'#C9A96E'}],
+      created: Date.now(), lastContact: null,
+    };
+    if(inputs[6]?.value) lead.notes.push({id:'n1',text:inputs[6].value,ts:Date.now()});
+    leads.push(lead);
+    localStorage.setItem('bchb_leads', JSON.stringify(leads));
+    // Log activity
+    const acts = JSON.parse(localStorage.getItem('bchb_activity')||'[]');
+    acts.unshift({msg:`Website form: new lead from ${lead.fname} ${lead.lname}`,color:'#C9A96E',ts:Date.now()});
+    localStorage.setItem('bchb_activity', JSON.stringify(acts.slice(0,60)));
+  }catch(err){}
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.textContent = '✓ Message Sent! We\'ll call you within 1 hour.';
+  btn.style.background = '#2a5a3a';
+  btn.disabled = true;
+}
+
+/* ── INIT ───────────────────────────────────────────────── */
+initHome();
+
+// ScrollTrigger refresh on page changes
+document.querySelectorAll('.page').forEach(pg=>{
+  const obs = new MutationObserver(()=>{
+    if(pg.classList.contains('active')) ScrollTrigger.refresh();
+  });
+  obs.observe(pg,{attributes:true,attributeFilter:['class']});
+});
+</script>
+</body>
+</html>
