@@ -1499,50 +1499,7 @@ input,select,textarea{font-family:var(--font)}
   </div>
   <div style="display:grid;grid-template-columns:80px 1fr;gap:0">
     <div id="dailyTimeCol" style="border-right:1px solid var(--border)"></div>
-    <div id="dailyEvents">
-      <div class="settings-panel" id="sp-appearance">
-        <div class="settings-section">
-          <h3>Appearance</h3>
-          <p>Choose an accent color for buttons, section titles, and highlights throughout the CRM.</p>
-        </div>
-        <div class="settings-section">
-          <h4 style="margin-bottom:8px">Accent Color</h4>
-          <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
-            <div>
-              <input type="color" class="accent-color-input" id="accentColorPicker"
-                value="#C9A96E" oninput="applyAccentColor(this.value)" />
-              <span class="accent-preview-label">Custom color</span>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:0.78rem;color:var(--gray);margin-bottom:8px;">Presets</div>
-              <div class="accent-swatch-row" id="accentSwatches">
-                <div class="accent-swatch" style="background:#C9A96E" title="Gold (default)" onclick="applyAccentColor('#C9A96E',this)"></div>
-                <div class="accent-swatch" style="background:#e05c2e" title="Burnt Orange" onclick="applyAccentColor('#e05c2e',this)"></div>
-                <div class="accent-swatch" style="background:#3b82f6" title="Blue" onclick="applyAccentColor('#3b82f6',this)"></div>
-                <div class="accent-swatch" style="background:#8b5cf6" title="Purple" onclick="applyAccentColor('#8b5cf6',this)"></div>
-                <div class="accent-swatch" style="background:#22c55e" title="Green" onclick="applyAccentColor('#22c55e',this)"></div>
-                <div class="accent-swatch" style="background:#ef4444" title="Red" onclick="applyAccentColor('#ef4444',this)"></div>
-                <div class="accent-swatch" style="background:#06b6d4" title="Cyan" onclick="applyAccentColor('#06b6d4',this)"></div>
-                <div class="accent-swatch" style="background:#f59e0b" title="Amber" onclick="applyAccentColor('#f59e0b',this)"></div>
-                <div class="accent-swatch" style="background:#ec4899" title="Pink" onclick="applyAccentColor('#ec4899',this)"></div>
-                <div class="accent-swatch" style="background:#ffffff" title="White" onclick="applyAccentColor('#ffffff',this)"></div>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-secondary btn-sm" onclick="applyAccentColor('#C9A96E')">↺ Reset to Default Gold</button>
-        </div>
-        <div class="settings-section">
-          <h4 style="margin-bottom:6px">Preview</h4>
-          <p style="font-size:0.82rem;color:var(--gray)">Changes apply instantly across the whole CRM — buttons, section titles, and highlights.</p>
-          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <button class="btn btn-primary" style="pointer-events:none">Primary Button</button>
-            <span style="color:var(--gold);font-size:0.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700">Section Title</span>
-            <span style="color:var(--gold)">Accent Text</span>
-          </div>
-        </div>
-      </div>
-
-</div>
+    <div id="dailyEvents"></div>
   </div>
 </div>
 
@@ -1853,19 +1810,19 @@ input,select,textarea{font-family:var(--font)}
           <button class="btn btn-ghost" style="width:100%" onclick="clearRoute()">✕ Clear All</button>
         </div>
       </div>
-      <!-- Right: Google Maps iframe -->
+      <!-- Right: Leaflet Map -->
       <div id="routeMapFrame" style="flex:1;min-height:500px;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--surface)">
-        <div id="rm-placeholder" class="sv-placeholder" style="display:flex">
+        <div id="rm-status-bar" class="rm-status" style="display:none">
+          <span id="rm-stop-count" class="rm-stop-badge mid">0 stops</span>
+          <span id="rm-route-info" style="color:var(--gray)"></span>
+          <span id="rm-geocode-log" class="rm-geocode-log"></span>
+        </div>
+        <div id="rm-leaflet" style="flex:1;min-height:0"></div>
+        <div id="rm-placeholder" class="sv-placeholder">
           <div class="sv-icon">🛣</div>
           <div style="font-size:1rem;font-weight:500">Route Map</div>
-          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Route.</p>
+          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route to map the route.</p>
         </div>
-        <iframe id="rm-gmap-frame"
-          style="display:none;flex:1;width:100%;border:none;min-height:0"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
       </div>
     </div>
   </div>
@@ -2898,105 +2855,148 @@ function getRouteAddresses(){
 /* ── Route Map — Google Maps Embed ── */
 
 function generateRoute(){
-  const {start, stops} = getRouteAddresses();
+  const {start, stops}=getRouteAddresses();
   if(!start){ alert('Please enter a start address.'); return; }
   if(!stops.length){ alert('Please add at least one stop.'); return; }
 
-  const apiKey = localStorage.getItem('bchb_maps_key') || '';
-  const frame = document.getElementById('rm-gmap-frame');
-  const placeholder = document.getElementById('rm-placeholder');
-  const all = [start, ...stops];
+  document.getElementById('rm-placeholder').style.display='none';
+  document.getElementById('rm-status-bar').style.display='flex';
+  document.getElementById('rm-geocode-log').textContent='Locating addresses…';
+  document.getElementById('rm-stop-count').textContent='Loading…';
 
-  let url = '';
-  if(apiKey){
-    // Maps Embed API v1 — directions mode
-    const origin = encodeURIComponent(start);
-    const destination = encodeURIComponent(stops[stops.length - 1]);
-    const waypoints = stops.length > 1
-      ? '&waypoints=' + stops.slice(0, -1).map(s => encodeURIComponent(s)).join('|')
-      : '';
-    url = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}&origin=${origin}&destination=${destination}${waypoints}&mode=driving`;
-  } else {
-    // Fallback: open-style embed (works for simple 2-point routes)
-    const saddr = encodeURIComponent(start);
-    const daddr = stops.map((s,i) => i===0 ? encodeURIComponent(s) : 'to:'+encodeURIComponent(s)).join('+');
-    url = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed`;
-  }
+  rmInitMap();
+  rmClearLayers();
+  setTimeout(()=>_rm.map.invalidateSize(),50);
 
-  frame.src = url;
-  frame.style.display = 'block';
-  if(placeholder) placeholder.style.display = 'none';
-
-  // Show API key hint if no key
-  var hint = document.getElementById('rm-key-hint');
-  if(!apiKey){
-    if(!hint){
-      hint = document.createElement('div');
-      hint.id = 'rm-key-hint';
-      hint.style.cssText = 'padding:8px 14px;background:rgba(201,169,110,.12);border-top:1px solid rgba(201,169,110,.3);font-size:0.76rem;color:var(--gold);text-align:center';
-      hint.innerHTML = '💡 Add a <strong>Maps API Key</strong> in Street View settings for full multi-stop routing';
-      document.getElementById('routeMapFrame').appendChild(hint);
+  const all=[start,...stops];
+  (async()=>{
+    const coords=[];
+    for(let i=0;i<all.length;i++){
+      document.getElementById('rm-geocode-log').textContent='Finding '+(i+1)+' of '+all.length+': '+all[i].split(',')[0]+'…';
+      const c=await rmGeocode(all[i]);
+      if(!c){ alert('Could not locate: '+all[i]+'\nTry adding city/state.'); document.getElementById('rm-geocode-log').textContent=''; return; }
+      coords.push(c);
+      await new Promise(r=>setTimeout(r,300));
     }
-  } else if(hint){ hint.remove(); }
 
-  renderStopNotes(all);
+    document.getElementById('rm-geocode-log').textContent='Drawing route…';
+
+    coords.forEach((c,i)=>{
+      const type=i===0?'start':(i===all.length-1?'end':'stop');
+      const label=i===0?'S':(i===all.length-1?'E':i);
+      rmAddMarker(c,all[i],label,type);
+    });
+
+    try{
+      const osrmCoords=coords.map(c=>c[1]+','+c[0]).join(';');
+      const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+osrmCoords+'?overview=full&geometries=geojson');
+      const d=await r.json();
+      if(d.routes&&d.routes[0]){
+        const line=L.geoJSON(d.routes[0].geometry,{style:{color:'var(--gold)',weight:4,opacity:0.85}}).addTo(_rm.map);
+        _rm.layers.push(line);
+        const dist=(d.routes[0].distance/1609.34).toFixed(1);
+        const dur=Math.round(d.routes[0].duration/60);
+        document.getElementById('rm-route-info').textContent=dist+' mi · ~'+dur+' min';
+      }
+    }catch(e){ console.warn('OSRM routing failed',e); }
+
+    const bounds=L.latLngBounds(coords);
+    _rm.map.fitBounds(bounds,{padding:[40,40]});
+    document.getElementById('rm-stop-count').textContent=all.length+' stop'+(all.length>1?'s':'');
+    document.getElementById('rm-geocode-log').textContent='Click any pin for notes';
+    document.getElementById('rm-stop-count').className='rm-stop-badge mid';
+  })();
 }
 
-function renderStopNotes(addresses){
-  // Remove old notes panel if present
-  var old = document.getElementById('rm-stop-notes');
-  if(old) old.remove();
+/* ── Leaflet core ── */
+let _rm={map:null,layers:[],markers:[]};
 
-  var frame = document.getElementById('routeMapFrame');
-  var wrap = document.createElement('div');
-  wrap.id = 'rm-stop-notes';
-  wrap.style.cssText = 'padding:14px 16px;background:var(--surface2);border-top:1px solid var(--border)';
+function rmInitMap(){
+  if(_rm.map) return;
+  const el=document.getElementById('rm-leaflet');
+  if(!el) return;
+  _rm.map=L.map(el,{center:[35.3733,-119.0187],zoom:12,zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>'
+  }).addTo(_rm.map);
+}
 
-  var title = document.createElement('div');
-  title.style.cssText = 'font-size:0.72rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:10px';
-  title.textContent = 'Stop Notes';
-  wrap.appendChild(title);
+function rmClearLayers(){
+  _rm.layers.forEach(l=>_rm.map.removeLayer(l));
+  _rm.markers.forEach(m=>_rm.map.removeLayer(m));
+  _rm.layers=[];_rm.markers=[];
+}
 
-  var grid = document.createElement('div');
-  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px';
+async function rmGeocode(addr){
+  const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr)+'&format=json&limit=1&countrycodes=us';
+  const r=await fetch(url,{headers:{'Accept-Language':'en-US'}});
+  const d=await r.json();
+  if(!d.length) return null;
+  return [parseFloat(d[0].lat),parseFloat(d[0].lon)];
+}
 
-  addresses.forEach(function(addr, i){
-    var note = getPinNote(addr);
-    var icon = i===0 ? '🏁' : i===addresses.length-1 ? '🏆' : '📍';
-
-    var cell = document.createElement('div');
-
-    var label = document.createElement('div');
-    label.style.cssText = 'font-size:0.73rem;color:var(--gray);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
-    label.title = addr;
-    label.textContent = icon + ' ' + addr;
-    cell.appendChild(label);
-
-    var ta = document.createElement('textarea');
-    ta.style.cssText = 'width:100%;background:var(--surface1);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:0.78rem;padding:6px 8px;resize:vertical;outline:none;box-sizing:border-box;min-height:58px;font-family:inherit';
-    ta.placeholder = 'Notes…';
-    ta.value = note;
-    ta.addEventListener('focus', function(){ this.style.borderColor = 'var(--gold)'; });
-    ta.addEventListener('blur',  function(){ this.style.borderColor = 'var(--border)'; });
-    ta.addEventListener('input', (function(a){ return function(){ savePinNote(a, this.value); }; })(addr));
-    cell.appendChild(ta);
-
-    grid.appendChild(cell);
+function rmMakeIcon(label,type){
+  const colors={start:'#22c55e',stop:'#C9A96E',end:'#ef4444'};
+  const c=colors[type]||colors.stop;
+  return L.divIcon({
+    className:'',iconSize:[34,44],iconAnchor:[17,44],popupAnchor:[0,-46],
+    html:'<div class="rm-pin-wrap"><div class="rm-pin-body '+type+'"><span class="rm-pin-num">'+label+'</span></div></div>'
   });
-
-  wrap.appendChild(grid);
-  frame.appendChild(wrap);
 }
 
 function savePinNote(addr,val){
   const notes=JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}');
-  notes[addr]=val;
-  localStorage.setItem('bchb_pin_notes',JSON.stringify(notes));
+  notes[addr]=val;localStorage.setItem('bchb_pin_notes',JSON.stringify(notes));
+  const el=document.getElementById('pn-saved-'+btoa(unescape(encodeURIComponent(addr))).replace(/[^a-z0-9]/gi,'').slice(0,12));
+  if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1500);}
 }
 
 function getPinNote(addr){
-  const notes=JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}');
-  return notes[addr]||'';
+  return (JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}')||{})[addr]||'';
+}
+
+function rmAddMarker(latlng,addr,label,type){
+  const icon=rmMakeIcon(label,type);
+  const safeId=btoa(unescape(encodeURIComponent(addr))).replace(/[^a-z0-9]/gi,'').slice(0,12);
+  const note=getPinNote(addr);
+  const typeLabel={start:'Starting Point',stop:'Stop '+label,end:'Final Stop'}[type]||'Stop';
+  const popup=L.popup({closeButton:true,maxWidth:280,minWidth:240,autoClose:false,closeOnClick:false})
+    .setContent('<div style="background:#1a1a1f;border-radius:12px;padding:14px;min-width:220px">'
+      +'<div style="font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:2px">'+addr+'</div>'
+      +'<div style="font-size:0.7rem;color:#888;margin-bottom:10px">'+typeLabel+'</div>'
+      +'<textarea id="pn-ta-'+safeId+'" placeholder="Add notes for this stop…" '
+      +'style="width:100%;background:#111;border:1px solid rgba(201,169,110,.3);border-radius:6px;'
+      +'color:#fff;font-size:0.78rem;padding:6px 8px;resize:vertical;outline:none;box-sizing:border-box;min-height:60px"'
+      +' oninput="savePinNote(''+addr.replace(/\/g,'\\').replace(/'/g,"\'")+'',(this.value))">'
+      +note+'</textarea>'
+      +'<div id="pn-saved-'+safeId+'" style="font-size:0.68rem;color:#22c55e;opacity:0;margin-top:4px;transition:opacity .3s">✓ Saved</div>'
+      +'</div>');
+  const marker=L.marker(latlng,{icon}).addTo(_rm.map);
+  marker.bindPopup(popup);
+  marker.on('click',function(){ if(this.isPopupOpen()) this.closePopup(); else this.openPopup(); });
+  _rm.markers.push(marker);
+  return marker;
+}
+
+function clearRoute(){
+  document.getElementById('rt-start').value='';
+  document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
+  if(_rm.map) rmClearLayers();
+  document.getElementById('rm-placeholder').style.display='flex';
+  document.getElementById('rm-status-bar').style.display='none';
+  document.getElementById('rm-route-info').textContent='';
+  document.getElementById('rm-geocode-log').textContent='';
+}
+
+function saveCurrentRoute(){
+  const {start,stops}=getRouteAddresses();
+  if(!start||stops.length===0){ alert('Generate a route first.'); return; }
+  const name=prompt('Name this route:','Route '+new Date().toLocaleDateString());
+  if(!name) return;
+  const routes=RouteDB.routes;
+  routes.unshift({id:uid(),name,start,stops,created:Date.now()});
+  RouteDB.routes=routes;
+  showToast('Route saved ✓');
 }
 
 function loadSavedRouteEmbed(id){
@@ -3011,28 +3011,6 @@ function loadSavedRouteEmbed(id){
     else{ addStop(); document.querySelectorAll('.rt-stop-row input')[i].value=s; }
   });
   generateRoute();
-}
-
-function saveCurrentRoute(){
-  const {start, stops}=getRouteAddresses();
-  if(!start||stops.length===0){ alert('Generate a route first.'); return; }
-  const name=prompt('Name this route:',`Route ${new Date().toLocaleDateString()}`);
-  if(!name) return;
-  const routes=RouteDB.routes;
-  routes.unshift({id:uid(), name, start, stops, created:Date.now()});
-  RouteDB.routes=routes;
-  alert('Route saved! View it in the Saved Routes tab.');
-}
-
-function clearRoute(){
-  document.getElementById('rt-start').value='';
-  document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
-  const frame=document.getElementById('rm-gmap-frame');
-  if(frame){ frame.src=''; frame.style.display='none'; }
-  const notes=document.getElementById('rm-stop-notes');
-  if(notes) notes.remove();
-  const ph=document.getElementById('rm-placeholder');
-  if(ph) ph.style.display='flex';
 }
 
 
@@ -3055,7 +3033,7 @@ function renderSavedRoutes(){
           <div style="font-size:0.75rem;color:var(--gray);margin-top:2px">${fmt(r.created)} · ${all.length} stops</div>
         </div>
         <div style="display:flex;gap:8px">
-          <a href="${mapsUrl}" target="_blank" class="btn btn-primary btn-sm">Open in Maps ↗</a>
+          <button class="btn btn-primary btn-sm" onclick="loadSavedRouteEmbed('${r.id}')">Load Route</button>
           <button class="btn btn-danger btn-sm" onclick="deleteRoute('${r.id}')">🗑</button>
         </div>
       </div>
