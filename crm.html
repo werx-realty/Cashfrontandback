@@ -650,6 +650,51 @@ input,select,textarea{font-family:var(--font)}
 .email-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+
+/* ═══ LEAD TASK MANAGER ═════════════════════════════════════════════════════ */
+.task-add-row{display:flex;gap:8px;margin-bottom:12px}
+.task-add-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--white);font-size:0.82rem;outline:none}
+.task-add-row input:focus{border-color:var(--gold)}
+.task-add-row input::placeholder{color:var(--gray)}
+.task-add-btn{padding:8px 14px;background:var(--gold);color:#0d0d0f;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.8rem;white-space:nowrap;transition:background .15s}
+.task-add-btn:hover{background:#b8935c}
+.task-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);margin-bottom:7px;transition:border-color .15s}
+.task-item.done-item{opacity:.6}
+.task-status-icon{font-size:1rem;cursor:pointer;flex-shrink:0;user-select:none}
+.task-text{flex:1;font-size:0.82rem;color:var(--white);line-height:1.4;word-break:break-word}
+.task-item.done-item .task-text{text-decoration:line-through;color:var(--gray)}
+.task-status-sel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:0.72rem;color:var(--gray);cursor:pointer;outline:none;max-width:100px;flex-shrink:0}
+.task-status-sel.sel-todo{border-color:var(--border);color:var(--gray)}
+.task-status-sel.sel-inprogress{border-color:var(--gold);color:var(--gold)}
+.task-status-sel.sel-done{border-color:var(--green);color:var(--green)}
+.task-del-btn{background:none;border:none;color:var(--gray);cursor:pointer;font-size:0.85rem;flex-shrink:0;opacity:.5;transition:opacity .15s}
+.task-del-btn:hover{opacity:1;color:#ef4444}
+.task-empty{font-size:0.78rem;color:var(--gray);text-align:center;padding:12px 0;opacity:.7}
+
+/* ═══ STATUS FILTER BUTTONS ════════════════════════════════════════════════ */
+.status-filter-btns{display:flex;gap:6px;align-items:center}
+.sfb{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--gray);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.sfb:hover{color:var(--white);border-color:var(--white)}
+.sfb.active{color:#0d0d0f;border-color:transparent}
+/* All — gold when active */
+.sfb[data-filter=""].active{background:var(--gold);border-color:var(--gold);color:#0d0d0f}
+/* Hot — red */
+.sfb-hot{color:var(--hot);border-color:rgba(255,90,90,0.35)}
+.sfb-hot:hover{border-color:var(--hot);background:rgba(255,90,90,0.08)}
+.sfb-hot.active{background:var(--hot)!important;border-color:var(--hot)!important;color:#fff!important}
+/* Warm — yellow */
+.sfb-warm{color:var(--warm);border-color:rgba(245,166,35,0.35)}
+.sfb-warm:hover{border-color:var(--warm);background:rgba(245,166,35,0.08)}
+.sfb-warm.active{background:var(--warm)!important;border-color:var(--warm)!important;color:#0d0d0f!important}
+/* Cold — blue */
+.sfb-cold{color:var(--cold);border-color:rgba(90,180,255,0.35)}
+.sfb-cold:hover{border-color:var(--cold);background:rgba(90,180,255,0.08)}
+.sfb-cold.active{background:var(--cold)!important;border-color:var(--cold)!important;color:#0d0d0f!important}
+/* New button — green */
+.sfb-new{color:#22c55e;border-color:rgba(34,197,94,0.35)}
+.sfb-new:hover{border-color:#22c55e;background:rgba(34,197,94,0.08)}
+.sfb-new.active{background:#22c55e!important;border-color:#22c55e!important;color:#0d0d0f!important}
+
 </style>
 </head>
 <body>
@@ -789,6 +834,13 @@ input,select,textarea{font-family:var(--font)}
   <div class="topbar">
     <div class="page-title">Leads <span>Management</span></div>
     <div class="topbar-actions">
+      <div class="status-filter-btns" id="statusFilterBtns">
+        <button class="sfb active" data-filter="" onclick="setLeadsFilter('',this)">All</button>
+        <button class="sfb sfb-new"  data-filter="new"  onclick="setLeadsFilter('new',this)">✨ New</button>
+        <button class="sfb sfb-hot"  data-filter="hot"  onclick="setLeadsFilter('hot',this)">🔥 Hot</button>
+        <button class="sfb sfb-warm" data-filter="warm" onclick="setLeadsFilter('warm',this)">🌤 Warm</button>
+        <button class="sfb sfb-cold" data-filter="cold" onclick="setLeadsFilter('cold',this)">❄ Cold</button>
+      </div>
       <button class="btn btn-primary btn-sm" onclick="showView('add-lead')">+ Add Lead</button>
     </div>
   </div>
@@ -1059,6 +1111,14 @@ input,select,textarea{font-family:var(--font)}
         </div>
       </div>
       <div class="card" style="padding:20px">
+        <div class="detail-section-title">Property Tasks</div>
+        <div class="task-add-row">
+          <input type="text" id="task-input" placeholder="Add a task for this property…" onkeydown="if(event.key==='Enter')addLeadTask()"/>
+          <button class="task-add-btn" onclick="addLeadTask()">+ Add</button>
+        </div>
+        <div id="task-list"></div>
+      </div>
+      <div class="card" style="padding:20px">
         <div class="detail-section-title">Activity Timeline</div>
         <div id="timeline-list" style="max-height:400px;overflow-y:auto"></div>
       </div>
@@ -1159,8 +1219,20 @@ input,select,textarea{font-family:var(--font)}
         <div id="sv-lead-list" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
       </div>
       <div class="card" style="padding:16px;background:var(--gold-glow);border-color:rgba(201,169,110,0.2)">
-        <div style="font-size:0.75rem;color:var(--gold);margin-bottom:6px">💡 Tip</div>
-        <p style="font-size:0.78rem;color:var(--gray);line-height:1.6">Click any lead address to instantly open Street View for that property. Zoom in to inspect the exterior condition before making an offer.</p>
+        <div style="font-size:0.75rem;color:var(--gold);margin-bottom:8px">🔑 Enable Full Street View (Pegman)</div>
+        <p style="font-size:0.76rem;color:var(--gray);line-height:1.55;margin-bottom:10px">Add a free Google Maps API key to unlock the draggable pegman and full Street View experience.</p>
+        <div style="font-size:0.7rem;color:var(--gray);margin-bottom:6px;line-height:1.5">
+          1. <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">console.cloud.google.com</a><br>
+          2. Enable <strong style="color:var(--white)">Maps Embed API</strong><br>
+          3. Credentials → Create API Key<br>
+          4. Restrict to: <strong style="color:var(--white)">cashfrontandback.vercel.app</strong>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <input id="sv-api-key-input" type="text" placeholder="Paste API key here…"
+            style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 9px;color:var(--white);font-size:0.75rem;outline:none"/>
+          <button onclick="saveSvApiKey()" style="padding:6px 10px;background:var(--gold);color:#0d0d0f;border:none;border-radius:6px;font-size:0.75rem;font-weight:700;cursor:pointer">Save</button>
+        </div>
+        <div id="sv-key-status" style="font-size:0.72rem;margin-top:6px;display:none"></div>
       </div>
     </div>
     <div class="sv-frame" id="svFrame">
@@ -1599,14 +1671,30 @@ function refreshDashboard(){ renderDashboard(); }
 /* ══════════════════════════════════════════════════════
    LEADS TABLE
 ══════════════════════════════════════════════════════ */
+function setLeadsFilter(val, btn){
+  window.leadsStatusFilter = val;
+  document.querySelectorAll('.sfb').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderLeads();
+}
+
 function renderLeads(){
   const q=(document.getElementById('leadSearch')?.value||'').toLowerCase();
-  const fs=document.getElementById('filterStatus')?.value||'';
+  const fs=window.leadsStatusFilter||document.getElementById('filterStatus')?.value||'';
   const fc=document.getElementById('filterCall')?.value||'';
   const fsrc=document.getElementById('filterSource')?.value||'';
+  const TEN_DAYS=10*24*60*60*1000;
   let leads=[...DB.leads];
   if(q) leads=leads.filter(l=>(l.fname+l.lname+l.phone+l.address).toLowerCase().includes(q));
-  if(fs) leads=leads.filter(l=>l.status===fs);
+  if(fs==='new'){
+    // New = created within last 10 days OR never contacted (no call, no lastContact)
+    leads=leads.filter(l=>
+      (Date.now()-l.created <= TEN_DAYS) ||
+      (l.callstatus==='notcalled' && !l.lastContact)
+    );
+  } else if(fs){
+    leads=leads.filter(l=>l.status===fs);
+  }
   if(fc) leads=leads.filter(l=>l.callstatus===fc);
   if(fsrc) leads=leads.filter(l=>l.source===fsrc);
   leads.sort((a,b)=>b.created-a.created);
@@ -1708,6 +1796,7 @@ function clearAddForm(){
 ══════════════════════════════════════════════════════ */
 function openLead(id){
   currentLeadId=id;
+  window._openLeadId=id;
   const lead=DB.leads.find(l=>l.id===id);
   if(!lead)return;
   document.getElementById('detail-title').innerHTML=`${lead.fname} <span>${lead.lname}</span>`;
@@ -1735,7 +1824,7 @@ function openLead(id){
   const now=new Date();
   document.getElementById('d-calldate').value=now.toISOString().split('T')[0];
   document.getElementById('d-calltime').value=now.toTimeString().slice(0,5);
-  renderNotes(lead); renderTimeline(lead);
+  renderNotes(lead); renderTimeline(lead); renderLeadTasks(id);
   showView('lead-detail');
 }
 
@@ -1952,62 +2041,91 @@ function saveEvent(){
 /* ══════════════════════════════════════════════════════
    STREET VIEW
 ══════════════════════════════════════════════════════ */
+function saveSvApiKey(){
+  const val=document.getElementById('sv-api-key-input').value.trim();
+  const st=document.getElementById('sv-key-status');
+  if(!val){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='Please paste your API key first.'; return; }
+  localStorage.setItem('bchb_maps_key', val);
+  st.style.display='block'; st.style.color='var(--green)'; st.textContent='✓ Key saved! Enter an address and click Open Street View.';
+}
+
 function loadStreetView(addr){
   const a=addr||document.getElementById('sv-address').value.trim();
   if(!a)return;
   const frame=document.getElementById('svFrame');
   const full=a.includes('Bakersfield')?a:a+', Bakersfield CA';
   const enc=encodeURIComponent(full);
-  // Map embed URL (no street view layer — clean map)
-  const mapUrl='https://maps.google.com/maps?q='+enc+'&output=embed&z=16';
-  // Street view overlay URL — full Google Maps interface with pegman
-  const svUrl='https://www.google.com/maps?q='+enc+'&layer=c&output=embed&z=16';
-  frame.innerHTML=`
-    <div style="display:flex;flex-direction:column;height:100%">
-      <div style="background:var(--surface2);padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap">
-        <span style="font-size:1rem">📍</span>
-        <span style="font-size:0.82rem;color:var(--white);font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a}</span>
-        <div style="display:flex;gap:6px;flex-shrink:0">
-          <button id="sv-mode-map" onclick="svSetMode('map','${enc}')"
-            style="padding:5px 12px;border-radius:6px;border:1px solid var(--gold);background:var(--gold);color:#0d0d0f;font-size:0.76rem;font-weight:600;cursor:pointer">
-            🗺 Map
-          </button>
-          <button id="sv-mode-sv" onclick="svSetMode('sv','${enc}')"
-            style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:0.76rem;font-weight:600;cursor:pointer">
-            🧍 Street View
-          </button>
+  const apiKey=localStorage.getItem('bchb_maps_key')||'';
+
+  // Populate API key input if already saved
+  const keyInput=document.getElementById('sv-api-key-input');
+  if(keyInput && apiKey && !keyInput.value) keyInput.value=apiKey;
+
+  if(apiKey){
+    // Full Street View with draggable pegman via Maps Embed API v1
+    const svEmbedUrl=`https://www.google.com/maps/embed/v1/streetview?key=${apiKey}&location=${enc}&heading=0&pitch=0&fov=90`;
+    const mapEmbedUrl=`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${enc}&zoom=16`;
+    frame.innerHTML=`
+      <div style="display:flex;flex-direction:column;height:100%">
+        <div style="background:var(--surface2);padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap">
+          <span style="font-size:1rem">📍</span>
+          <span style="font-size:0.82rem;color:var(--white);font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a}</span>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button id="sv-mode-map" onclick="svSetMode('map','${enc}','${apiKey}')"
+              style="padding:5px 12px;border-radius:6px;border:1px solid var(--gold);background:var(--gold);color:#0d0d0f;font-size:0.76rem;font-weight:600;cursor:pointer">
+              🗺 Map
+            </button>
+            <button id="sv-mode-sv" onclick="svSetMode('sv','${enc}','${apiKey}')"
+              style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:0.76rem;font-weight:600;cursor:pointer">
+              🧍 Street View
+            </button>
+          </div>
         </div>
-      </div>
-      <div id="sv-tip" style="background:rgba(201,169,110,0.08);border-bottom:1px solid rgba(201,169,110,0.2);padding:7px 16px;font-size:0.76rem;color:var(--gold);flex-shrink:0;display:none">
-        🧍 <strong>Street View active</strong> — look for the small yellow person icon in the <strong>bottom-right</strong> corner of the map. Drag it onto any street to walk that block.
-      </div>
-      <iframe id="sv-iframe"
-        src="${mapUrl}"
-        style="flex:1;border:none;width:100%;min-height:0"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        title="Street View: ${a}">
-      </iframe>
-    </div>`;
+        <iframe id="sv-iframe"
+          src="${mapEmbedUrl}"
+          style="flex:1;border:none;width:100%;min-height:0"
+          allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Map: ${a}">
+        </iframe>
+      </div>`;
+  } else {
+    // No API key — show map embed with street view layer + instructions
+    const mapUrl='https://maps.google.com/maps?q='+enc+'&output=embed&z=16';
+    frame.innerHTML=`
+      <div style="display:flex;flex-direction:column;height:100%">
+        <div style="background:var(--surface2);padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap">
+          <span style="font-size:1rem">📍</span>
+          <span style="font-size:0.82rem;color:var(--white);font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a}</span>
+        </div>
+        <div style="background:rgba(201,169,110,0.08);border-bottom:1px solid rgba(201,169,110,0.2);padding:8px 16px;font-size:0.76rem;color:var(--gold);flex-shrink:0">
+          ⚠️ Add a free Maps API key in the sidebar to unlock the draggable 🧍 pegman & full Street View.
+        </div>
+        <iframe id="sv-iframe"
+          src="${mapUrl}"
+          style="flex:1;border:none;width:100%;min-height:0"
+          allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Map: ${a}">
+        </iframe>
+      </div>`;
+  }
 }
 
-function svSetMode(mode, enc){
+function svSetMode(mode, enc, apiKey){
   const iframe=document.getElementById('sv-iframe');
   const btnMap=document.getElementById('sv-mode-map');
   const btnSV=document.getElementById('sv-mode-sv');
-  const tip=document.getElementById('sv-tip');
-  if(!iframe||!btnMap||!btnSV) return;
+  if(!iframe) return;
+  const activeStyle='var(--gold)'; const inactiveBg='transparent';
   if(mode==='map'){
-    iframe.src='https://maps.google.com/maps?q='+enc+'&output=embed&z=16';
-    btnMap.style.background='var(--gold)'; btnMap.style.color='#0d0d0f'; btnMap.style.borderColor='var(--gold)';
-    btnSV.style.background='transparent'; btnSV.style.color='var(--gray)'; btnSV.style.borderColor='var(--border)';
-    tip.style.display='none';
+    iframe.src=`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${enc}&zoom=16`;
+    btnMap.style.cssText='padding:5px 12px;border-radius:6px;border:1px solid var(--gold);background:var(--gold);color:#0d0d0f;font-size:0.76rem;font-weight:600;cursor:pointer';
+    btnSV.style.cssText='padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:0.76rem;font-weight:600;cursor:pointer';
   } else {
-    iframe.src='https://maps.google.com/maps?q='+enc+'&output=embed&layer=c&z=16';
-    btnSV.style.background='var(--gold)'; btnSV.style.color='#0d0d0f'; btnSV.style.borderColor='var(--gold)';
-    btnMap.style.background='transparent'; btnMap.style.color='var(--gray)'; btnMap.style.borderColor='var(--border)';
-    tip.style.display='block';
+    iframe.src=`https://www.google.com/maps/embed/v1/streetview?key=${apiKey}&location=${enc}&heading=0&pitch=0&fov=90`;
+    btnSV.style.cssText='padding:5px 12px;border-radius:6px;border:1px solid var(--gold);background:var(--gold);color:#0d0d0f;font-size:0.76rem;font-weight:600;cursor:pointer';
+    btnMap.style.cssText='padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--gray);font-size:0.76rem;font-weight:600;cursor:pointer';
   }
 }
 function renderStreetViewLeads(){
@@ -2017,6 +2135,84 @@ function renderStreetViewLeads(){
       <div style="font-size:0.82rem;font-weight:500">${l.fname} ${l.lname}</div>
       <div style="font-size:0.73rem;color:var(--gray);margin-top:2px">${l.address.split(',')[0]}</div>
     </div>`).join('')||'<p style="color:var(--gray);font-size:0.8rem">No leads yet</p>';
+}
+
+
+/* ══════════════════════════════════════════════════════
+   LEAD TASK MANAGER
+══════════════════════════════════════════════════════ */
+function renderLeadTasks(leadId){
+  const lead=DB.leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  lead.tasks=lead.tasks||[];
+  const el=document.getElementById('task-list');
+  if(!el) return;
+  if(!lead.tasks.length){
+    el.innerHTML='<div class="task-empty">No tasks yet — add one above</div>';
+    return;
+  }
+  const statusIcon={'todo':'⬜','inprogress':'🔄','done':'✅'};
+  el.innerHTML=lead.tasks.map(t=>`
+    <div class="task-item${t.status==='done'?' done-item':''}" id="taskrow-${t.id}">
+      <span class="task-status-icon" onclick="cycleTaskStatus('${leadId}','${t.id}')" title="Click to cycle status">${statusIcon[t.status]||'⬜'}</span>
+      <span class="task-text">${escapeHTML(t.text)}</span>
+      <select class="task-status-sel sel-${t.status}" onchange="updateTaskStatus('${leadId}','${t.id}',this.value)">
+        <option value="todo"${t.status==='todo'?' selected':''}>To Do</option>
+        <option value="inprogress"${t.status==='inprogress'?' selected':''}>In Progress</option>
+        <option value="done"${t.status==='done'?' selected':''}>Done</option>
+      </select>
+      <button class="task-del-btn" onclick="deleteLeadTask('${leadId}','${t.id}')" title="Remove task">✕</button>
+    </div>`).join('');
+}
+
+function escapeHTML(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function addLeadTask(){
+  const input=document.getElementById('task-input');
+  const text=(input?.value||'').trim();
+  if(!text) return;
+  const leadId=window._openLeadId;
+  if(!leadId) return;
+  const leads=DB.leads;
+  const lead=leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  lead.tasks=lead.tasks||[];
+  lead.tasks.push({id:uid(), text, status:'todo', created:Date.now()});
+  DB.leads=leads;
+  input.value='';
+  renderLeadTasks(leadId);
+}
+
+function updateTaskStatus(leadId, taskId, status){
+  const leads=DB.leads;
+  const lead=leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  const task=(lead.tasks||[]).find(t=>t.id===taskId);
+  if(!task) return;
+  task.status=status;
+  DB.leads=leads;
+  renderLeadTasks(leadId);
+}
+
+function cycleTaskStatus(leadId, taskId){
+  const cycle=['todo','inprogress','done'];
+  const leads=DB.leads;
+  const lead=leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  const task=(lead.tasks||[]).find(t=>t.id===taskId);
+  if(!task) return;
+  task.status=cycle[(cycle.indexOf(task.status)+1)%cycle.length];
+  DB.leads=leads;
+  renderLeadTasks(leadId);
+}
+
+function deleteLeadTask(leadId, taskId){
+  const leads=DB.leads;
+  const lead=leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  lead.tasks=(lead.tasks||[]).filter(t=>t.id!==taskId);
+  DB.leads=leads;
+  renderLeadTasks(leadId);
 }
 
 /* ══════════════════════════════════════════════════════
