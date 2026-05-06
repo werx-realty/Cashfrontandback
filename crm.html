@@ -1764,6 +1764,48 @@ input,select,textarea{font-family:var(--font)}
 
       </div><!-- /sp-gcal -->
 
+      <div class="settings-panel" id="sp-appearance">
+        <div class="settings-section">
+          <h3>Appearance</h3>
+          <p>Choose an accent color for buttons, section titles, and highlights throughout the CRM.</p>
+        </div>
+        <div class="settings-section">
+          <h4 style="margin-bottom:8px">Accent Color</h4>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+            <div>
+              <input type="color" class="accent-color-input" id="accentColorPicker"
+                value="#C9A96E" oninput="applyAccentColor(this.value)" />
+              <span class="accent-preview-label">Custom color</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:0.78rem;color:var(--gray);margin-bottom:8px;">Presets</div>
+              <div class="accent-swatch-row" id="accentSwatches">
+                <div class="accent-swatch" style="background:#C9A96E" title="Gold (default)" onclick="applyAccentColor('#C9A96E',this)"></div>
+                <div class="accent-swatch" style="background:#e05c2e" title="Burnt Orange" onclick="applyAccentColor('#e05c2e',this)"></div>
+                <div class="accent-swatch" style="background:#3b82f6" title="Blue" onclick="applyAccentColor('#3b82f6',this)"></div>
+                <div class="accent-swatch" style="background:#8b5cf6" title="Purple" onclick="applyAccentColor('#8b5cf6',this)"></div>
+                <div class="accent-swatch" style="background:#22c55e" title="Green" onclick="applyAccentColor('#22c55e',this)"></div>
+                <div class="accent-swatch" style="background:#ef4444" title="Red" onclick="applyAccentColor('#ef4444',this)"></div>
+                <div class="accent-swatch" style="background:#06b6d4" title="Cyan" onclick="applyAccentColor('#06b6d4',this)"></div>
+                <div class="accent-swatch" style="background:#f59e0b" title="Amber" onclick="applyAccentColor('#f59e0b',this)"></div>
+                <div class="accent-swatch" style="background:#ec4899" title="Pink" onclick="applyAccentColor('#ec4899',this)"></div>
+                <div class="accent-swatch" style="background:#ffffff" title="White" onclick="applyAccentColor('#ffffff',this)"></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="applyAccentColor('#C9A96E')">↺ Reset to Default Gold</button>
+        </div>
+        <div class="settings-section">
+          <h4 style="margin-bottom:6px">Preview</h4>
+          <p style="font-size:0.82rem;color:var(--gray)">Changes apply instantly across the whole CRM — buttons, section titles, and highlights.</p>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-primary" style="pointer-events:none">Primary Button</button>
+            <span style="color:var(--gold);font-size:0.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700">Section Title</span>
+            <span style="color:var(--gold)">Accent Text</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -2860,18 +2902,44 @@ function generateRoute(){
   if(!start){ alert('Please enter a start address.'); return; }
   if(!stops.length){ alert('Please add at least one stop.'); return; }
 
-  const saddr = encodeURIComponent(start);
-  const daddr = stops.map((s,i) => i===0 ? encodeURIComponent(s) : 'to:'+encodeURIComponent(s)).join('+');
-  const url = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed&dirflg=d`;
-
+  const apiKey = localStorage.getItem('bchb_maps_key') || '';
   const frame = document.getElementById('rm-gmap-frame');
   const placeholder = document.getElementById('rm-placeholder');
+  const all = [start, ...stops];
+
+  let url = '';
+  if(apiKey){
+    // Maps Embed API v1 — directions mode
+    const origin = encodeURIComponent(start);
+    const destination = encodeURIComponent(stops[stops.length - 1]);
+    const waypoints = stops.length > 1
+      ? '&waypoints=' + stops.slice(0, -1).map(s => encodeURIComponent(s)).join('|')
+      : '';
+    url = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}&origin=${origin}&destination=${destination}${waypoints}&mode=driving`;
+  } else {
+    // Fallback: open-style embed (works for simple 2-point routes)
+    const saddr = encodeURIComponent(start);
+    const daddr = stops.map((s,i) => i===0 ? encodeURIComponent(s) : 'to:'+encodeURIComponent(s)).join('+');
+    url = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed`;
+  }
+
   frame.src = url;
   frame.style.display = 'block';
   if(placeholder) placeholder.style.display = 'none';
 
-  // Render stop notes below the map
-  renderStopNotes([start, ...stops]);
+  // Show API key hint if no key
+  var hint = document.getElementById('rm-key-hint');
+  if(!apiKey){
+    if(!hint){
+      hint = document.createElement('div');
+      hint.id = 'rm-key-hint';
+      hint.style.cssText = 'padding:8px 14px;background:rgba(201,169,110,.12);border-top:1px solid rgba(201,169,110,.3);font-size:0.76rem;color:var(--gold);text-align:center';
+      hint.innerHTML = '💡 Add a <strong>Maps API Key</strong> in Street View settings for full multi-stop routing';
+      document.getElementById('routeMapFrame').appendChild(hint);
+    }
+  } else if(hint){ hint.remove(); }
+
+  renderStopNotes(all);
 }
 
 function renderStopNotes(addresses){
