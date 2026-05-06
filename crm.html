@@ -4530,39 +4530,58 @@ const PI_PROXY = (
 const PI_BASE = 'https://maps.co.kern.ca.us/arcgis/rest/services';
 
 // Cached working service path (discovered at runtime)
-let piWorkingPath = localStorage.getItem('bchb_pi_service_path') || null;
+// Clear stale cached path so we rediscover with the correct paths
+const _cachedPath = localStorage.getItem('bchb_pi_service_path');
+// Invalidate any old guesses that were wrong
+const _validPaths = ['/Assessor/Assessor_Public/MapServer/2','/Assessor/Assessor_Public/MapServer/3','/Accela_Base/MapServer/0'];
+if(_cachedPath && !_validPaths.includes(_cachedPath)){
+  localStorage.removeItem('bchb_pi_service_path');
+}
+let piWorkingPath = _validPaths.includes(_cachedPath) ? _cachedPath : null;
 
+// Correct Kern County GIS service paths — confirmed via maps.co.kern.ca.us ArcGIS REST directory
 const PI_SERVICE_CANDIDATES = [
+  '/Assessor/Assessor_Public/MapServer/2',   // ✅ Parcels Land (confirmed)
+  '/Assessor/Assessor_Public/MapServer/3',   // ✅ Parcels Mineral (confirmed)
+  '/Accela_Base/MapServer/0',                // ✅ Accela base parcels
+  '/Accela_Base/MapServer/1',
+  '/Assessor/Assessor_Public/FeatureServer/2',
+  '/Assessor/Assessor_Public/FeatureServer/0',
   '/PUBLIC/Parcels/MapServer/0',
   '/PUBLIC/Parcels/FeatureServer/0',
-  '/Assessor/Parcel/MapServer/0',
-  '/Assessor/Parcel/FeatureServer/0',
-  '/PUBLIC/KernCountyParcels/MapServer/0',
   '/Parcels/MapServer/0',
   '/PUBLIC/Assessor/MapServer/0',
-  '/Assessor/Assessment/MapServer/0',
-  '/PUBLIC/ParcelQuery/MapServer/0',
-  '/PUBLIC/Property/MapServer/0',
 ];
 
 // Build all query string variants to try
+// Field names confirmed for Kern County Assessor_Public service:
+// APN, SITUS_ADD (address), ASSESSEE_NAME (owner), NET_AV (value), LAND_AV, IMPR_AV
 function piWhereVariants(type, q){
   const u = q.toUpperCase();
   const street = u.split(',')[0].trim(); // just street part
   if(type==='apn') return [
-    `APN='${u}'`, `APN LIKE '%${u}%'`, `PARCEL_NO='${u}'`, `PARCEL_NO LIKE '%${u}%'`,
+    `APN='${u}'`, `APN LIKE '%${u}%'`,
+    `PARCEL_NO='${u}'`, `PARCEL_NO LIKE '%${u}%'`,
     `APNNO='${u}'`, `ASSESSOR_PARCEL_NUMBER LIKE '%${u}%'`
   ];
   if(type==='owner') return [
-    `OWNER_NAME LIKE '%${u}%'`, `ASSESSEE_NAME LIKE '%${u}%'`,
-    `OWNER LIKE '%${u}%'`, `TAXPAYER_NAME LIKE '%${u}%'`, `NAME LIKE '%${u}%'`
+    `ASSESSEE_NAME LIKE '%${u}%'`,   // Kern County Assessor field
+    `OWNER_NAME LIKE '%${u}%'`,
+    `OWNER LIKE '%${u}%'`,
+    `TAXPAYER_NAME LIKE '%${u}%'`,
+    `NAME LIKE '%${u}%'`
   ];
-  // address — try full and street-only
+  // address — Kern County Assessor uses SITUS_ADD (truncated) or SITUS_ADDR
   return [
-    `SITUS_ADDRESS LIKE '%${street}%'`, `SITUS_ADDR LIKE '%${street}%'`,
-    `SITE_ADDRESS LIKE '%${street}%'`, `STREET_ADDRESS LIKE '%${street}%'`,
-    `ADDRESS LIKE '%${street}%'`, `PROP_ADDR LIKE '%${street}%'`,
-    `FULL_ADDRESS LIKE '%${street}%'`, `SITUS LIKE '%${street}%'`
+    `SITUS_ADD LIKE '%${street}%'`,      // ✅ confirmed Kern County field
+    `SITUS_ADDR LIKE '%${street}%'`,
+    `SITUS_ADDRESS LIKE '%${street}%'`,
+    `SITE_ADDRESS LIKE '%${street}%'`,
+    `STREET_ADDRESS LIKE '%${street}%'`,
+    `ADDRESS LIKE '%${street}%'`,
+    `PROP_ADDR LIKE '%${street}%'`,
+    `FULL_ADDRESS LIKE '%${street}%'`,
+    `SITUS LIKE '%${street}%'`
   ];
 }
 
@@ -4624,15 +4643,19 @@ async function piQueryParcels(city, maxRecords){
 }
 
 function piNormalizeFeature(attrs, idx){
+  // Kern County Assessor_Public/MapServer/2 field names confirmed via GIS portal:
+  // APN, SITUS_ADD, ASSESSEE_NAME, NET_AV, LAND_AV, IMPR_AV, SITUS_CTY, USE_CD
   const apn   = attrs.APN || attrs.PARCEL_NO || attrs.APNNO || '';
-  const addr  = attrs.SITUS_ADDRESS || attrs.SITUS_ADDR || attrs.STREET_ADDRESS || 'Unknown Address';
-  const owner = attrs.OWNER_NAME || attrs.OWNER || attrs.ASSESSEE_NAME || 'Unknown Owner';
-  const city  = attrs.SITUS_CITY || attrs.CITY || 'Bakersfield';
-  const zip   = attrs.ZIP || attrs.SITUS_ZIP || '';
-  const land  = parseFloat(attrs.ASSESSED_LAND || attrs.ASSMT_LAND || attrs.LAND_VALUE || 0);
-  const impr  = parseFloat(attrs.ASSESSED_IMPV || attrs.ASSMT_IMPS || attrs.IMPR_VALUE || 0);
-  const total = parseFloat(attrs.ASSESSED_TOTAL || attrs.ASSMT_TOTAL || attrs.TOTAL_VALUE || 0) || land + impr;
-  const use   = attrs.LAND_USE_CODE || attrs.LAND_USE || attrs.USE_CODE || '';
+  const addr  = attrs.SITUS_ADD || attrs.SITUS_ADDR || attrs.SITUS_ADDRESS ||
+                attrs.STREET_ADDRESS || attrs.ADDRESS || 'Unknown Address';
+  const owner = attrs.ASSESSEE_NAME || attrs.OWNER_NAME || attrs.OWNER ||
+                attrs.TAXPAYER_NAME || 'Unknown Owner';
+  const city  = attrs.SITUS_CTY || attrs.SITUS_CITY || attrs.CITY || 'Bakersfield';
+  const zip   = attrs.ZIP_CODE || attrs.SITUS_ZIP || attrs.ZIP || '';
+  const land  = parseFloat(attrs.LAND_AV || attrs.LAND_VALUE || attrs.ASSESSED_LAND || attrs.ASSMT_LAND || 0);
+  const impr  = parseFloat(attrs.IMPR_AV || attrs.IMPR_VALUE || attrs.ASSESSED_IMPV || attrs.ASSMT_IMPS || 0);
+  const total = parseFloat(attrs.NET_AV || attrs.ASSESSED_TOTAL || attrs.ASSMT_TOTAL || attrs.TOTAL_VALUE || 0) || land + impr;
+  const use   = attrs.USE_CD || attrs.USE_CODE || attrs.LAND_USE_CODE || attrs.LAND_USE || '';
 
   const prop = {
     id: 'pi_' + (apn || idx + '_' + Date.now()),
