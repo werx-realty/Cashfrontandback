@@ -1956,16 +1956,22 @@ function loadStreetView(addr){
   const a=addr||document.getElementById('sv-address').value.trim();
   if(!a)return;
   const frame=document.getElementById('svFrame');
-  const encoded=encodeURIComponent(a+', Bakersfield CA');
-  // Use Google Maps embed (no API key required) with street view layer
+  const encodedSV=encodeURIComponent(a.includes('Bakersfield')?a:a+', Bakersfield CA');
   frame.innerHTML=`
     <div style="display:flex;flex-direction:column;height:100%">
       <div style="background:var(--surface2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0">
-        <span style="font-size:0.8rem;color:var(--gray)">📍 ${a}</span>
-        <a href="https://www.google.com/maps/search/${encoded}" target="_blank" class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:0.75rem">Open in Google Maps ↗</a>
-        <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${encoded}" target="_blank" class="btn btn-primary btn-sm" style="font-size:0.75rem">Street View ↗</a>
+        <span style="font-size:1rem">📍</span>
+        <span style="font-size:0.82rem;color:var(--white);font-weight:500">${a}</span>
+        <span style="font-size:0.75rem;color:var(--gray);margin-left:auto">Drag the 🧍 figure onto any street inside the map to enter Street View</span>
       </div>
-      <iframe src="https://maps.google.com/maps?q=${encoded}&output=embed&layer=c" style="flex:1;border:none;width:100%" allowfullscreen loading="lazy" title="Map: ${a}"></iframe>
+      <iframe
+        src="https://maps.google.com/maps?q=${encodedSV}&output=embed&layer=c&z=18"
+        style="flex:1;border:none;width:100%"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Street View: ${a}">
+      </iframe>
     </div>`;
 }
 function renderStreetViewLeads(){
@@ -2130,36 +2136,45 @@ function generateRoute(){
   if(!start){ alert('Please enter a start address.'); return; }
   if(stops.length===0){ alert('Please add at least one stop.'); return; }
 
-  // Build Google Maps directions URL
+  // Embed directions directly — no new tab needed
   const all=[start,...stops];
-  const mapsUrl='https://www.google.com/maps/dir/'+all.map(a=>encodeURIComponent(a)).join('/');
-
-  // Show in frame with open-in-maps button + embedded map of first stop
   const frame=document.getElementById('routeMapFrame');
-  const encoded=encodeURIComponent(all.join(' to '));
+  const saddr=encodeURIComponent(start);
+  const daddr=stops.map((s,i)=>i===0?encodeURIComponent(s):'to:'+encodeURIComponent(s)).join('+');
+  const embedUrl='https://maps.google.com/maps?saddr='+saddr+'&daddr='+daddr+'&output=embed';
+
   frame.innerHTML=`
     <div style="display:flex;flex-direction:column;height:100%">
       <div style="background:var(--surface2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0;flex-wrap:wrap">
-        <span style="font-size:0.8rem;color:var(--gold);font-weight:600">${all.length} stops</span>
+        <span style="font-size:0.9rem">🏁</span>
+        <span style="font-size:0.82rem;color:var(--gold);font-weight:600">${all.length} stops</span>
         <span style="font-size:0.78rem;color:var(--gray)">${start} → ${stops[stops.length-1]}</span>
-        <a href="${mapsUrl}" target="_blank" class="btn btn-primary btn-sm" style="margin-left:auto;font-size:0.78rem">🗺 Open Full Route in Google Maps ↗</a>
       </div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;background:var(--surface)">
-        <div style="font-size:3rem">🛣</div>
-        <div style="font-family:var(--serif);font-size:1.4rem">Route Ready</div>
-        <div style="font-size:0.85rem;color:var(--gray);max-width:400px;line-height:1.7">
-          Your ${all.length}-stop route has been built. Click the button above to open the full turn-by-turn directions in Google Maps — it will show you the fastest route through all ${stops.length} stop${stops.length>1?'s':''}.
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:380px;margin-top:8px">
-          ${all.map((a,i)=>`
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;text-align:left">
-              <span style="color:var(--gold);font-weight:700;flex-shrink:0">${i===0?'🏁':i===all.length-1?'🏆':i}</span>
-              <span>${a}</span>
-            </div>`).join('')}
-        </div>
-        <a href="${mapsUrl}" target="_blank" class="btn btn-primary" style="font-size:0.9rem;padding:14px 32px;margin-top:8px">Open in Google Maps ↗</a>
-      </div>
-    </div>`;
+      <iframe
+        src="${embedUrl}"
+        style="flex:1;border:none;width:100%"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Route Map">
+      </iframe>
+    </div>`
+}
+
+function loadSavedRouteEmbed(id){
+  const r=RouteDB.routes.find(x=>x.id===id);
+  if(!r) return;
+  // Switch to addresses tab to show the map frame
+  showRouteTab('addresses');
+  // Repopulate fields
+  document.getElementById('rt-start').value=r.start;
+  const stopRows=document.querySelectorAll('.rt-stop-row input');
+  r.stops.forEach((s,i)=>{
+    if(stopRows[i]) stopRows[i].value=s;
+    else{ addStop(); document.querySelectorAll('.rt-stop-row input')[i].value=s; }
+  });
+  // Generate embedded route
+  generateRoute();
 }
 
 function saveCurrentRoute(){
@@ -2192,7 +2207,9 @@ function renderSavedRoutes(){
   none.style.display='none';
   list.innerHTML=routes.map(r=>{
     const all=[r.start,...r.stops];
-    const mapsUrl='https://www.google.com/maps/dir/'+all.map(a=>encodeURIComponent(a)).join('/');
+    const saddr2=encodeURIComponent(r.start);
+    const daddr2=r.stops.map((s,i)=>i===0?encodeURIComponent(s):'to:'+encodeURIComponent(s)).join('+');
+    const embedUrl2=`https://maps.google.com/maps?saddr=${saddr2}&daddr=${daddr2}&output=embed`;
     return `
     <div class="card" style="padding:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
