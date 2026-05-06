@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/crm", "dest": "/crm.html" },
-    { "src": "/crm.html", "dest": "/crm.html" },
-    { "src": "/", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/crm", "destination": "/crm.html" }
   ]
 }
