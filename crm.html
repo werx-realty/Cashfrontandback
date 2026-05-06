@@ -6,8 +6,6 @@
 <title>BCHB CRM — Bakersfield Cash Home Buyers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
 /* ── RESET & ROOT ─────────────────────────────────── */
@@ -724,10 +722,7 @@ input,select,textarea{font-family:var(--font)}
 .rm-pin-body.stop{background:#C9A96E}
 .rm-pin-body.end{background:#ef4444}
 /* Popup */
-.rm-popup .leaflet-popup-content-wrapper{background:#1a1a1f;border:1px solid rgba(201,169,110,0.3);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.6);padding:0;min-width:240px}
-.rm-popup .leaflet-popup-content{margin:0;width:100%!important}
-.rm-popup .leaflet-popup-tip-container{display:none}
-.rm-popup .leaflet-popup-close-button{color:#C9A96E!important;font-size:1rem!important;top:10px!important;right:12px!important}
+
 .rm-popup-inner{padding:14px 16px}
 .rm-popup-addr{font-size:0.78rem;font-weight:700;color:#C9A96E;margin-bottom:2px;padding-right:20px;line-height:1.3}
 .rm-popup-label{font-size:0.68rem;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
@@ -936,6 +931,63 @@ input,select,textarea{font-family:var(--font)}
   box-shadow:0 6px 24px rgba(0,0,0,.5);
 }
 .crm-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+
+/* ── Custom confirm dialog ─────────────────────────────── */
+.crm-confirm-overlay{
+  position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.6);display:none;
+  align-items:center;justify-content:center;
+}
+.crm-confirm-overlay.open{display:flex;}
+.crm-confirm-box{
+  background:var(--surface1);border:1px solid var(--border);
+  border-radius:14px;padding:28px 28px 22px;width:320px;
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
+  display:flex;flex-direction:column;align-items:center;gap:0;
+}
+.crm-confirm-icon{font-size:2rem;margin-bottom:10px;}
+.crm-confirm-msg{
+  font-size:0.9rem;color:var(--white);font-weight:600;
+  text-align:center;line-height:1.5;margin-bottom:6px;
+}
+.crm-confirm-sub{
+  font-size:0.76rem;color:var(--gray);text-align:center;margin-bottom:20px;
+}
+.crm-confirm-btns{display:flex;gap:10px;width:100%;}
+.crm-confirm-no{
+  flex:1;padding:10px;border-radius:8px;
+  background:var(--surface2);color:var(--white);
+  border:1px solid var(--border);font-size:0.85rem;
+  font-weight:600;cursor:pointer;transition:background .15s;
+}
+.crm-confirm-no:hover{background:var(--surface3,#2a2a2a);}
+.crm-confirm-yes{
+  flex:1;padding:10px;border-radius:8px;
+  background:#ef4444;color:#fff;
+  border:none;font-size:0.85rem;
+  font-weight:700;cursor:pointer;transition:background .15s;
+}
+.crm-confirm-yes:hover{background:#dc2626;}
+
+/* ── Appearance / color wheel settings panel ────────────── */
+.accent-swatch-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;}
+.accent-swatch{
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:transform .15s,border-color .15s;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+}
+.accent-swatch:hover{transform:scale(1.15);}
+.accent-swatch.active{border-color:#fff;}
+.accent-color-input{
+  width:48px;height:48px;border:none;border-radius:50%;cursor:pointer;
+  background:none;padding:0;outline:none;overflow:hidden;
+}
+.accent-color-input::-webkit-color-swatch-wrapper{padding:0;}
+.accent-color-input::-webkit-color-swatch{border:none;border-radius:50%;}
+.accent-preview-label{
+  font-size:0.75rem;color:var(--gray);margin-top:4px;display:block;
+}
 
 </style>
 </head>
@@ -1447,7 +1499,50 @@ input,select,textarea{font-family:var(--font)}
   </div>
   <div style="display:grid;grid-template-columns:80px 1fr;gap:0">
     <div id="dailyTimeCol" style="border-right:1px solid var(--border)"></div>
-    <div id="dailyEvents"></div>
+    <div id="dailyEvents">
+      <div class="settings-panel" id="sp-appearance">
+        <div class="settings-section">
+          <h3>Appearance</h3>
+          <p>Choose an accent color for buttons, section titles, and highlights throughout the CRM.</p>
+        </div>
+        <div class="settings-section">
+          <h4 style="margin-bottom:8px">Accent Color</h4>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+            <div>
+              <input type="color" class="accent-color-input" id="accentColorPicker"
+                value="#C9A96E" oninput="applyAccentColor(this.value)" />
+              <span class="accent-preview-label">Custom color</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:0.78rem;color:var(--gray);margin-bottom:8px;">Presets</div>
+              <div class="accent-swatch-row" id="accentSwatches">
+                <div class="accent-swatch" style="background:#C9A96E" title="Gold (default)" onclick="applyAccentColor('#C9A96E',this)"></div>
+                <div class="accent-swatch" style="background:#e05c2e" title="Burnt Orange" onclick="applyAccentColor('#e05c2e',this)"></div>
+                <div class="accent-swatch" style="background:#3b82f6" title="Blue" onclick="applyAccentColor('#3b82f6',this)"></div>
+                <div class="accent-swatch" style="background:#8b5cf6" title="Purple" onclick="applyAccentColor('#8b5cf6',this)"></div>
+                <div class="accent-swatch" style="background:#22c55e" title="Green" onclick="applyAccentColor('#22c55e',this)"></div>
+                <div class="accent-swatch" style="background:#ef4444" title="Red" onclick="applyAccentColor('#ef4444',this)"></div>
+                <div class="accent-swatch" style="background:#06b6d4" title="Cyan" onclick="applyAccentColor('#06b6d4',this)"></div>
+                <div class="accent-swatch" style="background:#f59e0b" title="Amber" onclick="applyAccentColor('#f59e0b',this)"></div>
+                <div class="accent-swatch" style="background:#ec4899" title="Pink" onclick="applyAccentColor('#ec4899',this)"></div>
+                <div class="accent-swatch" style="background:#ffffff" title="White" onclick="applyAccentColor('#ffffff',this)"></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="applyAccentColor('#C9A96E')">↺ Reset to Default Gold</button>
+        </div>
+        <div class="settings-section">
+          <h4 style="margin-bottom:6px">Preview</h4>
+          <p style="font-size:0.82rem;color:var(--gray)">Changes apply instantly across the whole CRM — buttons, section titles, and highlights.</p>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-primary" style="pointer-events:none">Primary Button</button>
+            <span style="color:var(--gold);font-size:0.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700">Section Title</span>
+            <span style="color:var(--gold)">Accent Text</span>
+          </div>
+        </div>
+      </div>
+
+</div>
   </div>
 </div>
 
@@ -1558,6 +1653,7 @@ input,select,textarea{font-family:var(--font)}
       <div class="settings-nav-item" onclick="showSettingsPanel('users',this)">👥 Users</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('data',this)">💾 Data & Export</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('gcal',this)" id="gcal-nav-item">📅 Google Calendar</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('appearance',this)">🎨 Appearance</div>
     </div>
     <div>
       <div class="settings-panel active" id="sp-profile">
@@ -1606,7 +1702,7 @@ input,select,textarea{font-family:var(--font)}
           <div style="display:flex;gap:10px;flex-wrap:wrap">
             <button class="btn btn-ghost" onclick="exportCSV()">📥 Export Leads CSV</button>
             <button class="btn btn-ghost" onclick="exportJSON()">📥 Export JSON</button>
-            <button class="btn btn-danger" onclick="if(confirm('Clear ALL leads? This cannot be undone.'))clearAllLeads()">🗑 Clear All Leads</button>
+            <button class="btn btn-danger" onclick="crmConfirm('Clear ALL leads?','This will permanently remove every lead.',clearAllLeads)">🗑 Clear All Leads</button>
           </div>
         </div>
       </div>
@@ -1715,19 +1811,19 @@ input,select,textarea{font-family:var(--font)}
           <button class="btn btn-ghost" style="width:100%" onclick="clearRoute()">✕ Clear All</button>
         </div>
       </div>
-      <!-- Right: Leaflet Map -->
+      <!-- Right: Google Maps iframe -->
       <div id="routeMapFrame" style="flex:1;min-height:500px;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--surface)">
-        <div id="rm-status-bar" class="rm-status" style="display:none">
-          <span id="rm-stop-count" class="rm-stop-badge mid">0 stops</span>
-          <span id="rm-route-info" style="color:var(--gray)"></span>
-          <span id="rm-geocode-log" class="rm-geocode-log"></span>
-        </div>
-        <div id="rm-leaflet" style="flex:1;min-height:0"></div>
-        <div id="rm-placeholder" class="sv-placeholder">
+        <div id="rm-placeholder" class="sv-placeholder" style="display:flex">
           <div class="sv-icon">🛣</div>
           <div style="font-size:1rem;font-weight:500">Route Map</div>
-          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route to drop pins on each house.</p>
+          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Route.</p>
         </div>
+        <iframe id="rm-gmap-frame"
+          style="display:none;flex:1;width:100%;border:none;min-height:0"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
       </div>
     </div>
   </div>
@@ -1736,7 +1832,7 @@ input,select,textarea{font-family:var(--font)}
   <div id="routetab-routes" style="display:none">
     <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
       <div style="font-size:0.85rem;color:var(--gray)">Your saved routes — click any to reopen in Google Maps.</div>
-      <button class="btn btn-danger btn-sm" onclick="if(confirm('Clear all saved routes?')){DB.routes=[];renderSavedRoutes()}">Clear All Routes</button>
+      <button class="btn btn-danger btn-sm" onclick="crmConfirm('Clear all saved routes?','This will remove every saved route.',()=>{DB.routes=[];renderSavedRoutes()})">Clear All Routes</button>
     </div>
     <div id="saved-routes-list" style="display:flex;flex-direction:column;gap:12px"></div>
     <div id="no-routes-msg" style="display:none">
@@ -2224,12 +2320,14 @@ function renderTimeline(lead){
   }).join('')||'<p style="color:var(--gray);font-size:0.82rem">No activity yet.</p>';
 }
 function deleteTimelineItem(leadId, origIdx){
-  const leads=DB.leads;
-  const i=leads.findIndex(l=>l.id===leadId);
-  if(i<0) return;
-  leads[i].timeline.splice(origIdx,1);
-  DB.leads=leads;
-  renderTimeline(leads[i]);
+  crmConfirm('Delete this activity?','This entry will be removed from the timeline.',()=>{
+    const leads=DB.leads;
+    const i=leads.findIndex(l=>l.id===leadId);
+    if(i<0) return;
+    leads[i].timeline.splice(origIdx,1);
+    DB.leads=leads;
+    renderTimeline(leads[i]);
+  });
 }
 
 
@@ -2284,9 +2382,10 @@ function logCall(){
 }
 
 function deleteLead(){
-  if(!confirm('Delete this lead? This cannot be undone.')) return;
-  deleteLeadById(currentLeadId);
-  showView('leads');
+  crmConfirm('Delete this lead?','This cannot be undone.',()=>{
+    deleteLeadById(currentLeadId);
+    showView('leads');
+  });
 }
 function deleteLeadById(id){
   const leads=DB.leads.filter(l=>l.id!==id);
@@ -2596,12 +2695,14 @@ function cycleTaskStatus(leadId, taskId){
 }
 
 function deleteLeadTask(leadId, taskId){
-  const leads=DB.leads;
-  const lead=leads.find(l=>l.id===leadId);
-  if(!lead) return;
-  lead.tasks=(lead.tasks||[]).filter(t=>t.id!==taskId);
-  DB.leads=leads;
-  renderLeadTasks(leadId);
+  crmConfirm('Remove this task?','The task will be deleted from this lead.',()=>{
+    const leads=DB.leads;
+    const lead=leads.find(l=>l.id===leadId);
+    if(!lead) return;
+    lead.tasks=(lead.tasks||[]).filter(t=>t.id!==taskId);
+    DB.leads=leads;
+    renderLeadTasks(leadId);
+  });
 }
 
 /* ══════════════════════════════════════════════════════
@@ -2752,49 +2853,77 @@ function getRouteAddresses(){
   return {start, stops};
 }
 
-/* ── Route Map — Leaflet + Nominatim + OSRM ── */
-let _rm = { map:null, layers:[], markers:[] };
+/* ── Route Map — Google Maps Embed ── */
 
-function rmInitMap(){
-  if(_rm.map) return;
-  const el=document.getElementById('rm-leaflet');
-  if(!el) return;
-  _rm.map=L.map(el,{center:[35.3733,-119.0187],zoom:12,zoomControl:true});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>'
-  }).addTo(_rm.map);
+function generateRoute(){
+  const {start, stops} = getRouteAddresses();
+  if(!start){ alert('Please enter a start address.'); return; }
+  if(!stops.length){ alert('Please add at least one stop.'); return; }
+
+  const saddr = encodeURIComponent(start);
+  const daddr = stops.map((s,i) => i===0 ? encodeURIComponent(s) : 'to:'+encodeURIComponent(s)).join('+');
+  const url = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed&dirflg=d`;
+
+  const frame = document.getElementById('rm-gmap-frame');
+  const placeholder = document.getElementById('rm-placeholder');
+  frame.src = url;
+  frame.style.display = 'block';
+  if(placeholder) placeholder.style.display = 'none';
+
+  // Render stop notes below the map
+  renderStopNotes([start, ...stops]);
 }
 
-function rmClearLayers(){
-  _rm.layers.forEach(l=>_rm.map.removeLayer(l));
-  _rm.markers.forEach(m=>_rm.map.removeLayer(m));
-  _rm.layers=[]; _rm.markers=[];
-}
+function renderStopNotes(addresses){
+  // Remove old notes panel if present
+  var old = document.getElementById('rm-stop-notes');
+  if(old) old.remove();
 
-async function rmGeocode(addr){
-  const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr)+'&format=json&limit=1&countrycodes=us';
-  const r=await fetch(url,{headers:{'Accept-Language':'en-US'}});
-  const d=await r.json();
-  if(!d.length) return null;
-  return [parseFloat(d[0].lat),parseFloat(d[0].lon)];
-}
+  var frame = document.getElementById('routeMapFrame');
+  var wrap = document.createElement('div');
+  wrap.id = 'rm-stop-notes';
+  wrap.style.cssText = 'padding:14px 16px;background:var(--surface2);border-top:1px solid var(--border)';
 
-function rmMakeIcon(label,type){
-  const colors={start:'#22c55e',stop:'#C9A96E',end:'#ef4444'};
-  const c=colors[type]||colors.stop;
-  return L.divIcon({
-    className:'',
-    iconSize:[34,44], iconAnchor:[17,44], popupAnchor:[0,-46],
-    html:`<div class="rm-pin-wrap"><div class="rm-pin-body ${type}"><span class="rm-pin-num">${label}</span></div></div>`
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:0.72rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:10px';
+  title.textContent = 'Stop Notes';
+  wrap.appendChild(title);
+
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px';
+
+  addresses.forEach(function(addr, i){
+    var note = getPinNote(addr);
+    var icon = i===0 ? '🏁' : i===addresses.length-1 ? '🏆' : '📍';
+
+    var cell = document.createElement('div');
+
+    var label = document.createElement('div');
+    label.style.cssText = 'font-size:0.73rem;color:var(--gray);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    label.title = addr;
+    label.textContent = icon + ' ' + addr;
+    cell.appendChild(label);
+
+    var ta = document.createElement('textarea');
+    ta.style.cssText = 'width:100%;background:var(--surface1);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:0.78rem;padding:6px 8px;resize:vertical;outline:none;box-sizing:border-box;min-height:58px;font-family:inherit';
+    ta.placeholder = 'Notes…';
+    ta.value = note;
+    ta.addEventListener('focus', function(){ this.style.borderColor = 'var(--gold)'; });
+    ta.addEventListener('blur',  function(){ this.style.borderColor = 'var(--border)'; });
+    ta.addEventListener('input', (function(a){ return function(){ savePinNote(a, this.value); }; })(addr));
+    cell.appendChild(ta);
+
+    grid.appendChild(cell);
   });
+
+  wrap.appendChild(grid);
+  frame.appendChild(wrap);
 }
 
 function savePinNote(addr,val){
   const notes=JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}');
   notes[addr]=val;
   localStorage.setItem('bchb_pin_notes',JSON.stringify(notes));
-  const el=document.getElementById('pn-saved-'+btoa(addr).replace(/[^a-z0-9]/gi,'').slice(0,12));
-  if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1500);}
 }
 
 function getPinNote(addr){
@@ -2802,95 +2931,11 @@ function getPinNote(addr){
   return notes[addr]||'';
 }
 
-function rmAddMarker(latlng,addr,label,type){
-  const icon=rmMakeIcon(label,type);
-  const safeId=btoa(addr).replace(/[^a-z0-9]/gi,'').slice(0,12);
-  const note=getPinNote(addr);
-  const typeLabel={start:'Starting Point',stop:'Stop '+label,end:'Final Stop'}[type]||'Stop';
-  const popup=L.popup({closeButton:true,className:'rm-popup',maxWidth:280,minWidth:240,autoClose:false,closeOnClick:false})
-    .setContent(`<div class="rm-popup-inner">
-      <div class="rm-popup-addr">${addr}</div>
-      <div class="rm-popup-label">${typeLabel}</div>
-      <textarea class="rm-popup-notes" id="pn-ta-${safeId}" placeholder="Add notes for this stop…" oninput="savePinNote('${addr.replace(/'/g,"\'")}',this.value)">${note}</textarea>
-      <div class="rm-popup-saved" id="pn-saved-${safeId}">✓ Saved</div>
-    </div>`);
-  const marker=L.marker(latlng,{icon}).addTo(_rm.map);
-  marker.bindPopup(popup);
-  // Toggle on click
-  marker.on('click',function(){
-    if(this.isPopupOpen()) this.closePopup();
-    else this.openPopup();
-  });
-  _rm.markers.push(marker);
-  return marker;
-}
-
-async function generateRoute(){
-  const {start, stops}=getRouteAddresses();
-  if(!start){ alert('Please enter a start address.'); return; }
-  if(!stops.length){ alert('Please add at least one stop.'); return; }
-
-  // Show map, hide placeholder
-  document.getElementById('rm-placeholder').style.display='none';
-  document.getElementById('rm-status-bar').style.display='flex';
-  document.getElementById('rm-geocode-log').textContent='Locating addresses…';
-  document.getElementById('rm-stop-count').textContent='Loading…';
-
-  // Init map if needed
-  rmInitMap();
-  rmClearLayers();
-  setTimeout(()=>_rm.map.invalidateSize(),50);
-
-  const all=[start,...stops];
-  const coords=[];
-
-  // Geocode each address sequentially
-  for(let i=0;i<all.length;i++){
-    document.getElementById('rm-geocode-log').textContent=`Finding ${i+1} of ${all.length}: ${all[i].split(',')[0]}…`;
-    const c=await rmGeocode(all[i]);
-    if(!c){ alert('Could not locate: '+all[i]+'\nTry adding the city/state.'); document.getElementById('rm-geocode-log').textContent=''; return; }
-    coords.push(c);
-    await new Promise(r=>setTimeout(r,300)); // Nominatim rate limit
-  }
-
-  document.getElementById('rm-geocode-log').textContent='Drawing route…';
-
-  // Plot pins
-  coords.forEach((c,i)=>{
-    const type=i===0?'start':(i===all.length-1?'end':'stop');
-    const label=i===0?'S':(i===all.length-1?'E':i);
-    rmAddMarker(c,all[i],label,type);
-  });
-
-  // Get route from OSRM
-  try{
-    const osrmCoords=coords.map(c=>c[1]+','+c[0]).join(';');
-    const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+osrmCoords+'?overview=full&geometries=geojson');
-    const d=await r.json();
-    if(d.routes&&d.routes[0]){
-      const line=L.geoJSON(d.routes[0].geometry,{style:{color:'#C9A96E',weight:4,opacity:0.85,dashArray:''}}).addTo(_rm.map);
-      _rm.layers.push(line);
-      const dist=(d.routes[0].distance/1609.34).toFixed(1);
-      const dur=Math.round(d.routes[0].duration/60);
-      document.getElementById('rm-route-info').textContent=`${dist} mi · ~${dur} min`;
-    }
-  }catch(e){ console.warn('OSRM routing failed',e); }
-
-  // Fit map to all pins
-  const bounds=L.latLngBounds(coords);
-  _rm.map.fitBounds(bounds,{padding:[40,40]});
-
-  document.getElementById('rm-stop-count').textContent=all.length+' stop'+(all.length>1?'s':'');
-  document.getElementById('rm-geocode-log').textContent='Click any pin to add notes';
-  document.getElementById('rm-stop-count').className='rm-stop-badge mid';
-}
-
 function loadSavedRouteEmbed(id){
   const r=RouteDB.routes.find(x=>x.id===id);
   if(!r) return;
   showRouteTab('addresses');
   document.getElementById('rt-start').value=r.start;
-  // Clear existing stops and repopulate
   document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
   r.stops.forEach((s,i)=>{
     const rows=document.querySelectorAll('.rt-stop-row input');
@@ -2914,12 +2959,14 @@ function saveCurrentRoute(){
 function clearRoute(){
   document.getElementById('rt-start').value='';
   document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
-  if(_rm.map) rmClearLayers();
-  document.getElementById('rm-placeholder').style.display='flex';
-  document.getElementById('rm-status-bar').style.display='none';
-  document.getElementById('rm-route-info').textContent='';
-  document.getElementById('rm-geocode-log').textContent='';
+  const frame=document.getElementById('rm-gmap-frame');
+  if(frame){ frame.src=''; frame.style.display='none'; }
+  const notes=document.getElementById('rm-stop-notes');
+  if(notes) notes.remove();
+  const ph=document.getElementById('rm-placeholder');
+  if(ph) ph.style.display='flex';
 }
+
 
 function renderSavedRoutes(){
   const routes=RouteDB.routes;
@@ -2956,9 +3003,10 @@ function renderSavedRoutes(){
 }
 
 function deleteRoute(id){
-  if(!confirm('Delete this route?')) return;
-  RouteDB.routes=RouteDB.routes.filter(r=>r.id!==id);
-  renderSavedRoutes();
+  crmConfirm('Delete this route?','This will remove the saved route.',()=>{
+    RouteDB.routes=RouteDB.routes.filter(r=>r.id!==id);
+    renderSavedRoutes();
+  });
 }
 
 function renderRouteLeadPins(){
@@ -3064,7 +3112,9 @@ function gcalShowConnected(){
 }
 
 window.gcalDisconnect = function(){
-  if(!confirm('Disconnect Google Calendar?')) return;
+  crmConfirm('Disconnect Google Calendar?','Calendar sync will stop and events will be removed.',()=>_gcalDoDisconnect()); return;
+}
+function _gcalDoDisconnect(){
   GCal.accessToken=null; GCal.tokenExpiry=0; GCal.accountEmail='';
   GCal.cachedEvents=[]; GCal.cachedMonth=null;
   localStorage.removeItem('bchb_gcal_client_id');
@@ -3508,7 +3558,9 @@ window.emailArchive = async function(){
 
 window.emailTrash = async function(){
   if(!ES.currentId) return;
-  if(!confirm('Move this email to trash?')) return;
+  crmConfirm('Move to trash?','This email will be moved to your Gmail trash.',()=>_emailDoTrash()); return;
+}
+async function _emailDoTrash(){
   try{
     await gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${ES.currentId}/trash`,{method:'POST'});
     removeCurrentFromList();
@@ -3530,7 +3582,9 @@ window.emailRefresh = function(){
 
 /* ── Disconnect ── */
 window.emailDisconnect = function(){
-  if(!confirm('Disconnect your email account?')) return;
+  crmConfirm('Disconnect email?','You will need to reconnect Gmail to use email.',()=>_emailDoDisconnect()); return;
+}
+function _emailDoDisconnect(){
   ES.accessToken=null; ES.tokenExpiry=0; ES.accountEmail=''; ES.messages=[]; ES.currentId=null;
   document.getElementById('emailClient').style.display='none';
   document.getElementById('emailConnectState').style.display='flex';
@@ -3669,7 +3723,10 @@ function npAddPage(){
 function npDeletePage(id){
   const pages = NotepadDB.pages;
   if(pages.length<=1){ alert('Keep at least one page.'); return; }
-  if(!confirm('Delete this page? This cannot be undone.')) return;
+  crmConfirm('Delete this page?','This cannot be undone.',()=>_npDoDeletePage(id)); return;
+}
+function _npDoDeletePage(id){
+  const pages = NotepadDB.pages;
   const idx = pages.findIndex(p=>p.id===id);
   const newPages = pages.filter(p=>p.id!==id);
   NotepadDB.pages = newPages;
@@ -3696,6 +3753,68 @@ function npUpdateWordCount(){
    ATTACH NOTES  –  attach notepad pages to leads
 ════════════════════════════════════════════════════════════ */
 /* ── Toast helper ───────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   CUSTOM CONFIRM DIALOG
+════════════════════════════════════════════════════════════ */
+let _crmConfirmCb = null;
+function crmConfirm(msg, sub, cb){
+  _crmConfirmCb = cb;
+  const msgEl = document.getElementById('crmConfirmMsg');
+  const subEl = document.getElementById('crmConfirmSub');
+  if(msgEl) msgEl.textContent = msg || 'Are you sure?';
+  if(subEl) subEl.textContent = sub || 'This action cannot be undone.';
+  const ov = document.getElementById('crmConfirmOverlay');
+  if(ov) ov.classList.add('open');
+}
+function crmConfirmAnswer(yes){
+  const ov = document.getElementById('crmConfirmOverlay');
+  if(ov) ov.classList.remove('open');
+  if(yes && typeof _crmConfirmCb === 'function') _crmConfirmCb();
+  _crmConfirmCb = null;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ACCENT COLOR  –  color wheel
+════════════════════════════════════════════════════════════ */
+function hexToRgb(hex){
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+function applyAccentColor(hex, swatchEl){
+  if(!hex || hex.length < 4) return;
+  // Normalize shorthand
+  if(hex.length === 4) hex = '#'+hex[1]+hex[1]+hex[2]+hex[2]+hex[3]+hex[3];
+  const {r,g,b} = hexToRgb(hex);
+  const root = document.documentElement;
+  root.style.setProperty('--gold', hex);
+  root.style.setProperty('--gold-dim', `rgba(${r},${g},${b},0.15)`);
+  root.style.setProperty('--gold-glow', `rgba(${r},${g},${b},0.08)`);
+  // Persist
+  localStorage.setItem('bchb_accent_color', hex);
+  // Update color picker
+  const picker = document.getElementById('accentColorPicker');
+  if(picker) picker.value = hex;
+  // Update active swatch
+  document.querySelectorAll('.accent-swatch').forEach(s => s.classList.remove('active'));
+  if(swatchEl) swatchEl.classList.add('active');
+  else{
+    // Find matching preset
+    document.querySelectorAll('.accent-swatch').forEach(s=>{
+      if(s.style.background.toLowerCase() === hex.toLowerCase() ||
+         s.getAttribute('onclick') && s.getAttribute('onclick').includes(hex)){
+        s.classList.add('active');
+      }
+    });
+  }
+}
+// Apply saved accent color on load
+(function(){
+  const saved = localStorage.getItem('bchb_accent_color');
+  if(saved) applyAccentColor(saved);
+})();
+
 function showToast(msg, dur=2800){
   let t = document.getElementById('crmToast');
   if(!t){
@@ -3910,7 +4029,9 @@ function naSaveEdit(leadId, idx, val, immediate){
 }
 
 function naDetachNote(leadId, idx){
-  if(!confirm('Remove this attached note from the lead?')) return;
+  crmConfirm('Remove attached note?','This note will be detached from this lead.',()=>_naDoDetach(leadId,idx)); return;
+}
+function _naDoDetach(leadId,idx){
   const db = AttachDB.get();
   if(!db[leadId]) return;
   db[leadId].splice(idx, 1);
@@ -3963,6 +4084,20 @@ window.showView = function(v){
     <div class="np-attach-footer">
       <button class="np-attach-cancel-btn" onclick="naCloseDropdown()">Cancel</button>
       <button class="np-attach-do-btn" id="naDoBtn" onclick="naAttach()" disabled>Attach to Lead</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ CUSTOM CONFIRM DIALOG ═════════════════════════════════════════════ -->
+<div class="crm-confirm-overlay" id="crmConfirmOverlay">
+  <div class="crm-confirm-box">
+    <div class="crm-confirm-icon">🗑</div>
+    <div class="crm-confirm-msg" id="crmConfirmMsg">Are you sure?</div>
+    <div class="crm-confirm-sub" id="crmConfirmSub">This action cannot be undone.</div>
+    <div class="crm-confirm-btns">
+      <button class="crm-confirm-no" onclick="crmConfirmAnswer(false)">No, Cancel</button>
+      <button class="crm-confirm-yes" onclick="crmConfirmAnswer(true)">Yes, Delete</button>
     </div>
   </div>
 </div>
