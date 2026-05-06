@@ -780,6 +780,153 @@ input,select,textarea{font-family:var(--font)}
 .np-textarea::selection{background:rgba(201,169,110,.3)}
 .np-page-count{background:#1c1c1c;padding:5px 16px;font-size:0.7rem;color:#666;text-align:right;flex-shrink:0}
 
+
+/* ── Attach Notes button ─────────────────────────────────────── */
+.np-attach-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:8px;
+  background:var(--gold-dim);border:1.5px solid var(--gold);
+  color:var(--gold);font-size:0.78rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.np-attach-btn:hover{background:var(--gold);color:#0d0d0f;}
+
+/* ── Attach dropdown overlay ─────────────────────────────────── */
+.np-attach-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;
+}
+.np-attach-overlay.open{display:flex;}
+
+.np-attach-panel{
+  background:var(--surface1);border:1px solid var(--border);
+  border-radius:14px;width:380px;max-height:520px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
+}
+.np-attach-header{
+  padding:16px 18px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.np-attach-title{font-weight:700;font-size:0.95rem;color:var(--white);}
+.np-attach-close-btn{
+  background:none;border:none;color:var(--gray);font-size:1.1rem;
+  cursor:pointer;padding:2px 6px;border-radius:4px;line-height:1;
+}
+.np-attach-close-btn:hover{color:var(--white);background:var(--surface2);}
+.np-attach-search-wrap{padding:12px 16px;border-bottom:1px solid var(--border);}
+.np-attach-search{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;color:var(--white);font-size:0.82rem;
+  outline:none;box-sizing:border-box;
+}
+.np-attach-search:focus{border-color:var(--gold);}
+.np-attach-search::placeholder{color:var(--gray);}
+.np-attach-note-preview{
+  padding:8px 16px 6px;font-size:0.75rem;color:var(--gray);
+  border-bottom:1px solid var(--border);line-height:1.4;
+}
+.np-attach-note-preview strong{color:var(--gold);}
+.np-attach-lead-list{flex:1;overflow-y:auto;padding:8px;}
+.np-attach-lead-list::-webkit-scrollbar{width:4px;}
+.np-attach-lead-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.np-attach-lead-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:8px;cursor:pointer;
+  transition:background .12s;border:1.5px solid transparent;
+}
+.np-attach-lead-item:hover{background:var(--surface2);}
+.np-attach-lead-item.selected{
+  background:var(--gold-dim);border-color:var(--gold);
+}
+.np-attach-lead-dot{
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;
+}
+.np-attach-lead-addr{font-size:0.83rem;color:var(--white);font-weight:500;}
+.np-attach-lead-sub{font-size:0.72rem;color:var(--gray);}
+.np-attach-footer{
+  padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.np-attach-do-btn{
+  flex:1;padding:10px;border-radius:8px;
+  background:var(--gold);color:#0d0d0f;
+  border:none;font-weight:700;font-size:0.85rem;cursor:pointer;
+  transition:background .15s;
+}
+.np-attach-do-btn:hover{background:#b8935c;}
+.np-attach-do-btn:disabled{opacity:.4;cursor:not-allowed;}
+.np-attach-cancel-btn{
+  padding:10px 16px;border-radius:8px;
+  background:var(--surface2);color:var(--gray);
+  border:1px solid var(--border);font-size:0.83rem;cursor:pointer;
+}
+.np-attach-cancel-btn:hover{color:var(--white);}
+
+/* ── Attached notes grid (under Activity Timeline) ──────────── */
+.attached-notes-section{margin-top:16px;}
+.attached-notes-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;
+}
+.attached-note-card{
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:10px;overflow:hidden;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s;
+}
+.attached-note-card:hover{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-dim);}
+.attached-note-card.expanded{
+  grid-column:1/-1;cursor:default;
+  border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-dim);
+}
+.an-card-header{
+  background:#1c1c1c;padding:8px 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+}
+.an-card-title{font-size:0.78rem;font-weight:700;color:var(--white);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.an-card-actions{display:flex;gap:4px;align-items:center;}
+.an-card-btn{
+  background:none;border:none;color:var(--gray);
+  font-size:0.7rem;cursor:pointer;padding:2px 5px;border-radius:4px;
+}
+.an-card-btn:hover{color:var(--white);background:rgba(255,255,255,.06);}
+.an-card-preview{
+  padding:8px 10px;font-size:0.76rem;color:var(--gray);
+  line-height:1.5;max-height:54px;overflow:hidden;
+  white-space:pre-wrap;word-break:break-word;
+}
+.an-card-expand{
+  padding:0 8px 8px;display:none;flex-direction:column;
+}
+.attached-note-card.expanded .an-card-expand{display:flex;}
+.attached-note-card.expanded .an-card-preview{display:none;}
+.an-card-textarea{
+  width:100%;min-height:180px;background:var(--surface1);
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--white);font-size:0.82rem;line-height:1.6;
+  padding:8px 10px;resize:vertical;outline:none;
+  font-family:'Georgia',serif;box-sizing:border-box;
+}
+.an-card-textarea:focus{border-color:var(--gold);}
+.an-card-save-row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
+.an-card-save-btn{
+  padding:6px 14px;background:var(--gold);color:#0d0d0f;
+  border:none;border-radius:6px;font-weight:700;font-size:0.75rem;cursor:pointer;
+}
+.an-card-save-btn:hover{background:#b8935c;}
+.an-card-date{font-size:0.68rem;color:var(--gray);padding:0 10px 8px;text-align:right;}
+
+
+/* ── Toast notification ─────────────────────────────────── */
+.crm-toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1c2b1c;border:1.5px solid #22c55e;color:#86efac;
+  padding:10px 22px;border-radius:10px;font-size:0.82rem;font-weight:600;
+  z-index:9999;opacity:0;pointer-events:none;
+  transition:opacity .25s, transform .25s;white-space:nowrap;
+  box-shadow:0 6px 24px rgba(0,0,0,.5);
+}
+.crm-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
 </style>
 </head>
 <body>
@@ -1208,6 +1355,11 @@ input,select,textarea{font-family:var(--font)}
         <div class="detail-section-title">Activity Timeline</div>
         <div id="timeline-list" style="max-height:400px;overflow-y:auto"></div>
       </div>
+      <!-- Attached notepad notes -->
+      <div id="attached-notes-section" class="attached-notes-section" style="display:none">
+        <div class="detail-section-title">Attached Notes</div>
+        <div class="attached-notes-grid" id="attachedNotesGrid"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1591,6 +1743,7 @@ input,select,textarea{font-family:var(--font)}
     <div class="topbar-actions">
       <span class="np-save-dot" id="npSaveDot"></span>
       <span class="np-meta" id="npSaveMeta">Auto-saved</span>
+      <button class="np-attach-btn" onclick="naOpenDropdown()">📎 Attach to Lead</button>
     </div>
   </div>
   <div class="notepad-layout">
@@ -2034,7 +2187,7 @@ function openLead(id){
   const now=new Date();
   document.getElementById('d-calldate').value=now.toISOString().split('T')[0];
   document.getElementById('d-calltime').value=now.toTimeString().slice(0,5);
-  renderNotes(lead); renderTimeline(lead); renderLeadTasks(id);
+  renderNotes(lead); renderTimeline(lead); renderLeadTasks(id); renderAttachedNotes(id);
   showView('lead-detail');
 }
 
@@ -3516,6 +3669,237 @@ function npUpdateWordCount(){
   el.textContent = words+' word'+(words!==1?'s':'')+' · '+chars+' characters';
 }
 
+/* ════════════════════════════════════════════════════════════
+   ATTACH NOTES  –  attach notepad pages to leads
+════════════════════════════════════════════════════════════ */
+/* ── Toast helper ───────────────────────────────────────── */
+function showToast(msg, dur=2800){
+  let t = document.getElementById('crmToast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'crmToast';
+    t.className = 'crm-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+const AttachDB = {
+  get(){ return JSON.parse(localStorage.getItem('bchb_attached_notes')||'{}'); },
+  save(v){ localStorage.setItem('bchb_attached_notes', JSON.stringify(v)); }
+};
+
+let _naSelectedLeadId = null;
+
+function naOpenDropdown(){
+  // Flush any unsaved notepad content first
+  if(typeof npFlushSave === 'function') npFlushSave();
+
+  const pages = NotepadDB.pages;
+  const page = pages.find(p => p.id === npCurrentId);
+  const titleEl = document.getElementById('naPreviewTitle');
+  if(titleEl) titleEl.textContent = page ? (page.title || 'Untitled') : '—';
+
+  _naSelectedLeadId = null;
+  document.getElementById('naDoBtn').disabled = true;
+  document.getElementById('naSearchInput').value = '';
+  naFilterLeads('');
+
+  const ov = document.getElementById('naOverlay');
+  if(ov){ ov.classList.add('open'); }
+  setTimeout(()=>{ const s=document.getElementById('naSearchInput'); if(s) s.focus(); }, 80);
+}
+
+function naCloseDropdown(){
+  const ov = document.getElementById('naOverlay');
+  if(ov) ov.classList.remove('open');
+  _naSelectedLeadId = null;
+}
+
+function naClickOverlay(e){
+  if(e.target === document.getElementById('naOverlay')) naCloseDropdown();
+}
+
+function naFilterLeads(q){
+  const DB = JSON.parse(localStorage.getItem('bchb_leads')||'[]');
+  const term = q.toLowerCase().trim();
+  const filtered = DB.filter(l =>
+    !term ||
+    (l.address||'').toLowerCase().includes(term) ||
+    (l.name||'').toLowerCase().includes(term) ||
+    (l.phone||'').toLowerCase().includes(term)
+  ).slice(0, 50);
+
+  const list = document.getElementById('naLeadList');
+  if(!list) return;
+  if(!filtered.length){
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray);font-size:0.82rem;">No leads found</div>';
+    return;
+  }
+
+  const statusColors = { hot:'var(--hot)', warm:'var(--warm)', cold:'var(--cold)', new:'#22c55e' };
+  list.innerHTML = filtered.map(l => {
+    const color = statusColors[l.status] || 'var(--gray)';
+    const isSelected = l.id === _naSelectedLeadId;
+    return `<div class="np-attach-lead-item${isSelected?' selected':''}" onclick="naSelectLead('${l.id}')">
+      <div class="np-attach-lead-dot" style="background:${color}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="np-attach-lead-addr">${l.address||'No address'}</div>
+        <div class="np-attach-lead-sub">${l.name||''} ${l.phone?'· '+l.phone:''}</div>
+      </div>
+      ${isSelected ? '<span style="color:var(--gold);font-size:0.9rem;">✓</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function naSelectLead(id){
+  _naSelectedLeadId = id;
+  document.getElementById('naDoBtn').disabled = false;
+  // Re-render the list to show checkmark
+  const q = document.getElementById('naSearchInput')?.value || '';
+  naFilterLeads(q);
+}
+
+function naAttach(){
+  if(!_naSelectedLeadId || !npCurrentId) return;
+  // Flush any unsaved content
+  if(typeof npFlushSave === 'function') npFlushSave();
+
+  const pages = NotepadDB.pages;
+  const page = pages.find(p => p.id === npCurrentId);
+  if(!page){ alert('Could not find the current notepad page.'); return; }
+
+  const db = AttachDB.get();
+  if(!db[_naSelectedLeadId]) db[_naSelectedLeadId] = [];
+
+  // Check if this page is already attached to this lead
+  const already = db[_naSelectedLeadId].find(n => n.noteId === npCurrentId);
+  if(already){
+    // Update content
+    already.content = page.content;
+    already.title = page.title || 'Untitled';
+    already.updatedAt = Date.now();
+    AttachDB.save(db);
+    naCloseDropdown();
+    const leads = JSON.parse(localStorage.getItem('bchb_leads')||'[]');
+    const lead = leads.find(l=>l.id===_naSelectedLeadId);
+    showToast('Note updated on ' + (lead ? lead.address : 'lead'));
+    return;
+  }
+
+  db[_naSelectedLeadId].push({
+    noteId: npCurrentId,
+    title: page.title || 'Untitled',
+    content: page.content || '',
+    attachedAt: Date.now(),
+    updatedAt: Date.now()
+  });
+  AttachDB.save(db);
+
+  const leads = JSON.parse(localStorage.getItem('bchb_leads')||'[]');
+  const lead = leads.find(l=>l.id===_naSelectedLeadId);
+
+  naCloseDropdown();
+  showToast('Note attached to ' + (lead ? lead.address : 'lead') + ' ✓');
+}
+
+/* ── Render attached notes under Activity Timeline ───────────── */
+function renderAttachedNotes(leadId){
+  const section = document.getElementById('attached-notes-section');
+  const grid = document.getElementById('attachedNotesGrid');
+  if(!section || !grid) return;
+
+  const db = AttachDB.get();
+  const notes = db[leadId] || [];
+
+  if(!notes.length){
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+
+  grid.innerHTML = notes.map((n, idx) => {
+    const preview = (n.content || '').slice(0, 120) || '(empty)';
+    const dateStr = n.updatedAt ? new Date(n.updatedAt).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'}) : '';
+    return `
+    <div class="attached-note-card" id="anCard_${leadId}_${idx}">
+      <div class="an-card-header" onclick="naToggleCard('${leadId}',${idx})">
+        <div class="an-card-title">📄 ${escHtml(n.title)}</div>
+        <div class="an-card-actions">
+          <button class="an-card-btn" onclick="event.stopPropagation();naDetachNote('${leadId}',${idx})" title="Remove">✕</button>
+          <span style="color:var(--gray);font-size:0.7rem;" id="anChevron_${leadId}_${idx}">▼</span>
+        </div>
+      </div>
+      <div class="an-card-preview">${escHtml(preview)}${n.content && n.content.length > 120 ? '…' : ''}</div>
+      <div class="an-card-expand">
+        <textarea class="an-card-textarea" id="anTA_${leadId}_${idx}"
+          oninput="naSaveEdit('${leadId}',${idx},this.value)"
+          >${escHtml(n.content||'')}</textarea>
+        <div class="an-card-save-row">
+          <button class="an-card-save-btn" onclick="naSaveEdit('${leadId}',${idx},document.getElementById('anTA_${leadId}_${idx}').value,true)">Save</button>
+        </div>
+      </div>
+      <div class="an-card-date">${dateStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function naToggleCard(leadId, idx){
+  const card = document.getElementById('anCard_'+leadId+'_'+idx);
+  const chevron = document.getElementById('anChevron_'+leadId+'_'+idx);
+  if(!card) return;
+  const expanding = !card.classList.contains('expanded');
+  // Collapse all first
+  document.querySelectorAll('.attached-note-card.expanded').forEach(c=>{
+    c.classList.remove('expanded');
+  });
+  document.querySelectorAll('[id^="anChevron_"]').forEach(c=>c.textContent='▼');
+  if(expanding){
+    card.classList.add('expanded');
+    if(chevron) chevron.textContent = '▲';
+    const ta = document.getElementById('anTA_'+leadId+'_'+idx);
+    if(ta) setTimeout(()=>ta.focus(),50);
+  }
+}
+
+let _naSaveTimer = null;
+function naSaveEdit(leadId, idx, val, immediate){
+  clearTimeout(_naSaveTimer);
+  const doSave = ()=>{
+    const db = AttachDB.get();
+    if(!db[leadId] || !db[leadId][idx]) return;
+    db[leadId][idx].content = val;
+    db[leadId][idx].updatedAt = Date.now();
+    AttachDB.save(db);
+    // Update preview text
+    const card = document.getElementById('anCard_'+leadId+'_'+idx);
+    const preview = card && card.querySelector('.an-card-preview');
+    if(preview){
+      const p = (val||'').slice(0,120)||'(empty)';
+      preview.textContent = p + (val && val.length > 120 ? '…' : '');
+    }
+  };
+  if(immediate) doSave();
+  else _naSaveTimer = setTimeout(doSave, 800);
+}
+
+function naDetachNote(leadId, idx){
+  if(!confirm('Remove this attached note from the lead?')) return;
+  const db = AttachDB.get();
+  if(!db[leadId]) return;
+  db[leadId].splice(idx, 1);
+  if(!db[leadId].length) delete db[leadId];
+  AttachDB.save(db);
+  renderAttachedNotes(leadId);
+}
+
+function escHtml(str){
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // Hook into showView
 const _npOrigShowView = window.showView;
 window.showView = function(v){
@@ -3535,6 +3919,30 @@ window.showView = function(v){
 };
 
 </script>
+
+
+<!-- ══ ATTACH NOTE DROPDOWN ══════════════════════════════════════════════ -->
+<div class="np-attach-overlay" id="naOverlay" onclick="naClickOverlay(event)">
+  <div class="np-attach-panel">
+    <div class="np-attach-header">
+      <div class="np-attach-title">📎 Attach Note to Lead</div>
+      <button class="np-attach-close-btn" onclick="naCloseDropdown()">✕</button>
+    </div>
+    <div class="np-attach-note-preview" id="naPreviewBar">
+      Attaching: <strong id="naPreviewTitle">—</strong>
+    </div>
+    <div class="np-attach-search-wrap">
+      <input class="np-attach-search" id="naSearchInput"
+        placeholder="Search by address or lead name…"
+        oninput="naFilterLeads(this.value)" />
+    </div>
+    <div class="np-attach-lead-list" id="naLeadList"></div>
+    <div class="np-attach-footer">
+      <button class="np-attach-cancel-btn" onclick="naCloseDropdown()">Cancel</button>
+      <button class="np-attach-do-btn" id="naDoBtn" onclick="naAttach()" disabled>Attach to Lead</button>
+    </div>
+  </div>
+</div>
 
 <!-- KANBAN QUICK-ADD MODAL -->
 <div class="modal-overlay" id="kanbanModal">
