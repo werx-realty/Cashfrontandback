@@ -446,7 +446,17 @@ input,select,textarea{font-family:var(--font)}
 .timeline-item{
   display:flex;gap:12px;padding:10px 0;
   border-bottom:1px solid var(--border);
+  align-items:flex-start;
 }
+.tl-del-btn{
+  margin-left:auto;flex-shrink:0;
+  background:none;border:none;
+  color:transparent;font-size:0.82rem;
+  cursor:pointer;padding:2px 4px;border-radius:4px;
+  line-height:1;transition:color .15s,background .15s;
+}
+.timeline-item:hover .tl-del-btn{color:var(--gray);}
+.tl-del-btn:hover{color:#ef4444!important;background:rgba(239,68,68,.1);}
 .timeline-item:last-child{border-bottom:none}
 .timeline-dot{
   width:10px;height:10px;border-radius:50%;flex-shrink:0;
@@ -2203,12 +2213,25 @@ function renderNotes(lead){
 function renderTimeline(lead){
   const el=document.getElementById('timeline-list');
   const items=[...(lead.timeline||[])].reverse();
-  el.innerHTML=items.map(t=>`
-    <div class="timeline-item">
+  const total=lead.timeline?lead.timeline.length:0;
+  el.innerHTML=items.map((t,dispIdx)=>{
+    const origIdx=total-1-dispIdx;
+    return `<div class="timeline-item">
       <div class="timeline-dot" style="border-color:${t.color||'var(--gold)'}"></div>
-      <div><div class="timeline-content">${t.msg}</div><div class="timeline-time">${timeAgo(t.ts)}</div></div>
-    </div>`).join('')||'<p style="color:var(--gray);font-size:0.82rem">No activity yet.</p>';
+      <div style="flex:1;min-width:0"><div class="timeline-content">${t.msg}</div><div class="timeline-time">${timeAgo(t.ts)}</div></div>
+      <button class="tl-del-btn" onclick="deleteTimelineItem('${lead.id}',${origIdx})" title="Delete entry">🗑</button>
+    </div>`;
+  }).join('')||'<p style="color:var(--gray);font-size:0.82rem">No activity yet.</p>';
 }
+function deleteTimelineItem(leadId, origIdx){
+  const leads=DB.leads;
+  const i=leads.findIndex(l=>l.id===leadId);
+  if(i<0) return;
+  leads[i].timeline.splice(origIdx,1);
+  DB.leads=leads;
+  renderTimeline(leads[i]);
+}
+
 
 function saveLeadDetail(){
   const leads=DB.leads;
