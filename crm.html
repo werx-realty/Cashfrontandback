@@ -640,7 +640,7 @@ input,select,textarea{font-family:var(--font)}
 .compose-body-area{flex:1;background:transparent;border:none;color:var(--gray);font-size:0.84rem;line-height:1.75;resize:none;outline:none;padding:14px 0;font-family:inherit;min-height:160px}
 .compose-toolbar-bar{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
 /* connect state */
-.email-connect-state{display:flex;align-items:center;justify-content:center;height:100%}
+.email-connect-state{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 200px)}
 .email-connect-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:48px 40px;text-align:center;max-width:500px;width:100%}
 .email-connect-card h2{font-size:1.35rem;font-weight:700;color:var(--white);margin-bottom:8px}
 .email-connect-card p{font-size:0.84rem;color:var(--gray);line-height:1.6;margin-bottom:28px}
@@ -1046,6 +1046,59 @@ input,select,textarea{font-family:var(--font)}
 .cal-upcoming-section-label::before{content:'';display:inline-block;width:3px;height:14px;background:var(--gold);border-radius:2px}
 .cal-upcoming-day-label{font-size:0.7rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin:10px 0 6px;padding:0 2px}
 
+
+/* ══ PROPERTY INTEL ══ */
+.pi-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:900px){.pi-kpi-row{grid-template-columns:repeat(2,1fr)}}
+.pi-kpi{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.pi-kpi-num{font-size:1.6rem;font-weight:700;color:var(--gold);font-family:var(--serif)}
+.pi-kpi-label{font-size:0.7rem;color:var(--gray);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.pi-tab-bar{display:flex;gap:2px;margin-bottom:18px;border-bottom:1px solid var(--border)}
+.pi-tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 18px;color:var(--gray);cursor:pointer;font-size:0.82rem;font-weight:500;transition:color .15s;margin-bottom:-1px;white-space:nowrap}
+.pi-tab:hover{color:var(--white)}
+.pi-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.pi-filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.pi-sync-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;font-size:0.8rem;color:var(--gray)}
+.pi-sync-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.pi-sync-dot.stale{background:#f59e0b}
+.pi-sync-dot.never{background:#888}
+.pi-prop-list{display:flex;flex-direction:column;gap:10px}
+.pi-prop-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:border-color .15s}
+.pi-prop-card:hover{border-color:var(--gold-dim)}
+.pi-score-circle{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;flex-shrink:0;border:2px solid}
+.score-low{border-color:#555;color:#888;background:rgba(85,85,85,.1)}
+.score-med{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.1)}
+.score-high{border-color:#ef4444;color:#ef4444;background:rgba(239,68,68,.1)}
+.score-crit{border-color:#dc2626;color:#fff;background:rgba(220,38,38,.3)}
+.pi-prop-main{flex:1;min-width:0}
+.pi-prop-addr{font-size:0.9rem;font-weight:600;color:var(--white);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-prop-owner{font-size:0.77rem;color:var(--gray);margin-bottom:8px}
+.pi-prop-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.pi-tag{font-size:0.66rem;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:.03em;border:1px solid}
+.pi-tag-nod{background:rgba(239,68,68,.15);color:#ef4444;border-color:rgba(239,68,68,.35)}
+.pi-tag-lien{background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.35)}
+.pi-tag-fore{background:rgba(220,38,38,.2);color:#fca5a5;border-color:rgba(220,38,38,.4)}
+.pi-tag-equity{background:rgba(34,197,94,.15);color:#22c55e;border-color:rgba(34,197,94,.3)}
+.pi-tag-vacant{background:rgba(99,102,241,.15);color:#a5b4fc;border-color:rgba(99,102,241,.3)}
+.pi-tag-absentee{background:rgba(168,85,247,.15);color:#c084fc;border-color:rgba(168,85,247,.3)}
+.pi-prop-nums{display:flex;gap:18px;font-size:0.75rem;color:var(--gray);flex-wrap:wrap}
+.pi-prop-nums b{color:var(--white);font-weight:600}
+.pi-prop-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0}
+.pi-equity-bar-wrap{width:120px;background:var(--surface3,#222);border-radius:4px;height:5px;overflow:hidden;margin-top:6px}
+.pi-equity-bar{height:100%;border-radius:4px;background:var(--gold);transition:width .4s}
+.pi-lookup-box{max-width:680px}
+.pi-lookup-row{display:flex;gap:8px;margin-bottom:12px}
+.pi-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pi-result-field{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.pi-result-field-label{font-size:0.68rem;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.pi-result-field-value{font-size:0.9rem;font-weight:600;color:var(--white)}
+.pi-import-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .15s;color:var(--gray)}
+.pi-import-zone:hover{border-color:var(--gold);color:var(--white)}
+.pi-empty{text-align:center;padding:60px 20px;color:var(--gray)}
+.pi-empty-icon{font-size:2.5rem;margin-bottom:12px}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.pi-detail-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.pi-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:640px;max-height:85vh;overflow-y:auto;padding:28px}
 </style>
 </head>
 <body>
@@ -1100,6 +1153,7 @@ input,select,textarea{font-family:var(--font)}
     <div class="nav-item" onclick="showView('daily')" data-view="daily"><span class="nav-icon">☀️</span><span class="nav-label">Daily Schedule</span></div>
     <div class="nav-section-label">TOOLS</div>
     <div class="nav-item" onclick="showView('streetview')" data-view="streetview"><span class="nav-icon">🗺</span><span class="nav-label">Street View</span></div>
+    <div class="nav-item" onclick="showView('propintel')" data-view="propintel"><span class="nav-icon">🏚</span><span class="nav-label">Property Intel</span></div>
     <div class="nav-item" onclick="showView('routemap')" data-view="routemap"><span class="nav-icon">🛣</span><span class="nav-label">Route Map</span></div>
     <div class="nav-item" onclick="showView('email')" data-view="email"><span class="nav-icon">✉️</span><span class="nav-label">Email</span></div>
     <div class="nav-item" onclick="showView('notepad')" data-view="notepad"><span class="nav-icon">📝</span><span class="nav-label">Notepad</span></div>
@@ -1943,6 +1997,167 @@ input,select,textarea{font-family:var(--font)}
       <div class="empty-state"><div class="empty-icon">🛣</div><p>No saved routes yet. Generate a route and save it.</p></div>
     </div>
   </div>
+</div>
+
+
+<!-- ══ PROPERTY INTEL ════════════════════════════════ -->
+<div class="view" id="view-propintel">
+  <div class="topbar" style="margin-bottom:14px">
+    <div class="page-title">Property <span>Intel</span></div>
+    <div class="topbar-actions">
+      <div id="piSyncBar" class="pi-sync-bar" style="margin-bottom:0;padding:6px 12px">
+        <div class="pi-sync-dot never" id="piSyncDot"></div>
+        <span id="piSyncLabel">Never synced</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="piSync()" id="piSyncBtn">🔄 Sync Now</button>
+      <button class="btn btn-primary btn-sm" onclick="piTab('lookup')">🔍 Lookup</button>
+    </div>
+  </div>
+
+  <!-- KPI row -->
+  <div class="pi-kpi-row" id="piKpiRow">
+    <div class="pi-kpi"><div class="pi-kpi-num" id="piKpiTotal">0</div><div class="pi-kpi-label">Properties</div></div>
+    <div class="pi-kpi"><div class="pi-kpi-num" id="piKpiForeclosure">0</div><div class="pi-kpi-label">Foreclosures</div></div>
+    <div class="pi-kpi"><div class="pi-kpi-num" id="piKpiHot">0</div><div class="pi-kpi-label">Hot Leads (70+)</div></div>
+    <div class="pi-kpi"><div class="pi-kpi-num" id="piKpiEquity">$0</div><div class="pi-kpi-label">Avg Equity</div></div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="pi-tab-bar">
+    <button class="pi-tab active" id="pi-tab-all"         onclick="piTab('all')">📋 All Properties</button>
+    <button class="pi-tab"        id="pi-tab-foreclosure" onclick="piTab('foreclosure')">🏚 Foreclosures</button>
+    <button class="pi-tab"        id="pi-tab-nod"         onclick="piTab('nod')">⚠️ NOD & Liens</button>
+    <button class="pi-tab"        id="pi-tab-lookup"      onclick="piTab('lookup')">🔍 Lookup</button>
+    <button class="pi-tab"        id="pi-tab-import"      onclick="piTab('import')">📥 Import</button>
+    <button class="pi-tab"        id="pi-tab-pisettings"  onclick="piTab('pisettings')">⚙️ Settings</button>
+  </div>
+
+  <!-- ALL PROPERTIES -->
+  <div id="pi-panel-all">
+    <div class="pi-filter-bar">
+      <input class="form-input" id="piSearchInput" placeholder="Search address, APN, owner…" style="flex:1;max-width:320px" oninput="piRenderAll()">
+      <select class="form-input" id="piStageFilter" style="width:160px" onchange="piRenderAll()">
+        <option value="all">All Stages</option>
+        <option value="normal">Normal</option>
+        <option value="pre_nod">Pre-NOD</option>
+        <option value="nod">NOD Filed</option>
+        <option value="notice_sale">Notice of Sale</option>
+        <option value="reo">REO</option>
+      </select>
+      <select class="form-input" id="piSortFilter" style="width:150px" onchange="piRenderAll()">
+        <option value="score">Score (High→Low)</option>
+        <option value="equity">Equity (High→Low)</option>
+        <option value="value">Value (High→Low)</option>
+        <option value="newest">Newest First</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="piExportCSV()">⬇ Export</button>
+    </div>
+    <div class="pi-prop-list" id="piAllList"></div>
+  </div>
+
+  <!-- FORECLOSURES -->
+  <div id="pi-panel-foreclosure" style="display:none">
+    <div class="pi-filter-bar">
+      <input class="form-input" id="piForeSearch" placeholder="Search…" style="flex:1;max-width:320px" oninput="piRenderForeclosures()">
+    </div>
+    <div class="pi-prop-list" id="piForeList"></div>
+  </div>
+
+  <!-- NOD & LIENS -->
+  <div id="pi-panel-nod" style="display:none">
+    <div style="margin-bottom:14px;font-size:0.84rem;color:var(--gray)">Properties with active Notices of Default, tax liens, or mechanic liens.</div>
+    <div class="pi-prop-list" id="piNodList"></div>
+  </div>
+
+  <!-- LOOKUP -->
+  <div id="pi-panel-lookup" style="display:none">
+    <div class="pi-lookup-box">
+      <div style="margin-bottom:18px">
+        <div style="font-size:1rem;font-weight:600;margin-bottom:6px">Property Lookup</div>
+        <div style="font-size:0.82rem;color:var(--gray)">Search Kern County parcels by APN, address, or owner name.</div>
+      </div>
+      <div class="pi-lookup-row">
+        <input class="form-input" id="piLookupInput" placeholder="APN (e.g. 019-010-01) or address or owner name…" style="flex:1" onkeydown="if(event.key==='Enter')piLookup()">
+        <button class="btn btn-primary" onclick="piLookup()">Search</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="piLookupType('apn')">🔢 By APN</button>
+        <button class="btn btn-ghost btn-sm" onclick="piLookupType('address')">📍 By Address</button>
+        <button class="btn btn-ghost btn-sm" onclick="piLookupType('owner')">👤 By Owner</button>
+      </div>
+      <div id="piLookupResult"></div>
+    </div>
+  </div>
+
+  <!-- IMPORT -->
+  <div id="pi-panel-import" style="display:none">
+    <div style="max-width:640px">
+      <div style="font-size:1rem;font-weight:600;margin-bottom:6px">Import Property Data</div>
+      <div style="font-size:0.82rem;color:var(--gray);margin-bottom:20px">Import NOD, foreclosure, or property lists via CSV. Required columns: address, owner_name. Optional: apn, assessed_value, stage, lien_amount, nod_date.</div>
+      <div class="pi-import-zone" onclick="document.getElementById('piCsvFile').click()">
+        <div style="font-size:2rem;margin-bottom:8px">📄</div>
+        <div style="font-weight:600;margin-bottom:4px">Click to upload CSV</div>
+        <div style="font-size:0.78rem">or drag and drop</div>
+        <input type="file" id="piCsvFile" accept=".csv" style="display:none" onchange="piImportCSV(event)">
+      </div>
+      <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border)">
+        <div style="font-size:0.88rem;font-weight:600;margin-bottom:10px">Manual Add Property</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <input class="form-input" id="piManAddr" placeholder="Address *">
+          <input class="form-input" id="piManOwner" placeholder="Owner Name">
+          <input class="form-input" id="piManApn" placeholder="APN">
+          <input class="form-input" id="piManValue" placeholder="Assessed Value ($)" type="number">
+          <select class="form-input" id="piManStage">
+            <option value="normal">Normal</option>
+            <option value="pre_nod">Pre-NOD</option>
+            <option value="nod">NOD Filed</option>
+            <option value="notice_sale">Notice of Trustee Sale</option>
+            <option value="reo">REO</option>
+          </select>
+          <input class="form-input" id="piManLien" placeholder="Lien Amount ($)" type="number">
+        </div>
+        <button class="btn btn-primary" onclick="piManualAdd()">+ Add Property</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="pi-panel-pisettings" style="display:none">
+    <div style="max-width:540px">
+      <div style="font-size:0.9rem;font-weight:600;margin-bottom:14px">Sync Settings</div>
+      <div class="form-group">
+        <label class="form-label">Target Cities (comma-separated)</label>
+        <input class="form-input" id="piCitySetting" placeholder="Bakersfield, Delano, Wasco" value="Bakersfield">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Records Per Sync</label>
+        <input class="form-input" id="piMaxRecords" type="number" placeholder="500" value="500">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Auto-sync interval</label>
+        <select class="form-input" id="piSyncInterval">
+          <option value="12">Every 12 hours</option>
+          <option value="6">Every 6 hours</option>
+          <option value="24">Every 24 hours</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Minimum Lead Score to Show</label>
+        <input class="form-input" id="piMinScore" type="number" placeholder="0" value="0">
+      </div>
+      <button class="btn btn-primary" onclick="piSaveSettings()">Save Settings</button>
+      <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
+        <div style="font-size:0.88rem;font-weight:600;margin-bottom:8px;color:#ef4444">Danger Zone</div>
+        <button class="btn btn-danger btn-sm" onclick="crmConfirm('Clear all Property Intel data?','This removes all synced properties.',()=>{PropIntelDB.properties=[];PropIntelDB.lastSync=null;piRender();showToast('Cleared ✓');})">🗑 Clear All Data</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /view-propintel -->
+
+<!-- Property Intel detail modal -->
+<div id="piDetailModal" class="pi-detail-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="pi-detail-card" id="piDetailCard"></div>
 </div>
 
 
@@ -4510,6 +4725,748 @@ window.showView = function(v){
     console.error('Init error:', err);
   }
 })();
+
+/* ══════════════════════════════════════════════════════
+   PROPERTY INTEL
+══════════════════════════════════════════════════════ */
+const PropIntelDB = {
+  get properties(){ return JSON.parse(localStorage.getItem('bchb_pi_props')||'[]'); },
+  set properties(v){ localStorage.setItem('bchb_pi_props', JSON.stringify(v)); },
+  get lastSync(){ return localStorage.getItem('bchb_pi_sync')||null; },
+  set lastSync(v){ if(v===null) localStorage.removeItem('bchb_pi_sync'); else localStorage.setItem('bchb_pi_sync',v); },
+  get settings(){ return JSON.parse(localStorage.getItem('bchb_pi_settings')||'{"cities":["Bakersfield"],"maxRecords":500,"interval":12,"minScore":0}'); },
+  set settings(v){ localStorage.setItem('bchb_pi_settings', JSON.stringify(v)); }
+};
+
+let piCurrentTab = 'all';
+let piSyncing = false;
+
+/* ── Lead Scoring ── */
+function piScore(prop){
+  let s = 20;
+  if(prop.stage === 'nod')           s += 30;
+  else if(prop.stage === 'notice_sale') s += 40;
+  else if(prop.stage === 'pre_nod')  s += 15;
+  else if(prop.stage === 'reo')      s += 20;
+  if(prop.lienAmount > 0)            s += 15;
+  const eq = prop.equityPct || 0;
+  if(eq >= 60)       s += 20;
+  else if(eq >= 40)  s += 12;
+  else if(eq >= 20)  s += 5;
+  if(prop.assessedTotal > 0 && prop.assessedTotal < 150000) s += 8;
+  if(prop.ownerAddress && prop.address && !prop.ownerAddress.toLowerCase().includes(prop.address.toLowerCase().split(',')[0])) s += 8;
+  return Math.min(s, 100);
+}
+
+function piScoreClass(s){
+  if(s >= 80) return 'score-crit';
+  if(s >= 60) return 'score-high';
+  if(s >= 40) return 'score-med';
+  return 'score-low';
+}
+
+function piCalcEquity(prop){
+  const estimated = prop.estimatedValue || (prop.assessedTotal ? prop.assessedTotal * 1.25 : 0);
+  const lien = prop.lienAmount || 0;
+  if(!estimated) return {equity:0, equityPct:0, estimatedValue:0};
+  const equity = Math.max(0, estimated - lien);
+  const equityPct = estimated > 0 ? Math.round((equity / estimated) * 100) : 0;
+  return {equity, equityPct, estimatedValue: estimated};
+}
+
+/* ── API Fetch ── */
+// Use Vercel proxy to avoid CORS — falls back to direct if running locally
+const PI_PROXY = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? null  // local: try direct (may still fail CORS)
+  : '/api/kern-proxy';  // production: route through Vercel serverless proxy
+const PI_BASE = 'https://maps.co.kern.ca.us/arcgis/rest/services';
+
+// Cached working service path (discovered at runtime)
+let piWorkingPath = localStorage.getItem('bchb_pi_service_path') || null;
+
+const PI_SERVICE_CANDIDATES = [
+  '/PUBLIC/Parcels/MapServer/0',
+  '/PUBLIC/Parcels/FeatureServer/0',
+  '/Assessor/Parcel/MapServer/0',
+  '/Assessor/Parcel/FeatureServer/0',
+  '/PUBLIC/KernCountyParcels/MapServer/0',
+  '/Parcels/MapServer/0',
+  '/PUBLIC/Assessor/MapServer/0',
+  '/Assessor/Assessment/MapServer/0',
+  '/PUBLIC/ParcelQuery/MapServer/0',
+  '/PUBLIC/Property/MapServer/0',
+];
+
+// Build all query string variants to try
+function piWhereVariants(type, q){
+  const u = q.toUpperCase();
+  const street = u.split(',')[0].trim(); // just street part
+  if(type==='apn') return [
+    `APN='${u}'`, `APN LIKE '%${u}%'`, `PARCEL_NO='${u}'`, `PARCEL_NO LIKE '%${u}%'`,
+    `APNNO='${u}'`, `ASSESSOR_PARCEL_NUMBER LIKE '%${u}%'`
+  ];
+  if(type==='owner') return [
+    `OWNER_NAME LIKE '%${u}%'`, `ASSESSEE_NAME LIKE '%${u}%'`,
+    `OWNER LIKE '%${u}%'`, `TAXPAYER_NAME LIKE '%${u}%'`, `NAME LIKE '%${u}%'`
+  ];
+  // address — try full and street-only
+  return [
+    `SITUS_ADDRESS LIKE '%${street}%'`, `SITUS_ADDR LIKE '%${street}%'`,
+    `SITE_ADDRESS LIKE '%${street}%'`, `STREET_ADDRESS LIKE '%${street}%'`,
+    `ADDRESS LIKE '%${street}%'`, `PROP_ADDR LIKE '%${street}%'`,
+    `FULL_ADDRESS LIKE '%${street}%'`, `SITUS LIKE '%${street}%'`
+  ];
+}
+
+async function piTryFetch(path, params){
+  let url;
+  if(PI_PROXY){
+    // Route through Vercel proxy: /api/kern-proxy?path=/PUBLIC/Parcels/MapServer/0/query&where=...
+    url = PI_PROXY + '?path=' + encodeURIComponent(path + '/query') + '&' + params + '&returnGeometry=false&outFields=*&f=json';
+  } else {
+    url = PI_BASE + path + '/query?' + params + '&returnGeometry=false&outFields=*&f=json';
+  }
+  const r = await fetch(url, {signal: AbortSignal.timeout(15000)});
+  if(!r.ok) return null;
+  const d = await r.json();
+  if(d.error){ console.warn('[PI] API error:', d.error); return null; }
+  return d.features && d.features.length ? d : null;
+}
+
+async function piDiscoverWorkingPath(testWhere){
+  if(piWorkingPath){
+    // Verify cached path still works
+    try{
+      const d = await piTryFetch(piWorkingPath, 'where=' + encodeURIComponent(testWhere) + '&resultRecordCount=1');
+      if(d) return piWorkingPath;
+    }catch(e){}
+    piWorkingPath = null;
+  }
+  for(const path of PI_SERVICE_CANDIDATES){
+    try{
+      const d = await piTryFetch(path, 'where=1%3D1&resultRecordCount=1');
+      if(d !== null){
+        piWorkingPath = path;
+        localStorage.setItem('bchb_pi_service_path', path);
+        console.log('[PI] Working service path found:', path);
+        return path;
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+async function piQueryParcels(city, maxRecords){
+  const path = await piDiscoverWorkingPath(`1=1`);
+  if(!path) return null;
+  // Try each address WHERE variant
+  const wheres = piWhereVariants('address', city);
+  for(const w of wheres){
+    try{
+      const d = await piTryFetch(path, 'where=' + encodeURIComponent(w) + '&resultRecordCount=' + maxRecords);
+      if(d) return {features: d.features, servicePath: path};
+    }catch(e){}
+  }
+  // Fallback: grab any records
+  try{
+    const d = await piTryFetch(path, 'where=1%3D1&resultRecordCount=' + maxRecords);
+    if(d) return {features: d.features, servicePath: path};
+  }catch(e){}
+  return null;
+}
+
+function piNormalizeFeature(attrs, idx){
+  const apn   = attrs.APN || attrs.PARCEL_NO || attrs.APNNO || '';
+  const addr  = attrs.SITUS_ADDRESS || attrs.SITUS_ADDR || attrs.STREET_ADDRESS || 'Unknown Address';
+  const owner = attrs.OWNER_NAME || attrs.OWNER || attrs.ASSESSEE_NAME || 'Unknown Owner';
+  const city  = attrs.SITUS_CITY || attrs.CITY || 'Bakersfield';
+  const zip   = attrs.ZIP || attrs.SITUS_ZIP || '';
+  const land  = parseFloat(attrs.ASSESSED_LAND || attrs.ASSMT_LAND || attrs.LAND_VALUE || 0);
+  const impr  = parseFloat(attrs.ASSESSED_IMPV || attrs.ASSMT_IMPS || attrs.IMPR_VALUE || 0);
+  const total = parseFloat(attrs.ASSESSED_TOTAL || attrs.ASSMT_TOTAL || attrs.TOTAL_VALUE || 0) || land + impr;
+  const use   = attrs.LAND_USE_CODE || attrs.LAND_USE || attrs.USE_CODE || '';
+
+  const prop = {
+    id: 'pi_' + (apn || idx + '_' + Date.now()),
+    apn, addr, city, zip, ownerName: owner,
+    assessedLand: land, assessedImpr: impr, assessedTotal: total,
+    landUse: use,
+    stage: 'normal', lienAmount: 0, nodDate: '', trusteeSaleDate: '', lender: '',
+    addedToCRM: false, source: 'gis',
+    created: Date.now(), updated: Date.now()
+  };
+  const eq = piCalcEquity(prop);
+  prop.estimatedValue = eq.estimatedValue;
+  prop.equity = eq.equity;
+  prop.equityPct = eq.equityPct;
+  prop.score = piScore(prop);
+  return prop;
+}
+
+async function piSync(){
+  if(piSyncing){ showToast('Sync already running…'); return; }
+  piSyncing = true;
+  const btn = document.getElementById('piSyncBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '⟳ Syncing…'; }
+  piUpdateSyncBar('Syncing…', 'stale');
+  showToast('Syncing Kern County GIS…');
+
+  const s = PropIntelDB.settings;
+  const cities = (s.cities || ['Bakersfield']);
+  const max = s.maxRecords || 500;
+  let allNew = [];
+
+  for(const city of cities){
+    try{
+      const result = await piQueryParcels(city, Math.ceil(max / cities.length));
+      if(result && result.features.length){
+        const mapped = result.features.map((f,i) => piNormalizeFeature(f.attributes || f, i));
+        allNew = allNew.concat(mapped);
+      }
+    }catch(e){ console.warn('[PI] city error:', city, e); }
+  }
+
+  if(allNew.length){
+    // Merge with existing — deduplicate by APN or addr
+    const existing = PropIntelDB.properties;
+    const existMap = {};
+    existing.forEach(p => { existMap[p.apn || p.addr] = p; });
+    let merged = 0;
+    allNew.forEach(p => {
+      const key = p.apn || p.addr;
+      if(existMap[key]){
+        // Preserve manual fields (stage, lien, notes)
+        const ex = existMap[key];
+        p.stage = ex.stage;
+        p.lienAmount = ex.lienAmount;
+        p.nodDate = ex.nodDate;
+        p.trusteeSaleDate = ex.trusteeSaleDate;
+        p.notes = ex.notes || '';
+        p.addedToCRM = ex.addedToCRM;
+        p.score = piScore(p);
+        merged++;
+      }
+      existMap[key] = p;
+    });
+    const final = Object.values(existMap);
+    PropIntelDB.properties = final;
+    PropIntelDB.lastSync = new Date().toISOString();
+    showToast('Synced ' + allNew.length + ' properties (' + merged + ' updated) ✓');
+  } else {
+    // API unavailable — show helpful message
+    showToast('GIS API unreachable. Add properties via Import tab.', 5000);
+    PropIntelDB.lastSync = new Date().toISOString();
+  }
+
+  piSyncing = false;
+  if(btn){ btn.disabled = false; btn.textContent = '🔄 Sync Now'; }
+  piUpdateSyncBar();
+  piRender();
+}
+
+/* ── Auto-sync check ── */
+function piCheckAutoSync(){
+  const last = PropIntelDB.lastSync;
+  const s = PropIntelDB.settings;
+  const hrs = s.interval || 12;
+  if(!last){
+    // Never synced — offer to sync
+    return;
+  }
+  const diff = (Date.now() - new Date(last).getTime()) / 3600000;
+  if(diff >= hrs) piSync();
+}
+
+// Check every hour
+setInterval(piCheckAutoSync, 3600000);
+
+/* ── Sync Bar ── */
+function piUpdateSyncBar(msg, dotCls){
+  const dot = document.getElementById('piSyncDot');
+  const lbl = document.getElementById('piSyncLabel');
+  if(!dot||!lbl) return;
+  const last = PropIntelDB.lastSync;
+  if(msg){
+    lbl.textContent = msg;
+    dot.className = 'pi-sync-dot ' + (dotCls||'stale');
+    return;
+  }
+  if(!last){
+    lbl.textContent = 'Never synced';
+    dot.className = 'pi-sync-dot never';
+    return;
+  }
+  const mins = Math.round((Date.now() - new Date(last).getTime()) / 60000);
+  const hrs  = Math.floor(mins / 60);
+  const age  = hrs > 0 ? hrs + 'h ago' : mins + 'min ago';
+  lbl.textContent = 'Last sync: ' + age + ' · ' + PropIntelDB.properties.length + ' properties';
+  dot.className = 'pi-sync-dot ' + (mins > 720 ? 'stale' : '');
+}
+
+/* ── Tab ── */
+function piTab(t){
+  piCurrentTab = t;
+  ['all','foreclosure','nod','lookup','import','pisettings'].forEach(id => {
+    const panel = document.getElementById('pi-panel-' + id);
+    const tab   = document.getElementById('pi-tab-' + id);
+    if(panel) panel.style.display = id === t ? '' : 'none';
+    if(tab)   tab.classList.toggle('active', id === t);
+  });
+  if(t === 'all')         piRenderAll();
+  if(t === 'foreclosure') piRenderForeclosures();
+  if(t === 'nod')         piRenderNOD();
+  if(t === 'pisettings')  piLoadSettings();
+}
+
+/* ── KPIs ── */
+function piUpdateKPIs(){
+  const props = PropIntelDB.properties;
+  const fore  = props.filter(p => ['nod','notice_sale','reo'].includes(p.stage));
+  const hot   = props.filter(p => p.score >= 70);
+  const avgEq = props.length ? Math.round(props.reduce((s,p)=>s+(p.equity||0),0)/props.length) : 0;
+  const fmt = n => n>=1000000 ? '$'+(n/1000000).toFixed(1)+'M' : n>=1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n;
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('piKpiTotal', props.length);
+  set('piKpiForeclosure', fore.length);
+  set('piKpiHot', hot.length);
+  set('piKpiEquity', fmt(avgEq));
+}
+
+/* ── Render helpers ── */
+function piCardHTML(p){
+  const tags = [];
+  if(p.stage==='nod')          tags.push('<span class="pi-tag pi-tag-nod">NOD</span>');
+  if(p.stage==='notice_sale')  tags.push('<span class="pi-tag pi-tag-fore">NOTICE OF SALE</span>');
+  if(p.stage==='pre_nod')      tags.push('<span class="pi-tag pi-tag-nod">PRE-NOD</span>');
+  if(p.stage==='reo')          tags.push('<span class="pi-tag pi-tag-fore">REO</span>');
+  if(p.lienAmount > 0)         tags.push('<span class="pi-tag pi-tag-lien">LIEN $'+(p.lienAmount/1000).toFixed(0)+'K</span>');
+  if(p.equityPct >= 40)        tags.push('<span class="pi-tag pi-tag-equity">'+p.equityPct+'% EQUITY</span>');
+  const fmtVal = v => v>=1000000?'$'+(v/1000000).toFixed(2)+'M':v>=1000?'$'+(v/1000).toFixed(0)+'K':'$'+(v||0);
+  const scoreClass = piScoreClass(p.score);
+  const equityBarW = Math.min(100, p.equityPct||0);
+  const alreadyInCRM = p.addedToCRM;
+  return `
+  <div class="pi-prop-card">
+    <div class="pi-score-circle ${scoreClass}" title="Lead Score">${p.score}</div>
+    <div class="pi-prop-main">
+      <div class="pi-prop-addr">${p.addr}${p.city&&p.city!=='Unknown'?', '+p.city:''}</div>
+      <div class="pi-prop-owner">👤 ${p.ownerName}${p.apn?' &nbsp;·&nbsp; APN: '+p.apn:''}</div>
+      <div class="pi-prop-tags">${tags.join('')}</div>
+      <div class="pi-prop-nums">
+        <span>Assessed <b>${fmtVal(p.assessedTotal)}</b></span>
+        <span>Est. Value <b>${fmtVal(p.estimatedValue)}</b></span>
+        <span>Equity <b>${fmtVal(p.equity)}</b></span>
+      </div>
+      <div class="pi-equity-bar-wrap"><div class="pi-equity-bar" style="width:${equityBarW}%"></div></div>
+    </div>
+    <div class="pi-prop-actions">
+      ${alreadyInCRM
+        ? '<span style="font-size:0.72rem;color:#22c55e;font-weight:600">✓ In CRM</span>'
+        : `<button class="btn btn-primary btn-sm" onclick="piAddToCRM('${p.id}')">+ Add to CRM</button>`}
+      <button class="btn btn-ghost btn-sm" onclick="piViewDetail('${p.id}')">Details</button>
+      <button class="btn btn-danger btn-sm" style="padding:4px 8px" onclick="piDelete('${p.id}')">🗑</button>
+    </div>
+  </div>`;
+}
+
+function piRenderAll(){
+  const el = document.getElementById('piAllList');
+  if(!el) return;
+  const q = (document.getElementById('piSearchInput')?.value||'').toLowerCase();
+  const stage = document.getElementById('piStageFilter')?.value || 'all';
+  const sort  = document.getElementById('piSortFilter')?.value || 'score';
+  const min   = PropIntelDB.settings.minScore || 0;
+  let props = PropIntelDB.properties.filter(p => {
+    if(stage !== 'all' && p.stage !== stage) return false;
+    if(p.score < min) return false;
+    if(!q) return true;
+    return (p.addr||'').toLowerCase().includes(q)
+      || (p.ownerName||'').toLowerCase().includes(q)
+      || (p.apn||'').toLowerCase().includes(q);
+  });
+  if(sort==='score')  props.sort((a,b)=>b.score-a.score);
+  if(sort==='equity') props.sort((a,b)=>b.equityPct-a.equityPct);
+  if(sort==='value')  props.sort((a,b)=>b.estimatedValue-a.estimatedValue);
+  if(sort==='newest') props.sort((a,b)=>b.created-a.created);
+  if(!props.length){
+    el.innerHTML='<div class="pi-empty"><div class="pi-empty-icon">🏠</div><div>No properties yet. Click <b>Sync Now</b> to pull Kern County data, or use the Import tab.</div></div>';
+    return;
+  }
+  el.innerHTML = props.map(piCardHTML).join('');
+}
+
+function piRenderForeclosures(){
+  const el = document.getElementById('piForeList');
+  if(!el) return;
+  const q = (document.getElementById('piForeSearch')?.value||'').toLowerCase();
+  let props = PropIntelDB.properties.filter(p =>
+    ['nod','notice_sale','pre_nod','reo'].includes(p.stage) &&
+    (!q || (p.addr||'').toLowerCase().includes(q) || (p.ownerName||'').toLowerCase().includes(q))
+  ).sort((a,b)=>b.score-a.score);
+  if(!props.length){
+    el.innerHTML='<div class="pi-empty"><div class="pi-empty-icon">🏚</div><div>No foreclosure properties. Sync data or manually set a property stage to NOD/Pre-NOD/Notice of Sale.</div></div>';
+    return;
+  }
+  el.innerHTML = props.map(piCardHTML).join('');
+}
+
+function piRenderNOD(){
+  const el = document.getElementById('piNodList');
+  if(!el) return;
+  let props = PropIntelDB.properties.filter(p =>
+    p.stage==='nod' || p.stage==='notice_sale' || p.lienAmount > 0
+  ).sort((a,b)=>b.score-a.score);
+  if(!props.length){
+    el.innerHTML='<div class="pi-empty"><div class="pi-empty-icon">⚠️</div><div>No NOD or lien records. Import data or manually update a property.</div></div>';
+    return;
+  }
+  el.innerHTML = props.map(piCardHTML).join('');
+}
+
+function piRender(){
+  piUpdateKPIs();
+  piUpdateSyncBar();
+  if(piCurrentTab==='all')         piRenderAll();
+  if(piCurrentTab==='foreclosure') piRenderForeclosures();
+  if(piCurrentTab==='nod')         piRenderNOD();
+}
+
+/* ── Detail Modal ── */
+function piViewDetail(id){
+  const p = PropIntelDB.properties.find(x=>x.id===id);
+  if(!p) return;
+  const modal = document.getElementById('piDetailModal');
+  const card  = document.getElementById('piDetailCard');
+  const fmtVal = v => v>=1000000?'$'+(v/1000000).toFixed(2)+'M':v>=1000?'$'+(v/1000).toFixed(0)+'K':'$'+(v||0);
+  const stageLabels = {normal:'Normal',pre_nod:'Pre-NOD',nod:'NOD Filed',notice_sale:'Notice of Sale',reo:'REO / Bank-Owned'};
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+      <div>
+        <div style="font-size:1.1rem;font-weight:700">${p.addr}</div>
+        <div style="font-size:0.8rem;color:var(--gray);margin-top:2px">${p.city}${p.zip?', '+p.zip:''} · APN: ${p.apn||'N/A'}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="pi-score-circle ${piScoreClass(p.score)}" style="width:40px;height:40px;font-size:0.8rem">${p.score}</div>
+        <button onclick="document.getElementById('piDetailModal').style.display='none'" style="background:none;border:none;color:var(--gray);font-size:1.4rem;cursor:pointer">✕</button>
+      </div>
+    </div>
+    <div class="pi-result-grid">
+      <div class="pi-result-field"><div class="pi-result-field-label">Owner</div><div class="pi-result-field-value">${p.ownerName}</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">Stage</div><div class="pi-result-field-value">${stageLabels[p.stage]||p.stage}</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">Assessed Value</div><div class="pi-result-field-value">${fmtVal(p.assessedTotal)}</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">Est. Market Value</div><div class="pi-result-field-value">${fmtVal(p.estimatedValue)}</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">Estimated Equity</div><div class="pi-result-field-value">${fmtVal(p.equity)} (${p.equityPct}%)</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">Lien Amount</div><div class="pi-result-field-value">${p.lienAmount>0?fmtVal(p.lienAmount):'None'}</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">Land Use</div><div class="pi-result-field-value">${p.landUse||'N/A'}</div></div>
+      <div class="pi-result-field"><div class="pi-result-field-label">NOD Date</div><div class="pi-result-field-value">${p.nodDate||'N/A'}</div></div>
+    </div>
+    <div style="margin-top:16px">
+      <div class="form-label">Edit Stage</div>
+      <select class="form-input" id="piDetailStage" style="width:200px;display:inline-block;margin-right:8px">
+        <option value="normal" ${p.stage==='normal'?'selected':''}>Normal</option>
+        <option value="pre_nod" ${p.stage==='pre_nod'?'selected':''}>Pre-NOD</option>
+        <option value="nod" ${p.stage==='nod'?'selected':''}>NOD Filed</option>
+        <option value="notice_sale" ${p.stage==='notice_sale'?'selected':''}>Notice of Sale</option>
+        <option value="reo" ${p.stage==='reo'?'selected':''}>REO</option>
+      </select>
+      <input class="form-input" id="piDetailLien" type="number" placeholder="Lien $" style="width:140px;display:inline-block;margin-right:8px" value="${p.lienAmount||''}">
+      <button class="btn btn-ghost btn-sm" onclick="piDetailSave('${p.id}')">Save</button>
+    </div>
+    <div style="margin-top:14px">
+      <textarea class="form-input" id="piDetailNotes" rows="3" placeholder="Notes…" style="width:100%">${p.notes||''}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      ${!p.addedToCRM ? `<button class="btn btn-primary" onclick="piAddToCRM('${p.id}');document.getElementById('piDetailModal').style.display='none'">+ Add to CRM Leads</button>` : '<span style="color:#22c55e;font-size:0.85rem;font-weight:600">✓ Already in CRM Leads</span>'}
+    </div>`;
+  modal.style.display = 'flex';
+}
+
+function piDetailSave(id){
+  const props = PropIntelDB.properties;
+  const p = props.find(x=>x.id===id);
+  if(!p) return;
+  p.stage = document.getElementById('piDetailStage')?.value || p.stage;
+  p.lienAmount = parseFloat(document.getElementById('piDetailLien')?.value||0)||0;
+  p.notes = document.getElementById('piDetailNotes')?.value||'';
+  const eq = piCalcEquity(p);
+  p.equity = eq.equity; p.equityPct = eq.equityPct; p.estimatedValue = eq.estimatedValue;
+  p.score = piScore(p);
+  p.updated = Date.now();
+  PropIntelDB.properties = props;
+  showToast('Saved ✓');
+  piRender();
+}
+
+/* ── Add to CRM ── */
+function piAddToCRM(id){
+  const props = PropIntelDB.properties;
+  const p = props.find(x=>x.id===id);
+  if(!p) return;
+  const lead = {
+    id: uid(),
+    fname: (p.ownerName||'Unknown Owner').split(' ')[0] || 'Unknown',
+    lname: (p.ownerName||'').split(' ').slice(1).join(' ')||'',
+    phone: '', email: '',
+    address: p.addr + (p.city?', '+p.city:'') + (p.zip?' '+p.zip:''),
+    source: 'Property Intel',
+    status: p.score>=70 ? 'hot' : p.score>=40 ? 'warm' : 'new',
+    callstatus: 'notcalled',
+    value: p.estimatedValue || p.assessedTotal || 0,
+    notes: 'APN: '+(p.apn||'N/A')+' | Stage: '+p.stage+' | Equity: '+p.equityPct+'%'+(p.lienAmount?' | Lien: $'+p.lienAmount:'')+(p.notes?'\n'+p.notes:''),
+    timeline: [{type:'note',text:'Imported from Property Intel. Score: '+p.score,date:new Date().toLocaleDateString(),time:new Date().toLocaleTimeString()}],
+    created: Date.now()
+  };
+  const leads = DB.leads;
+  leads.unshift(lead);
+  DB.leads = leads;
+  p.addedToCRM = true;
+  PropIntelDB.properties = props;
+  showToast('Added to CRM Leads ✓');
+  piRender();
+}
+
+/* ── Delete ── */
+function piDelete(id){
+  crmConfirm('Remove this property?','It will be removed from Property Intel.',()=>{
+    PropIntelDB.properties = PropIntelDB.properties.filter(x=>x.id!==id);
+    piRender();
+  });
+}
+
+/* ── Lookup ── */
+let piLookupType_ = 'address';
+function piLookupType(t){ piLookupType_=t; }
+
+async function piLookup(){
+  const q = document.getElementById('piLookupInput')?.value.trim();
+  if(!q){ alert('Enter a search term.'); return; }
+  const res = document.getElementById('piLookupResult');
+
+  const addrEnc = encodeURIComponent(q.split(',')[0].trim());
+  const assessorUrl = `https://www.assessor.co.kern.ca.us/assessor/assessorservices.asp`;
+  const recorderUrl = `https://recorderexpress.co.kern.ca.us/reProp.aspx`;
+
+  res.innerHTML = `<div style="display:flex;align-items:center;gap:10px;color:var(--gray);padding:12px 0">
+    <span style="animation:spin 1s linear infinite;display:inline-block">⟳</span>
+    <span id="piLookupStatus">Checking local database…</span>
+  </div>`;
+
+  // 1. Local database first
+  const local = PropIntelDB.properties.filter(p =>
+    (p.addr||'').toLowerCase().includes(q.toLowerCase()) ||
+    (p.ownerName||'').toLowerCase().includes(q.toLowerCase()) ||
+    (p.apn||'').toLowerCase().includes(q.toLowerCase())
+  );
+  if(local.length){
+    res.innerHTML = '<div style="font-size:0.82rem;color:var(--gray);margin-bottom:10px">'+local.length+' match(es) from local database:</div>'
+      + local.map(piCardHTML).join('');
+    return;
+  }
+
+  // 2. Try live Kern County GIS API
+  const setStatus = t => { const el=document.getElementById('piLookupStatus'); if(el) el.textContent=t; };
+  setStatus('Connecting to Kern County GIS…');
+
+  try{
+    const path = await piDiscoverWorkingPath('1=1');
+    if(path){
+      setStatus('Searching parcels…');
+      const wheres = piWhereVariants(piLookupType_, q);
+      for(const w of wheres){
+        try{
+          const d = await piTryFetch(path, 'where='+encodeURIComponent(w)+'&resultRecordCount=20');
+          if(d && d.features.length){
+            const props = d.features.map((f,i)=>piNormalizeFeature(f.attributes||f,i));
+            res.innerHTML = '<div style="font-size:0.82rem;color:var(--gray);margin-bottom:10px">'+props.length+' result(s) from Kern County GIS:</div>'
+              + props.map(piCardHTML).join('');
+            return;
+          }
+        }catch(e){}
+      }
+      // Connected but no match
+      res.innerHTML = piNoResultHTML(q, assessorUrl, recorderUrl, 'Connected to GIS — no parcel matched "'+q+'". Try a shorter search (e.g. just the street number and name).');
+      return;
+    }
+  }catch(e){ console.warn('[PI] Lookup error:', e); }
+
+  // 3. API unreachable — show helpful fallback
+  res.innerHTML = piNoResultHTML(q, assessorUrl, recorderUrl, 'Could not reach the Kern County GIS API (may be a CORS restriction on this browser). Use the links below to search directly:');
+}
+
+function piNoResultHTML(q, assessorUrl, recorderUrl, msg){
+  return `<div style="padding:20px 0">
+    <div style="font-size:0.85rem;color:var(--gray);margin-bottom:18px;line-height:1.6">${msg}</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      <a href="${assessorUrl}" target="_blank" class="btn btn-ghost" style="text-align:left;padding:12px 16px;display:flex;align-items:center;gap:10px;text-decoration:none">
+        <span style="font-size:1.2rem">🏛</span>
+        <div><div style="font-size:0.85rem;font-weight:600;color:var(--white)">Kern County Assessor</div><div style="font-size:0.75rem;color:var(--gray)">assessor.co.kern.ca.us — property values &amp; ownership</div></div>
+      </a>
+      <a href="${recorderUrl}" target="_blank" class="btn btn-ghost" style="text-align:left;padding:12px 16px;display:flex;align-items:center;gap:10px;text-decoration:none">
+        <span style="font-size:1.2rem">📄</span>
+        <div><div style="font-size:0.85rem;font-weight:600;color:var(--white)">Kern County Recorder</div><div style="font-size:0.75rem;color:var(--gray)">recorderexpress.co.kern.ca.us — deeds, liens, NODs</div></div>
+      </a>
+      <a href="https://www.zillow.com/homes/${encodeURIComponent(q)}_rb/" target="_blank" class="btn btn-ghost" style="text-align:left;padding:12px 16px;display:flex;align-items:center;gap:10px;text-decoration:none">
+        <span style="font-size:1.2rem">🏠</span>
+        <div><div style="font-size:0.85rem;font-weight:600;color:var(--white)">Zillow</div><div style="font-size:0.75rem;color:var(--gray)">Estimated value &amp; ownership history</div></div>
+      </a>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:16px">
+      <div style="font-size:0.82rem;font-weight:600;margin-bottom:8px">Found the property? Add it manually:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="form-input" id="piQuickAddr" value="${q.replace(/"/g,'')}" placeholder="Address" style="flex:1;min-width:200px">
+        <input class="form-input" id="piQuickOwner" placeholder="Owner name" style="width:180px">
+        <input class="form-input" id="piQuickValue" placeholder="Est. value $" type="number" style="width:140px">
+        <button class="btn btn-primary" onclick="piQuickAdd()">+ Add</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function piQuickAdd(){
+  const addr  = document.getElementById('piQuickAddr')?.value.trim();
+  if(!addr){ alert('Address required.'); return; }
+  const prop = {
+    id:'pi_quick_'+Date.now(), apn:'', addr, city:'Bakersfield', zip:'',
+    ownerName: document.getElementById('piQuickOwner')?.value.trim()||'Unknown',
+    assessedTotal: 0,
+    estimatedValue: parseFloat(document.getElementById('piQuickValue')?.value||0)||0,
+    stage:'normal', lienAmount:0, nodDate:'', notes:'',
+    source:'manual', addedToCRM:false, created:Date.now(), updated:Date.now()
+  };
+  const eq=piCalcEquity(prop); prop.equity=eq.equity; prop.equityPct=eq.equityPct;
+  prop.estimatedValue=eq.estimatedValue||prop.estimatedValue;
+  prop.score=piScore(prop);
+  const props=PropIntelDB.properties; props.unshift(prop); PropIntelDB.properties=props;
+  showToast('Property added ✓');
+  piTab('all');
+}
+
+/* ── Import CSV ── */
+function piImportCSV(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').filter(Boolean);
+    const headers = lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/[^a-z_]/g,'_'));
+    const get = (row,name) => {
+      const idx = headers.findIndex(h=>h.includes(name));
+      return idx>=0 ? (row[idx]||'').trim() : '';
+    };
+    const props = PropIntelDB.properties;
+    let added = 0;
+    for(let i=1;i<lines.length;i++){
+      const row = lines[i].split(',').map(c=>c.trim().replace(/^"|"$/g,''));
+      const addr = get(row,'address') || get(row,'addr');
+      if(!addr) continue;
+      const prop = {
+        id: 'pi_imp_'+i+'_'+Date.now(),
+        apn: get(row,'apn'),
+        addr, city: get(row,'city')||'Bakersfield', zip: get(row,'zip'),
+        ownerName: get(row,'owner')||get(row,'name')||'Unknown',
+        assessedTotal: parseFloat(get(row,'assessed_value')||0)||0,
+        stage: get(row,'stage')||'normal',
+        lienAmount: parseFloat(get(row,'lien_amount')||0)||0,
+        nodDate: get(row,'nod_date'),
+        notes: get(row,'notes'),
+        source: 'import', addedToCRM: false,
+        created: Date.now(), updated: Date.now()
+      };
+      const eq = piCalcEquity(prop);
+      prop.estimatedValue=eq.estimatedValue; prop.equity=eq.equity; prop.equityPct=eq.equityPct;
+      prop.score=piScore(prop);
+      props.push(prop);
+      added++;
+    }
+    PropIntelDB.properties = props;
+    showToast('Imported '+added+' properties ✓');
+    piTab('all');
+    piRender();
+  };
+  reader.readAsText(file);
+}
+
+/* ── Manual Add ── */
+function piManualAdd(){
+  const addr  = document.getElementById('piManAddr')?.value.trim();
+  if(!addr){ alert('Address is required.'); return; }
+  const prop = {
+    id: 'pi_man_'+Date.now(),
+    apn:   document.getElementById('piManApn')?.value.trim()||'',
+    addr,  city: 'Bakersfield', zip:'',
+    ownerName: document.getElementById('piManOwner')?.value.trim()||'Unknown',
+    assessedTotal: parseFloat(document.getElementById('piManValue')?.value||0)||0,
+    stage: document.getElementById('piManStage')?.value||'normal',
+    lienAmount: parseFloat(document.getElementById('piManLien')?.value||0)||0,
+    nodDate:'', trusteeSaleDate:'', notes:'',
+    source:'manual', addedToCRM:false,
+    created:Date.now(), updated:Date.now()
+  };
+  const eq=piCalcEquity(prop);
+  prop.estimatedValue=eq.estimatedValue; prop.equity=eq.equity; prop.equityPct=eq.equityPct;
+  prop.score=piScore(prop);
+  const props=PropIntelDB.properties;
+  props.unshift(prop);
+  PropIntelDB.properties=props;
+  ['piManAddr','piManOwner','piManApn','piManValue','piManLien'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  showToast('Property added ✓');
+  piTab('all');
+  piRender();
+}
+
+/* ── Settings ── */
+function piLoadSettings(){
+  const s = PropIntelDB.settings;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+  set('piCitySetting', (s.cities||['Bakersfield']).join(', '));
+  set('piMaxRecords', s.maxRecords||500);
+  set('piSyncInterval', s.interval||12);
+  set('piMinScore', s.minScore||0);
+}
+
+function piSaveSettings(){
+  const g=(id)=>document.getElementById(id)?.value||'';
+  const cities = g('piCitySetting').split(',').map(c=>c.trim()).filter(Boolean);
+  PropIntelDB.settings = {
+    cities, maxRecords: parseInt(g('piMaxRecords'))||500,
+    interval: parseInt(g('piSyncInterval'))||12,
+    minScore: parseInt(g('piMinScore'))||0
+  };
+  showToast('Settings saved ✓');
+}
+
+/* ── Export CSV ── */
+function piExportCSV(){
+  const props = PropIntelDB.properties;
+  if(!props.length){ alert('No properties to export.'); return; }
+  const headers = ['APN','Address','City','Owner','Assessed Value','Est Value','Equity','Equity %','Stage','Lien','Score','Source'];
+  const rows = props.map(p=>[p.apn,p.addr,p.city,p.ownerName,p.assessedTotal,p.estimatedValue,p.equity,p.equityPct,p.stage,p.lienAmount,p.score,p.source]);
+  const csv = [headers,...rows].map(r=>r.map(v=>`"${v||''}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='property-intel-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+
+/* ── Hook into showView ── */
+(function(){
+  const _prev = window.showView;
+  window.showView = function(v){
+    _prev(v);
+    if(v==='propintel'){
+      piUpdateSyncBar();
+      piUpdateKPIs();
+      piTab(piCurrentTab);
+      // Auto-sync if stale
+      const last = PropIntelDB.lastSync;
+      const hrs = PropIntelDB.settings.interval || 12;
+      if(!last || (Date.now()-new Date(last).getTime())/3600000 >= hrs){
+        setTimeout(piSync, 800);
+      }
+    }
+  };
+})();
+
 </script>
 </body>
 </html>
