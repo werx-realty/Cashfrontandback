@@ -6,7 +6,9 @@
 <title>BCHB CRM — Bakersfield Cash Home Buyers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
 /* ── RESET & ROOT ─────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -702,6 +704,82 @@ input,select,textarea{font-family:var(--font)}
 .gcal-dot{width:8px;height:8px;border-radius:50%;background:#4285f4;flex-shrink:0}
 .gcal-setup-step{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:0.78rem;color:var(--gray);line-height:1.5}
 .gcal-setup-step .step-num{width:18px;height:18px;border-radius:50%;background:var(--gold-dim);color:var(--gold);font-size:0.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* ═══ ROUTE MAP PINS & POPUPS ═══════════════════════════════════════════════ */
+.rm-pin-wrap{position:relative;width:34px;height:44px;cursor:pointer}
+.rm-pin-body{width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .15s}
+.rm-pin-body:hover{transform:rotate(-45deg) scale(1.12)}
+.rm-pin-num{transform:rotate(45deg);font-size:0.75rem;font-weight:800;line-height:1}
+.rm-pin-body.start{background:#22c55e}
+.rm-pin-body.stop{background:#C9A96E}
+.rm-pin-body.end{background:#ef4444}
+/* Popup */
+.rm-popup .leaflet-popup-content-wrapper{background:#1a1a1f;border:1px solid rgba(201,169,110,0.3);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.6);padding:0;min-width:240px}
+.rm-popup .leaflet-popup-content{margin:0;width:100%!important}
+.rm-popup .leaflet-popup-tip-container{display:none}
+.rm-popup .leaflet-popup-close-button{color:#C9A96E!important;font-size:1rem!important;top:10px!important;right:12px!important}
+.rm-popup-inner{padding:14px 16px}
+.rm-popup-addr{font-size:0.78rem;font-weight:700;color:#C9A96E;margin-bottom:2px;padding-right:20px;line-height:1.3}
+.rm-popup-label{font-size:0.68rem;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.rm-popup-notes{width:100%;box-sizing:border-box;background:#111115;border:1px solid rgba(201,169,110,0.25);border-radius:8px;padding:8px 10px;color:#e0e0e0;font-size:0.8rem;line-height:1.5;resize:vertical;min-height:80px;outline:none;font-family:inherit}
+.rm-popup-notes:focus{border-color:#C9A96E}
+.rm-popup-notes::placeholder{color:#444}
+.rm-popup-saved{font-size:0.7rem;color:#22c55e;text-align:right;margin-top:4px;height:14px;opacity:0;transition:opacity .3s}
+#routeMapFrame{position:relative}
+.rm-status{background:#1a1a1f;padding:10px 16px;border-bottom:1px solid rgba(201,169,110,0.15);display:flex;gap:12px;align-items:center;font-size:0.8rem;flex-shrink:0;flex-wrap:wrap}
+.rm-stop-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:0.73rem;font-weight:600}
+.rm-stop-badge.start{background:rgba(34,197,94,.15);color:#22c55e}
+.rm-stop-badge.mid{background:rgba(201,169,110,.15);color:#C9A96E}
+.rm-stop-badge.end{background:rgba(239,68,68,.15);color:#ef4444}
+.rm-geocode-log{font-size:0.74rem;color:#666;flex:1;text-align:right}
+
+
+/* ═══ NOTEPAD PAGE ══════════════════════════════════════════════════════════ */
+.notepad-layout{display:flex;height:calc(100vh - 118px);gap:16px}
+
+/* ── Left sidebar (page thumbnails) ── */
+.notepad-sidebar{width:148px;flex-shrink:0;display:flex;flex-direction:column;gap:0;overflow:hidden}
+.notepad-sidebar-inner{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 10px}
+.notepad-sidebar-inner::-webkit-scrollbar{width:4px}
+.notepad-sidebar-inner::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* Thumbnail card */
+.np-thumb{position:relative;border-radius:6px;overflow:hidden;cursor:pointer;border:2px solid var(--border);transition:border-color .15s,transform .15s;flex-shrink:0;aspect-ratio:3/4;background:#fefef0;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.np-thumb:hover{border-color:rgba(201,169,110,.5);transform:translateY(-1px)}
+.np-thumb.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 4px 12px rgba(201,169,110,.25)}
+.np-thumb-header{background:#1c1c1c;height:12px;width:100%}
+.np-thumb-body{padding:5px 6px;background:#fefef0;background-image:repeating-linear-gradient(transparent 0px,transparent 10px,rgba(100,160,220,.45) 10px,rgba(100,160,220,.45) 11px);height:calc(100% - 12px);position:relative}
+.np-thumb-margin{position:absolute;left:14px;top:0;bottom:0;width:1.5px;background:rgba(200,50,50,.35)}
+.np-thumb-text{font-size:0.38rem;color:#444;line-height:11px;padding-left:18px;word-break:break-all;overflow:hidden;max-height:100%;white-space:pre-wrap}
+.np-thumb-num{position:absolute;bottom:4px;right:5px;font-size:0.5rem;color:#aaa;font-weight:600}
+.np-del-btn{position:absolute;top:3px;right:3px;width:14px;height:14px;border-radius:50%;background:rgba(239,68,68,.85);border:none;color:#fff;font-size:0.5rem;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;z-index:10}
+.np-thumb:hover .np-del-btn{display:flex}
+
+/* Add page button */
+.np-add-btn{width:100%;padding:10px 0;border-radius:8px;border:1.5px dashed var(--border);background:transparent;color:var(--gray);font-size:0.85rem;cursor:pointer;transition:all .15s;margin-top:4px;flex-shrink:0}
+.np-add-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+
+/* ── Main paper area ── */
+.notepad-main{flex:1;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.np-title-row{width:100%;max-width:780px;display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-shrink:0}
+.np-title-input{flex:1;background:transparent;border:none;outline:none;font-family:var(--serif);font-size:1.15rem;color:var(--white);font-weight:600}
+.np-title-input::placeholder{color:var(--gray)}
+.np-meta{font-size:0.72rem;color:var(--gray);white-space:nowrap}
+.np-save-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px;opacity:0;transition:opacity .3s}
+.np-save-dot.show{opacity:1}
+
+/* The paper */
+.np-paper{width:100%;max-width:780px;flex:1;display:flex;flex-direction:column;border-radius:6px;overflow:hidden;box-shadow:0 6px 40px rgba(0,0,0,.6);min-height:0}
+.np-paper-header{background:#1c1c1c;padding:7px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.np-paper-brand{color:#888;font-size:0.7rem;font-weight:600;letter-spacing:.08em;text-transform:lowercase;font-style:italic}
+.np-paper-lines{display:flex;flex:1;background:#fefef0;overflow:hidden;position:relative}
+.np-margin-line{width:56px;flex-shrink:0;background:#fefef0;background-image:repeating-linear-gradient(transparent 0px,transparent 27px,rgba(100,160,220,.4) 27px,rgba(100,160,220,.4) 28px);border-right:2px solid rgba(200,50,50,.45);background-position:0 5px}
+.np-writing-area{flex:1;background:#fefef0;background-image:repeating-linear-gradient(transparent 0px,transparent 27px,rgba(100,160,220,.4) 27px,rgba(100,160,220,.4) 28px);background-position:0 5px;overflow-y:auto;overflow-x:hidden}
+.np-textarea{width:100%;min-height:100%;background:transparent;border:none;outline:none;resize:none;font-family:'Georgia',serif;font-size:0.96rem;line-height:28px;color:#1a1a1a;padding:5px 24px 40px 12px;box-sizing:border-box;caret-color:#C9A96E}
+.np-textarea::placeholder{color:#bbb;font-style:italic}
+.np-textarea::selection{background:rgba(201,169,110,.3)}
+.np-page-count{background:#1c1c1c;padding:5px 16px;font-size:0.7rem;color:#666;text-align:right;flex-shrink:0}
+
 </style>
 </head>
 <body>
@@ -744,6 +822,7 @@ input,select,textarea{font-family:var(--font)}
     <div class="nav-item" onclick="showView('streetview')" data-view="streetview"><span class="nav-icon">🗺</span><span class="nav-label">Street View</span></div>
     <div class="nav-item" onclick="showView('routemap')" data-view="routemap"><span class="nav-icon">🛣</span><span class="nav-label">Route Map</span></div>
     <div class="nav-item" onclick="showView('email')" data-view="email"><span class="nav-icon">✉️</span><span class="nav-label">Email</span></div>
+    <div class="nav-item" onclick="showView('notepad')" data-view="notepad"><span class="nav-icon">📝</span><span class="nav-label">Notepad</span></div>
     <div class="nav-item" onclick="showView('integrations')" data-view="integrations"><span class="nav-icon">🔗</span><span class="nav-label">Integrations & API</span></div>
     <div class="nav-item" onclick="showView('settings')" data-view="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
   </div>
@@ -1474,12 +1553,18 @@ input,select,textarea{font-family:var(--font)}
           <button class="btn btn-ghost" style="width:100%" onclick="clearRoute()">✕ Clear All</button>
         </div>
       </div>
-      <!-- Right: Map -->
-      <div class="sv-frame" id="routeMapFrame" style="min-height:500px">
-        <div class="sv-placeholder">
+      <!-- Right: Leaflet Map -->
+      <div id="routeMapFrame" style="flex:1;min-height:500px;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--surface)">
+        <div id="rm-status-bar" class="rm-status" style="display:none">
+          <span id="rm-stop-count" class="rm-stop-badge mid">0 stops</span>
+          <span id="rm-route-info" style="color:var(--gray)"></span>
+          <span id="rm-geocode-log" class="rm-geocode-log"></span>
+        </div>
+        <div id="rm-leaflet" style="flex:1;min-height:0"></div>
+        <div id="rm-placeholder" class="sv-placeholder">
           <div class="sv-icon">🛣</div>
           <div style="font-size:1rem;font-weight:500">Route Map</div>
-          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route to see the fastest path.</p>
+          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route to drop pins on each house.</p>
         </div>
       </div>
     </div>
@@ -1495,6 +1580,55 @@ input,select,textarea{font-family:var(--font)}
     <div id="no-routes-msg" style="display:none">
       <div class="empty-state"><div class="empty-icon">🛣</div><p>No saved routes yet. Generate a route and save it.</p></div>
     </div>
+  </div>
+</div>
+
+
+<!-- ══ NOTEPAD ════════════════════════════════════════ -->
+<div class="view" id="view-notepad">
+  <div class="topbar" style="margin-bottom:10px">
+    <div class="page-title">Notepad <span>& Notes</span></div>
+    <div class="topbar-actions">
+      <span class="np-save-dot" id="npSaveDot"></span>
+      <span class="np-meta" id="npSaveMeta">Auto-saved</span>
+    </div>
+  </div>
+  <div class="notepad-layout">
+
+    <!-- Left: page thumbnails -->
+    <div class="notepad-sidebar">
+      <div class="notepad-sidebar-inner" id="npSidebar"></div>
+      <button class="np-add-btn" onclick="npAddPage()">+ New Page</button>
+    </div>
+
+    <!-- Right: active paper -->
+    <div class="notepad-main">
+      <div class="np-title-row">
+        <input class="np-title-input" id="npTitleInput" placeholder="Page title…"
+          oninput="npSaveTitle(this.value)" />
+        <span class="np-meta" id="npPageNum"></span>
+      </div>
+      <div class="np-paper">
+        <div class="np-paper-header">
+          <span class="np-paper-brand">universal</span>
+          <div style="flex:1;display:flex;gap:3px;align-items:center;margin-left:4px">
+            <div style="width:5px;height:5px;border-radius:50%;background:#555"></div>
+            <div style="width:5px;height:5px;border-radius:50%;background:#555"></div>
+            <div style="width:5px;height:5px;border-radius:50%;background:#555"></div>
+          </div>
+        </div>
+        <div class="np-paper-lines">
+          <div class="np-margin-line"></div>
+          <div class="np-writing-area">
+            <textarea class="np-textarea" id="npTextarea"
+              placeholder="Start writing…"
+              oninput="npAutoSave(this.value)"></textarea>
+          </div>
+        </div>
+        <div class="np-page-count" id="npWordCount">0 words</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2442,49 +2576,151 @@ function getRouteAddresses(){
   return {start, stops};
 }
 
-function generateRoute(){
+/* ── Route Map — Leaflet + Nominatim + OSRM ── */
+let _rm = { map:null, layers:[], markers:[] };
+
+function rmInitMap(){
+  if(_rm.map) return;
+  const el=document.getElementById('rm-leaflet');
+  if(!el) return;
+  _rm.map=L.map(el,{center:[35.3733,-119.0187],zoom:12,zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>'
+  }).addTo(_rm.map);
+}
+
+function rmClearLayers(){
+  _rm.layers.forEach(l=>_rm.map.removeLayer(l));
+  _rm.markers.forEach(m=>_rm.map.removeLayer(m));
+  _rm.layers=[]; _rm.markers=[];
+}
+
+async function rmGeocode(addr){
+  const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr)+'&format=json&limit=1&countrycodes=us';
+  const r=await fetch(url,{headers:{'Accept-Language':'en-US'}});
+  const d=await r.json();
+  if(!d.length) return null;
+  return [parseFloat(d[0].lat),parseFloat(d[0].lon)];
+}
+
+function rmMakeIcon(label,type){
+  const colors={start:'#22c55e',stop:'#C9A96E',end:'#ef4444'};
+  const c=colors[type]||colors.stop;
+  return L.divIcon({
+    className:'',
+    iconSize:[34,44], iconAnchor:[17,44], popupAnchor:[0,-46],
+    html:`<div class="rm-pin-wrap"><div class="rm-pin-body ${type}"><span class="rm-pin-num">${label}</span></div></div>`
+  });
+}
+
+function savePinNote(addr,val){
+  const notes=JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}');
+  notes[addr]=val;
+  localStorage.setItem('bchb_pin_notes',JSON.stringify(notes));
+  const el=document.getElementById('pn-saved-'+btoa(addr).replace(/[^a-z0-9]/gi,'').slice(0,12));
+  if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1500);}
+}
+
+function getPinNote(addr){
+  const notes=JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}');
+  return notes[addr]||'';
+}
+
+function rmAddMarker(latlng,addr,label,type){
+  const icon=rmMakeIcon(label,type);
+  const safeId=btoa(addr).replace(/[^a-z0-9]/gi,'').slice(0,12);
+  const note=getPinNote(addr);
+  const typeLabel={start:'Starting Point',stop:'Stop '+label,end:'Final Stop'}[type]||'Stop';
+  const popup=L.popup({closeButton:true,className:'rm-popup',maxWidth:280,minWidth:240,autoClose:false,closeOnClick:false})
+    .setContent(`<div class="rm-popup-inner">
+      <div class="rm-popup-addr">${addr}</div>
+      <div class="rm-popup-label">${typeLabel}</div>
+      <textarea class="rm-popup-notes" id="pn-ta-${safeId}" placeholder="Add notes for this stop…" oninput="savePinNote('${addr.replace(/'/g,"\'")}',this.value)">${note}</textarea>
+      <div class="rm-popup-saved" id="pn-saved-${safeId}">✓ Saved</div>
+    </div>`);
+  const marker=L.marker(latlng,{icon}).addTo(_rm.map);
+  marker.bindPopup(popup);
+  // Toggle on click
+  marker.on('click',function(){
+    if(this.isPopupOpen()) this.closePopup();
+    else this.openPopup();
+  });
+  _rm.markers.push(marker);
+  return marker;
+}
+
+async function generateRoute(){
   const {start, stops}=getRouteAddresses();
   if(!start){ alert('Please enter a start address.'); return; }
-  if(stops.length===0){ alert('Please add at least one stop.'); return; }
+  if(!stops.length){ alert('Please add at least one stop.'); return; }
 
-  // Embed directions directly — no new tab needed
+  // Show map, hide placeholder
+  document.getElementById('rm-placeholder').style.display='none';
+  document.getElementById('rm-status-bar').style.display='flex';
+  document.getElementById('rm-geocode-log').textContent='Locating addresses…';
+  document.getElementById('rm-stop-count').textContent='Loading…';
+
+  // Init map if needed
+  rmInitMap();
+  rmClearLayers();
+  setTimeout(()=>_rm.map.invalidateSize(),50);
+
   const all=[start,...stops];
-  const frame=document.getElementById('routeMapFrame');
-  const saddr=encodeURIComponent(start);
-  const daddr=stops.map((s,i)=>i===0?encodeURIComponent(s):'to:'+encodeURIComponent(s)).join('+');
-  const embedUrl='https://maps.google.com/maps?saddr='+saddr+'&daddr='+daddr+'&output=embed';
+  const coords=[];
 
-  frame.innerHTML=`
-    <div style="display:flex;flex-direction:column;height:100%">
-      <div style="background:var(--surface2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0;flex-wrap:wrap">
-        <span style="font-size:0.9rem">🏁</span>
-        <span style="font-size:0.82rem;color:var(--gold);font-weight:600">${all.length} stops</span>
-        <span style="font-size:0.78rem;color:var(--gray)">${start} → ${stops[stops.length-1]}</span>
-      </div>
-      <iframe
-        src="${embedUrl}"
-        style="flex:1;border:none;width:100%"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        title="Route Map">
-      </iframe>
-    </div>`
+  // Geocode each address sequentially
+  for(let i=0;i<all.length;i++){
+    document.getElementById('rm-geocode-log').textContent=`Finding ${i+1} of ${all.length}: ${all[i].split(',')[0]}…`;
+    const c=await rmGeocode(all[i]);
+    if(!c){ alert('Could not locate: '+all[i]+'\nTry adding the city/state.'); document.getElementById('rm-geocode-log').textContent=''; return; }
+    coords.push(c);
+    await new Promise(r=>setTimeout(r,300)); // Nominatim rate limit
+  }
+
+  document.getElementById('rm-geocode-log').textContent='Drawing route…';
+
+  // Plot pins
+  coords.forEach((c,i)=>{
+    const type=i===0?'start':(i===all.length-1?'end':'stop');
+    const label=i===0?'S':(i===all.length-1?'E':i);
+    rmAddMarker(c,all[i],label,type);
+  });
+
+  // Get route from OSRM
+  try{
+    const osrmCoords=coords.map(c=>c[1]+','+c[0]).join(';');
+    const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+osrmCoords+'?overview=full&geometries=geojson');
+    const d=await r.json();
+    if(d.routes&&d.routes[0]){
+      const line=L.geoJSON(d.routes[0].geometry,{style:{color:'#C9A96E',weight:4,opacity:0.85,dashArray:''}}).addTo(_rm.map);
+      _rm.layers.push(line);
+      const dist=(d.routes[0].distance/1609.34).toFixed(1);
+      const dur=Math.round(d.routes[0].duration/60);
+      document.getElementById('rm-route-info').textContent=`${dist} mi · ~${dur} min`;
+    }
+  }catch(e){ console.warn('OSRM routing failed',e); }
+
+  // Fit map to all pins
+  const bounds=L.latLngBounds(coords);
+  _rm.map.fitBounds(bounds,{padding:[40,40]});
+
+  document.getElementById('rm-stop-count').textContent=all.length+' stop'+(all.length>1?'s':'');
+  document.getElementById('rm-geocode-log').textContent='Click any pin to add notes';
+  document.getElementById('rm-stop-count').className='rm-stop-badge mid';
 }
 
 function loadSavedRouteEmbed(id){
   const r=RouteDB.routes.find(x=>x.id===id);
   if(!r) return;
-  // Switch to addresses tab to show the map frame
   showRouteTab('addresses');
-  // Repopulate fields
   document.getElementById('rt-start').value=r.start;
-  const stopRows=document.querySelectorAll('.rt-stop-row input');
+  // Clear existing stops and repopulate
+  document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
   r.stops.forEach((s,i)=>{
-    if(stopRows[i]) stopRows[i].value=s;
+    const rows=document.querySelectorAll('.rt-stop-row input');
+    if(rows[i]) rows[i].value=s;
     else{ addStop(); document.querySelectorAll('.rt-stop-row input')[i].value=s; }
   });
-  // Generate embedded route
   generateRoute();
 }
 
@@ -2502,12 +2738,11 @@ function saveCurrentRoute(){
 function clearRoute(){
   document.getElementById('rt-start').value='';
   document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
-  document.getElementById('routeMapFrame').innerHTML=`
-    <div class="sv-placeholder">
-      <div class="sv-icon">🛣</div>
-      <div style="font-size:1rem;font-weight:500">Route Map</div>
-      <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route.</p>
-    </div>`;
+  if(_rm.map) rmClearLayers();
+  document.getElementById('rm-placeholder').style.display='flex';
+  document.getElementById('rm-status-bar').style.display='none';
+  document.getElementById('rm-route-info').textContent='';
+  document.getElementById('rm-geocode-log').textContent='';
 }
 
 function renderSavedRoutes(){
@@ -3141,6 +3376,163 @@ window.showView = function(v){
 };
 
 })();
+
+
+/* ══════════════════════════════════════════════════════
+   NOTEPAD
+══════════════════════════════════════════════════════ */
+const NotepadDB = {
+  get pages(){ return JSON.parse(localStorage.getItem('bchb_notepad')||'[]'); },
+  set pages(v){ localStorage.setItem('bchb_notepad', JSON.stringify(v)); }
+};
+let npCurrentId = null;
+let npSaveTimer = null;
+
+function npInit(){
+  let pages = NotepadDB.pages;
+  if(!pages.length){
+    // Create first default page
+    pages = [{id:uid(), title:'My Notes', content:'', created:Date.now(), updated:Date.now()}];
+    NotepadDB.pages = pages;
+  }
+  npOpenPage(pages[0].id);
+  npRenderSidebar();
+}
+
+function npRenderSidebar(){
+  const pages = NotepadDB.pages;
+  const sidebar = document.getElementById('npSidebar');
+  if(!sidebar) return;
+  sidebar.innerHTML = pages.map((p,i) => {
+    const preview = (p.content||'').slice(0,120);
+    const isActive = p.id === npCurrentId;
+    return `
+    <div class="np-thumb${isActive?' active':''}" onclick="npOpenPage('${p.id}')" title="${p.title||'Page '+(i+1)}">
+      <button class="np-del-btn" onclick="event.stopPropagation();npDeletePage('${p.id}')" title="Delete page">✕</button>
+      <div class="np-thumb-header"></div>
+      <div class="np-thumb-body">
+        <div class="np-thumb-margin"></div>
+        <div class="np-thumb-text">${preview||'(empty)'}</div>
+        <div class="np-thumb-num">${i+1}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function npOpenPage(id){
+  // Save current first
+  if(npCurrentId) npFlushSave();
+  npCurrentId = id;
+  const pages = NotepadDB.pages;
+  const page = pages.find(p=>p.id===id);
+  if(!page) return;
+  const ta = document.getElementById('npTextarea');
+  const ti = document.getElementById('npTitleInput');
+  const pn = document.getElementById('npPageNum');
+  if(ta) ta.value = page.content||'';
+  if(ti) ti.value = page.title||'';
+  const idx = pages.findIndex(p=>p.id===id);
+  if(pn) pn.textContent = 'Page '+(idx+1)+' of '+pages.length;
+  npUpdateWordCount();
+  npRenderSidebar();
+  // Focus textarea
+  setTimeout(()=>{ if(ta) ta.focus(); }, 50);
+}
+
+function npAutoSave(val){
+  npUpdateWordCount();
+  clearTimeout(npSaveTimer);
+  npSaveTimer = setTimeout(()=>{
+    npFlushSave();
+    // Flash save dot
+    const dot = document.getElementById('npSaveDot');
+    const meta = document.getElementById('npSaveMeta');
+    if(dot){ dot.classList.add('show'); setTimeout(()=>dot.classList.remove('show'),1200); }
+    if(meta) meta.textContent = 'Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    npRenderSidebar();
+  }, 600);
+}
+
+function npFlushSave(){
+  if(!npCurrentId) return;
+  const ta = document.getElementById('npTextarea');
+  if(!ta) return;
+  const pages = NotepadDB.pages;
+  const page = pages.find(p=>p.id===npCurrentId);
+  if(page){
+    page.content = ta.value;
+    page.updated = Date.now();
+    NotepadDB.pages = pages;
+  }
+}
+
+function npSaveTitle(val){
+  if(!npCurrentId) return;
+  const pages = NotepadDB.pages;
+  const page = pages.find(p=>p.id===npCurrentId);
+  if(page){ page.title=val; NotepadDB.pages=pages; }
+  // Update page num label
+  const idx = pages.findIndex(p=>p.id===npCurrentId);
+  const pn = document.getElementById('npPageNum');
+  if(pn) pn.textContent = 'Page '+(idx+1)+' of '+pages.length;
+  npRenderSidebar();
+}
+
+function npAddPage(){
+  npFlushSave();
+  const pages = NotepadDB.pages;
+  const newPage = {id:uid(), title:'Page '+(pages.length+1), content:'', created:Date.now(), updated:Date.now()};
+  pages.push(newPage);
+  NotepadDB.pages = pages;
+  npOpenPage(newPage.id);
+  // Scroll sidebar to bottom
+  const sb = document.getElementById('npSidebar');
+  if(sb) setTimeout(()=>sb.scrollTop=sb.scrollHeight, 50);
+}
+
+function npDeletePage(id){
+  const pages = NotepadDB.pages;
+  if(pages.length<=1){ alert('Keep at least one page.'); return; }
+  if(!confirm('Delete this page? This cannot be undone.')) return;
+  const idx = pages.findIndex(p=>p.id===id);
+  const newPages = pages.filter(p=>p.id!==id);
+  NotepadDB.pages = newPages;
+  // If deleted the active page, switch to neighbor
+  if(npCurrentId===id){
+    npCurrentId = null;
+    const neighbor = newPages[Math.max(0,idx-1)];
+    if(neighbor) npOpenPage(neighbor.id);
+  } else {
+    npRenderSidebar();
+  }
+}
+
+function npUpdateWordCount(){
+  const ta = document.getElementById('npTextarea');
+  const el = document.getElementById('npWordCount');
+  if(!ta||!el) return;
+  const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+  const chars = ta.value.length;
+  el.textContent = words+' word'+(words!==1?'s':'')+' · '+chars+' characters';
+}
+
+// Hook into showView
+const _npOrigShowView = window.showView;
+window.showView = function(v){
+  _npOrigShowView(v);
+  if(v==='notepad'){
+    const pages = NotepadDB.pages;
+    if(!npCurrentId || !pages.find(p=>p.id===npCurrentId)){
+      npInit();
+    } else {
+      npRenderSidebar();
+    }
+    setTimeout(()=>{
+      const ta = document.getElementById('npTextarea');
+      if(ta) ta.focus();
+    }, 100);
+  }
+};
 
 </script>
 
