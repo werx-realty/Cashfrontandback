@@ -564,6 +564,92 @@ input,select,textarea{font-family:var(--font)}
   .two-col,.three-col{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
 }
+
+/* ═══ EMAIL PAGE ═══════════════════════════════════════════════════════════ */
+.email-wrap{display:flex;height:calc(100vh - 112px);background:var(--surface);border-radius:12px;border:1px solid var(--border);overflow:hidden}
+/* left folder panel */
+.email-fp{width:190px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 0}
+.email-compose-btn{margin:0 12px 14px;padding:9px 0;background:var(--gold);color:#0d0d0f;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.84rem;letter-spacing:.3px;transition:background .2s}
+.email-compose-btn:hover{background:#b8935c}
+.email-account-chip{display:flex;align-items:center;gap:7px;padding:7px 14px;margin-bottom:10px;border-bottom:1px solid var(--border)}
+.ea-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.ea-label{font-size:0.75rem;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.ea-disconnect{background:none;border:none;color:var(--gray);cursor:pointer;font-size:0.78rem;padding:0}
+.ea-disconnect:hover{color:#ef4444}
+.email-folder-section{font-size:0.68rem;color:var(--gray);padding:8px 14px 4px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.ef-item{display:flex;align-items:center;gap:9px;padding:7px 14px;cursor:pointer;font-size:0.82rem;color:var(--gray);transition:all .15s;border-left:2px solid transparent}
+.ef-item:hover{background:var(--surface2);color:var(--white)}
+.ef-item.active{background:var(--gold-dim);color:var(--gold);border-left-color:var(--gold);font-weight:500}
+.ef-count{margin-left:auto;font-size:0.7rem;background:var(--gold);color:#0d0d0f;padding:1px 6px;border-radius:10px;font-weight:700}
+/* middle list */
+.email-list-panel{width:290px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.email-list-toolbar{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.email-list-toolbar input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:0.78rem;outline:none}
+.email-list-toolbar input:focus{border-color:var(--gold)}
+.email-list-toolbar input::placeholder{color:var(--gray)}
+.email-list-label{padding:8px 14px 4px;font-size:0.68rem;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.email-list-label button{background:none;border:none;color:var(--gray);cursor:pointer;font-size:0.72rem}
+.email-list-label button:hover{color:var(--gold)}
+.email-items-scroll{flex:1;overflow-y:auto}
+.email-item{padding:11px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s;position:relative}
+.email-item:hover{background:var(--surface2)}
+.email-item.active{background:var(--gold-dim)}
+.email-item.unread::before{content:'';position:absolute;left:4px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.ei-row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.ei-from{font-size:0.8rem;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.email-item.unread .ei-from{font-weight:700;color:var(--white)}
+.ei-time{font-size:0.7rem;color:var(--gray);flex-shrink:0}
+.ei-subject{font-size:0.77rem;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.email-item.unread .ei-subject{font-weight:600;color:var(--white)}
+.ei-preview{font-size:0.7rem;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.65}
+/* right detail */
+.email-detail-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.email-detail-toolbar{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.ed-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--gray);cursor:pointer;font-size:0.78rem;transition:all .15s}
+.ed-btn:hover{border-color:var(--gold);color:var(--gold)}
+.email-detail-body{flex:1;overflow-y:auto;padding:24px}
+.ed-subject{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:14px;line-height:1.3}
+.ed-meta{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.ed-avatar{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;flex-shrink:0}
+.ed-from-name{font-size:0.85rem;font-weight:600;color:var(--white)}
+.ed-from-addr{font-size:0.73rem;color:var(--gray)}
+.ed-date-str{font-size:0.73rem;color:var(--gray);margin-left:auto;text-align:right}
+.ed-body-text{font-size:0.84rem;color:var(--gray);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.ed-body-html{font-size:0.84rem;color:var(--gray);line-height:1.75}
+.ed-body-html a{color:var(--gold)}
+.email-reply-bar{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.email-reply-bar textarea{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--white);font-size:0.83rem;resize:none;outline:none;min-height:60px;font-family:inherit}
+.email-reply-bar textarea:focus{border-color:var(--gold)}
+/* compose panel */
+.email-compose-panel{display:flex;flex-direction:column;height:100%;padding:20px}
+.compose-header{font-size:1rem;font-weight:600;color:var(--white);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.compose-field{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);padding:8px 0}
+.compose-field label{font-size:0.78rem;color:var(--gray);width:36px;flex-shrink:0}
+.compose-field input{flex:1;background:transparent;border:none;color:var(--white);font-size:0.84rem;outline:none}
+.compose-field input::placeholder{color:var(--gray)}
+.compose-body-area{flex:1;background:transparent;border:none;color:var(--gray);font-size:0.84rem;line-height:1.75;resize:none;outline:none;padding:14px 0;font-family:inherit;min-height:160px}
+.compose-toolbar-bar{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
+/* connect state */
+.email-connect-state{display:flex;align-items:center;justify-content:center;height:100%}
+.email-connect-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:48px 40px;text-align:center;max-width:500px;width:100%}
+.email-connect-card h2{font-size:1.35rem;font-weight:700;color:var(--white);margin-bottom:8px}
+.email-connect-card p{font-size:0.84rem;color:var(--gray);line-height:1.6;margin-bottom:28px}
+.email-provider-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.email-provider-btn{display:flex;align-items:center;gap:10px;padding:12px 28px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--white);cursor:pointer;font-size:0.88rem;font-weight:500;transition:all .2s}
+.email-provider-btn:hover{border-color:var(--gold);color:var(--gold)}
+.email-provider-btn svg{flex-shrink:0}
+.email-setup-note{font-size:0.74rem;color:var(--gray);line-height:1.5;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:left}
+.email-setup-note a{color:var(--gold);text-decoration:none}
+.email-client-id-row{display:flex;gap:8px;margin-top:16px}
+.email-client-id-row input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--white);font-size:0.8rem;outline:none}
+.email-client-id-row input:focus{border-color:var(--gold)}
+.email-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--gray)}
+.email-empty-state .ees-icon{font-size:2.8rem;opacity:.4}
+.email-empty-state p{font-size:0.84rem;opacity:.6}
+.email-loading{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--gray)}
+.email-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 </style>
 </head>
 <body>
@@ -604,6 +690,8 @@ input,select,textarea{font-family:var(--font)}
     <div class="nav-item" onclick="showView('daily')" data-view="daily"><span class="nav-icon">☀️</span><span class="nav-label">Daily Schedule</span></div>
     <div class="nav-section-label">TOOLS</div>
     <div class="nav-item" onclick="showView('streetview')" data-view="streetview"><span class="nav-icon">🗺</span><span class="nav-label">Street View</span></div>
+    <div class="nav-item" onclick="showView('routemap')" data-view="routemap"><span class="nav-icon">🛣</span><span class="nav-label">Route Map</span></div>
+    <div class="nav-item" onclick="showView('email')" data-view="email"><span class="nav-icon">✉️</span><span class="nav-label">Email</span></div>
     <div class="nav-item" onclick="showView('integrations')" data-view="integrations"><span class="nav-icon">🔗</span><span class="nav-label">Integrations & API</span></div>
     <div class="nav-item" onclick="showView('settings')" data-view="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
   </div>
@@ -983,7 +1071,8 @@ input,select,textarea{font-family:var(--font)}
   <div class="topbar">
     <div class="page-title">Kanban <span>Board</span></div>
     <div class="topbar-actions">
-      <div style="font-size:0.8rem;color:var(--gray)">Drag leads between days to schedule follow-ups</div>
+      <div style="font-size:0.8rem;color:var(--gray)">Drag cards between days to schedule</div>
+      <button class="btn btn-primary btn-sm" onclick="openKanbanAdd()">+ Add Lead to Board</button>
     </div>
   </div>
   <div class="kanban-board" id="kanbanBoard">
@@ -1200,6 +1289,73 @@ input,select,textarea{font-family:var(--font)}
   </div>
 </div>
 
+
+<!-- ══ ROUTE MAP ═══════════════════════════════════════ -->
+<div class="view" id="view-routemap">
+  <div class="topbar">
+    <div class="page-title">Route <span>Map</span></div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showRouteTab('addresses')" id="tab-addresses" style="border-color:var(--gold);color:var(--gold)">📍 Addresses</button>
+      <button class="btn btn-ghost btn-sm" onclick="showRouteTab('routes')" id="tab-routes">🛣 Saved Routes</button>
+    </div>
+  </div>
+
+  <!-- ADDRESSES TAB -->
+  <div id="routetab-addresses">
+    <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;height:calc(100vh - 160px)">
+      <!-- Left panel -->
+      <div style="display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding-right:4px">
+        <div class="card" style="padding:18px">
+          <div class="detail-section-title">Start Address</div>
+          <div class="form-group">
+            <input class="form-input" id="rt-start" placeholder="Your starting location..." />
+          </div>
+        </div>
+        <div class="card" style="padding:18px">
+          <div class="detail-section-title" style="margin-bottom:12px">Stops</div>
+          <div id="rt-stops-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+            <div class="rt-stop-row" style="display:flex;gap:8px;align-items:center">
+              <span style="font-size:0.75rem;color:var(--gold);width:20px;text-align:center;flex-shrink:0">1</span>
+              <input class="form-input" placeholder="Address stop 1..." style="flex:1"/>
+              <button onclick="removeStop(this)" style="background:none;border:none;color:var(--gray);font-size:1rem;cursor:pointer;flex-shrink:0">✕</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="addStop()" style="width:100%">+ Add Stop</button>
+        </div>
+        <div class="card" style="padding:18px">
+          <div class="detail-section-title">Lead Addresses</div>
+          <div id="rt-lead-pins" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn btn-primary" style="width:100%;padding:14px" onclick="generateRoute()">🗺 Generate Best Route</button>
+          <button class="btn btn-ghost" style="width:100%" onclick="saveCurrentRoute()">💾 Save This Route</button>
+          <button class="btn btn-ghost" style="width:100%" onclick="clearRoute()">✕ Clear All</button>
+        </div>
+      </div>
+      <!-- Right: Map -->
+      <div class="sv-frame" id="routeMapFrame" style="min-height:500px">
+        <div class="sv-placeholder">
+          <div class="sv-icon">🛣</div>
+          <div style="font-size:1rem;font-weight:500">Route Map</div>
+          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route to see the fastest path.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTES TAB -->
+  <div id="routetab-routes" style="display:none">
+    <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:0.85rem;color:var(--gray)">Your saved routes — click any to reopen in Google Maps.</div>
+      <button class="btn btn-danger btn-sm" onclick="if(confirm('Clear all saved routes?')){DB.routes=[];renderSavedRoutes()}">Clear All Routes</button>
+    </div>
+    <div id="saved-routes-list" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div id="no-routes-msg" style="display:none">
+      <div class="empty-state"><div class="empty-icon">🛣</div><p>No saved routes yet. Generate a route and save it.</p></div>
+    </div>
+  </div>
+</div>
+
 </main>
 </div>
 </div>
@@ -1249,7 +1405,9 @@ const DB = {
   set events(v){ localStorage.setItem('bchb_events', JSON.stringify(v)) },
   get activity(){ return JSON.parse(localStorage.getItem('bchb_activity')||'[]') },
   set activity(v){ localStorage.setItem('bchb_activity', JSON.stringify(v)) },
-  get users(){ return JSON.parse(localStorage.getItem('bchb_users')||JSON.stringify([{name:'Admin User',email:'admin@bchb.com',role:'Super Admin',initials:'AU'}])) },
+  get routes(){ return JSON.parse(localStorage.getItem('bchb_routes')||'[]') },
+  set routes(v){ localStorage.setItem('bchb_routes', JSON.stringify(v)) },
+    get users(){ return JSON.parse(localStorage.getItem('bchb_users')||JSON.stringify([{name:'Admin User',email:'admin@bchb.com',role:'Super Admin',initials:'AU'}])) },
   set users(v){ localStorage.setItem('bchb_users', JSON.stringify(v)) },
 };
 
@@ -1337,6 +1495,7 @@ function showView(v){
   else if(v==='calendar') renderCalendar();
   else if(v==='daily') renderDaily();
   else if(v==='streetview') renderStreetViewLeads();
+  else if(v==='routemap'){ renderRouteLeadPins(); showRouteTab('addresses'); }
   else if(v==='settings') renderUsers();
   // update badge
   document.getElementById('leadsCountBadge').textContent = DB.leads.length;
@@ -1797,8 +1956,17 @@ function loadStreetView(addr){
   const a=addr||document.getElementById('sv-address').value.trim();
   if(!a)return;
   const frame=document.getElementById('svFrame');
-  const encoded=encodeURIComponent(a);
-  frame.innerHTML=`<iframe src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&location=${encoded}&heading=210&pitch=10&fov=90" allowfullscreen loading="lazy" title="Street View: ${a}"></iframe>`;
+  const encoded=encodeURIComponent(a+', Bakersfield CA');
+  // Use Google Maps embed (no API key required) with street view layer
+  frame.innerHTML=`
+    <div style="display:flex;flex-direction:column;height:100%">
+      <div style="background:var(--surface2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0">
+        <span style="font-size:0.8rem;color:var(--gray)">📍 ${a}</span>
+        <a href="https://www.google.com/maps/search/${encoded}" target="_blank" class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:0.75rem">Open in Google Maps ↗</a>
+        <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${encoded}" target="_blank" class="btn btn-primary btn-sm" style="font-size:0.75rem">Street View ↗</a>
+      </div>
+      <iframe src="https://maps.google.com/maps?q=${encoded}&output=embed&layer=c" style="flex:1;border:none;width:100%" allowfullscreen loading="lazy" title="Map: ${a}"></iframe>
+    </div>`;
 }
 function renderStreetViewLeads(){
   const el=document.getElementById('sv-lead-list');
@@ -1877,6 +2045,873 @@ function clearAllLeads(){ localStorage.removeItem('bchb_leads'); localStorage.re
 function openModal(id){ document.getElementById(id).classList.add('open'); gsap.from(`#${id} .modal`,{scale:0.95,opacity:0,duration:0.3,ease:'power3.out'}); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+/* ══════════════════════════════════════════════════════
+   KANBAN QUICK-ADD
+══════════════════════════════════════════════════════ */
+function openKanbanAdd(){
+  ['kb-fname','kb-lname','kb-phone','kb-email','kb-address','kb-value','kb-notes'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  openModal('kanbanModal');
+}
+function saveKanbanLead(){
+  const fn=document.getElementById('kb-fname').value.trim();
+  const ln=document.getElementById('kb-lname').value.trim();
+  const ph=document.getElementById('kb-phone').value.trim();
+  if(!fn||!ln||!ph){ alert('First name, last name and phone are required.'); return; }
+  const day=document.getElementById('kb-day').value;
+  const lead={
+    id:uid(), fname:fn, lname:ln,
+    phone:ph, email:document.getElementById('kb-email').value.trim(),
+    address:document.getElementById('kb-address').value.trim(),
+    value:document.getElementById('kb-value').value||0,
+    type:'', status:document.getElementById('kb-status').value,
+    callstatus:'notcalled', source:'manual', situation:'',
+    kanbanDay:day, notes:[], timeline:[{type:'created',msg:`Lead added directly to Kanban (${day})`,ts:Date.now(),color:'var(--gold)'}],
+    created:Date.now(), lastContact:null,
+  };
+  const notes=document.getElementById('kb-notes').value.trim();
+  if(notes) lead.notes.push({id:uid(),text:notes,ts:Date.now()});
+  const leads=DB.leads; leads.push(lead); DB.leads=leads;
+  document.getElementById('leadsCountBadge').textContent=DB.leads.length;
+  logActivity(`Kanban lead added: ${fn} ${ln} → ${day}`,'var(--warm)');
+  closeModal('kanbanModal');
+  renderKanban();
+}
+
+/* ══════════════════════════════════════════════════════
+   ROUTE MAP
+══════════════════════════════════════════════════════ */
+const RouteDB = {
+  get routes(){ return JSON.parse(localStorage.getItem('bchb_routes')||'[]') },
+  set routes(v){ localStorage.setItem('bchb_routes', JSON.stringify(v)) },
+};
+
+function showRouteTab(tab){
+  document.getElementById('routetab-addresses').style.display = tab==='addresses'?'block':'none';
+  document.getElementById('routetab-routes').style.display   = tab==='routes'?'block':'none';
+  document.getElementById('tab-addresses').style.borderColor = tab==='addresses'?'var(--gold)':'var(--border)';
+  document.getElementById('tab-addresses').style.color       = tab==='addresses'?'var(--gold)':'var(--gray)';
+  document.getElementById('tab-routes').style.borderColor    = tab==='routes'?'var(--gold)':'var(--border)';
+  document.getElementById('tab-routes').style.color          = tab==='routes'?'var(--gold)':'var(--gray)';
+  if(tab==='routes') renderSavedRoutes();
+}
+
+function addStop(){
+  const list=document.getElementById('rt-stops-list');
+  const num=list.children.length+1;
+  const div=document.createElement('div');
+  div.className='rt-stop-row';
+  div.style.cssText='display:flex;gap:8px;align-items:center';
+  div.innerHTML=`
+    <span style="font-size:0.75rem;color:var(--gold);width:20px;text-align:center;flex-shrink:0">${num}</span>
+    <input class="form-input" placeholder="Address stop ${num}..." style="flex:1"/>
+    <button onclick="removeStop(this)" style="background:none;border:none;color:var(--gray);font-size:1rem;cursor:pointer;flex-shrink:0">✕</button>`;
+  list.appendChild(div);
+}
+
+function removeStop(btn){
+  btn.closest('.rt-stop-row').remove();
+  // renumber
+  document.querySelectorAll('.rt-stop-row').forEach((row,i)=>{
+    row.querySelector('span').textContent=i+1;
+  });
+}
+
+function getRouteAddresses(){
+  const start=document.getElementById('rt-start').value.trim();
+  const stops=[...document.querySelectorAll('.rt-stop-row input')].map(i=>i.value.trim()).filter(Boolean);
+  return {start, stops};
+}
+
+function generateRoute(){
+  const {start, stops}=getRouteAddresses();
+  if(!start){ alert('Please enter a start address.'); return; }
+  if(stops.length===0){ alert('Please add at least one stop.'); return; }
+
+  // Build Google Maps directions URL
+  const all=[start,...stops];
+  const mapsUrl='https://www.google.com/maps/dir/'+all.map(a=>encodeURIComponent(a)).join('/');
+
+  // Show in frame with open-in-maps button + embedded map of first stop
+  const frame=document.getElementById('routeMapFrame');
+  const encoded=encodeURIComponent(all.join(' to '));
+  frame.innerHTML=`
+    <div style="display:flex;flex-direction:column;height:100%">
+      <div style="background:var(--surface2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0;flex-wrap:wrap">
+        <span style="font-size:0.8rem;color:var(--gold);font-weight:600">${all.length} stops</span>
+        <span style="font-size:0.78rem;color:var(--gray)">${start} → ${stops[stops.length-1]}</span>
+        <a href="${mapsUrl}" target="_blank" class="btn btn-primary btn-sm" style="margin-left:auto;font-size:0.78rem">🗺 Open Full Route in Google Maps ↗</a>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;background:var(--surface)">
+        <div style="font-size:3rem">🛣</div>
+        <div style="font-family:var(--serif);font-size:1.4rem">Route Ready</div>
+        <div style="font-size:0.85rem;color:var(--gray);max-width:400px;line-height:1.7">
+          Your ${all.length}-stop route has been built. Click the button above to open the full turn-by-turn directions in Google Maps — it will show you the fastest route through all ${stops.length} stop${stops.length>1?'s':''}.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:380px;margin-top:8px">
+          ${all.map((a,i)=>`
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;text-align:left">
+              <span style="color:var(--gold);font-weight:700;flex-shrink:0">${i===0?'🏁':i===all.length-1?'🏆':i}</span>
+              <span>${a}</span>
+            </div>`).join('')}
+        </div>
+        <a href="${mapsUrl}" target="_blank" class="btn btn-primary" style="font-size:0.9rem;padding:14px 32px;margin-top:8px">Open in Google Maps ↗</a>
+      </div>
+    </div>`;
+}
+
+function saveCurrentRoute(){
+  const {start, stops}=getRouteAddresses();
+  if(!start||stops.length===0){ alert('Generate a route first.'); return; }
+  const name=prompt('Name this route:',`Route ${new Date().toLocaleDateString()}`);
+  if(!name) return;
+  const routes=RouteDB.routes;
+  routes.unshift({id:uid(), name, start, stops, created:Date.now()});
+  RouteDB.routes=routes;
+  alert('Route saved! View it in the Saved Routes tab.');
+}
+
+function clearRoute(){
+  document.getElementById('rt-start').value='';
+  document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
+  document.getElementById('routeMapFrame').innerHTML=`
+    <div class="sv-placeholder">
+      <div class="sv-icon">🛣</div>
+      <div style="font-size:1rem;font-weight:500">Route Map</div>
+      <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route.</p>
+    </div>`;
+}
+
+function renderSavedRoutes(){
+  const routes=RouteDB.routes;
+  const list=document.getElementById('saved-routes-list');
+  const none=document.getElementById('no-routes-msg');
+  if(!routes.length){ list.innerHTML=''; none.style.display='block'; return; }
+  none.style.display='none';
+  list.innerHTML=routes.map(r=>{
+    const all=[r.start,...r.stops];
+    const mapsUrl='https://www.google.com/maps/dir/'+all.map(a=>encodeURIComponent(a)).join('/');
+    return `
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+        <div>
+          <div style="font-size:0.9rem;font-weight:600">${r.name}</div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-top:2px">${fmt(r.created)} · ${all.length} stops</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <a href="${mapsUrl}" target="_blank" class="btn btn-primary btn-sm">Open in Maps ↗</a>
+          <button class="btn btn-danger btn-sm" onclick="deleteRoute('${r.id}')">🗑</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${all.map((a,i)=>`
+          <div style="display:flex;gap:10px;align-items:center;font-size:0.8rem;color:var(--gray)">
+            <span style="color:var(--gold);font-weight:700;flex-shrink:0;width:20px">${i===0?'🏁':i===all.length-1?'🏆':i}</span>
+            <span>${a}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteRoute(id){
+  if(!confirm('Delete this route?')) return;
+  RouteDB.routes=RouteDB.routes.filter(r=>r.id!==id);
+  renderSavedRoutes();
+}
+
+function renderRouteLeadPins(){
+  const el=document.getElementById('rt-lead-pins');
+  if(!el) return;
+  const leads=DB.leads.filter(l=>l.address);
+  el.innerHTML=leads.length ? leads.map(l=>`
+    <div onclick="addLeadToRoute('${l.address.replace(/'/g,"\'")}')"
+         style="padding:8px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);transition:border-color 0.2s"
+         onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:0.8rem;font-weight:500">${l.fname} ${l.lname}</div>
+      <div style="font-size:0.72rem;color:var(--gray);margin-top:2px">${l.address.split(',')[0]}</div>
+    </div>`).join('') : '<p style="font-size:0.78rem;color:var(--gray)">No leads with addresses yet.</p>';
+}
+
+function addLeadToRoute(addr){
+  // Try to fill next empty stop first
+  const stops=document.querySelectorAll('.rt-stop-row input');
+  for(const s of stops){ if(!s.value.trim()){ s.value=addr; return; } }
+  // Otherwise add new stop
+  addStop();
+  const allStops=document.querySelectorAll('.rt-stop-row input');
+  allStops[allStops.length-1].value=addr;
+}
+
+
+/* ══════════════════════ EMAIL MODULE ══════════════════════════════════════ */
+(function(){
+
+/* ── State ── */
+const ES = {
+  accessToken: null,
+  tokenExpiry:  0,
+  accountEmail: '',
+  clientId:     localStorage.getItem('bchb_gmail_client_id') || '',
+  messages:     [],           // list cache [{id,threadId,from,subject,snippet,date,unread,labelIds}]
+  currentId:    null,
+  currentFolder:'INBOX',
+  searchQ:      '',
+  replyTo:      null,         // {to, subject}
+};
+
+const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.modify';
+let gsiLoaded = false;
+let tokenClient = null;
+
+/* ── GSI loader ── */
+function ensureGSI(cb){
+  if(gsiLoaded && window.google){ cb(); return; }
+  if(document.getElementById('gsi-script')){ 
+    // already loading, wait
+    const iv = setInterval(()=>{ if(window.google?.accounts){ clearInterval(iv); gsiLoaded=true; cb(); } }, 100);
+    return;
+  }
+  const s = document.createElement('script');
+  s.id = 'gsi-script';
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = ()=>{ gsiLoaded=true; cb(); };
+  document.head.appendChild(s);
+}
+
+function initTokenClient(){
+  if(!ES.clientId){ showGmailSetup(); return; }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: ES.clientId,
+    scope:     SCOPES,
+    callback:  onTokenReceived
+  });
+}
+
+function onTokenReceived(resp){
+  if(resp.error){ alert('Auth error: '+resp.error); return; }
+  ES.accessToken = resp.access_token;
+  ES.tokenExpiry  = Date.now() + (resp.expires_in - 60)*1000;
+  fetchProfile();
+}
+
+/* ── Public: connect ── */
+window.connectGmail = function(){
+  document.getElementById('yahooInfoNote').style.display='none';
+  if(!ES.clientId){
+    showGmailSetup();
+    return;
+  }
+  ensureGSI(()=>{
+    initTokenClient();
+    tokenClient.requestAccessToken({prompt:'select_account'});
+  });
+};
+
+window.showYahooInfo = function(){
+  document.getElementById('emailSetupNote').style.display='none';
+  document.getElementById('yahooInfoNote').style.display='block';
+};
+
+function showGmailSetup(){
+  const note = document.getElementById('emailSetupNote');
+  note.style.display = 'block';
+  document.getElementById('emailOriginHint').textContent = window.location.origin;
+  if(ES.clientId) document.getElementById('gmailClientIdInput').value = ES.clientId;
+  document.getElementById('yahooInfoNote').style.display='none';
+}
+
+window.saveGmailClientId = function(){
+  const val = document.getElementById('gmailClientIdInput').value.trim();
+  if(!val){ alert('Please paste your Google Client ID first.'); return; }
+  ES.clientId = val;
+  localStorage.setItem('bchb_gmail_client_id', val);
+  connectGmail();
+};
+
+/* ── Profile ── */
+async function fetchProfile(){
+  try{
+    const r = await gmailFetch('https://gmail.googleapis.com/gmail/v1/users/me/profile');
+    ES.accountEmail = r.emailAddress || 'Gmail Account';
+    document.getElementById('emailAccountLabel').textContent = ES.accountEmail;
+    document.getElementById('emailViewSub').textContent = ES.accountEmail;
+    // show email client
+    document.getElementById('emailConnectState').style.display='none';
+    document.getElementById('emailClient').style.display='block';
+    document.getElementById('emailRefreshBtn').style.display='inline-flex';
+    document.getElementById('emailDisconnectBtn').style.display='inline-flex';
+    emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
+  }catch(e){ console.error(e); alert('Could not fetch Gmail profile. Check your Client ID and try again.'); }
+}
+
+/* ── API helper ── */
+async function gmailFetch(url, opts={}){
+  if(Date.now() > ES.tokenExpiry){
+    // Token expired — request new silently
+    await new Promise(res=>{
+      tokenClient.callback = t=>{ ES.accessToken=t.access_token; ES.tokenExpiry=Date.now()+(t.expires_in-60)*1000; res(); };
+      tokenClient.requestAccessToken({prompt:''});
+    });
+  }
+  const resp = await fetch(url, {
+    ...opts,
+    headers:{ 'Authorization':'Bearer '+ES.accessToken, 'Content-Type':'application/json', ...(opts.headers||{}) }
+  });
+  if(!resp.ok) throw new Error(resp.status+' '+resp.statusText);
+  return resp.json();
+}
+
+/* ── Load folder ── */
+window.emailLoadFolder = async function(labelId, el){
+  ES.currentFolder = labelId;
+  ES.currentId = null;
+  ES.searchQ = '';
+  document.getElementById('emailSearchInput').value='';
+  document.querySelectorAll('.ef-item').forEach(x=>x.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labelNames = {INBOX:'Inbox',STARRED:'Starred',SENT:'Sent',DRAFT:'Drafts',SPAM:'Spam',TRASH:'Trash'};
+  document.getElementById('emailFolderLabel').textContent = labelNames[labelId]||labelId;
+  showListLoading();
+  try{
+    const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=40&labelIds=${labelId}`;
+    const data = await gmailFetch(url);
+    if(!data.messages||!data.messages.length){ showListEmpty(); return; }
+    // batch fetch headers
+    const details = await Promise.all(data.messages.slice(0,40).map(m=>
+      gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`)
+    ));
+    ES.messages = details.map(msg=>{
+      const h = {};
+      (msg.payload?.headers||[]).forEach(x=>{ h[x.name]=x.value; });
+      return {
+        id:       msg.id,
+        threadId: msg.threadId,
+        from:     parseFrom(h['From']||''),
+        fromRaw:  h['From']||'',
+        subject:  h['Subject']||'(no subject)',
+        date:     h['Date']||'',
+        snippet:  msg.snippet||'',
+        unread:   (msg.labelIds||[]).includes('UNREAD'),
+        labelIds: msg.labelIds||[]
+      };
+    });
+    renderEmailList(ES.messages);
+    updateUnreadBadge();
+  }catch(e){ console.error(e); showListError(e.message); }
+};
+
+function parseFrom(raw){
+  const m = raw.match(/^"?([^"<]+)"?\s*<?/);
+  if(m) return m[1].trim();
+  return raw.split('@')[0]||raw;
+}
+
+function formatDate(raw){
+  try{
+    const d = new Date(raw);
+    const now = new Date();
+    if(d.toDateString()===now.toDateString()) return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return d.toLocaleDateString([],{month:'short',day:'numeric'});
+  }catch{ return raw; }
+}
+
+function showListLoading(){
+  document.getElementById('emailItemsScroll').innerHTML=
+    '<div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Loading…</span></div>';
+}
+function showListEmpty(){
+  document.getElementById('emailItemsScroll').innerHTML=
+    '<div class="email-empty-state" style="height:200px"><div class="ees-icon">📭</div><p>No messages here</p></div>';
+}
+function showListError(msg){
+  document.getElementById('emailItemsScroll').innerHTML=
+    `<div class="email-empty-state" style="height:200px"><div class="ees-icon">⚠️</div><p>${msg}</p></div>`;
+}
+
+function renderEmailList(msgs){
+  if(!msgs.length){ showListEmpty(); return; }
+  const scroll = document.getElementById('emailItemsScroll');
+  scroll.innerHTML = msgs.map(m=>`
+    <div class="email-item${m.unread?' unread':''}${m.id===ES.currentId?' active':''}" onclick="emailOpenMessage('${m.id}',this)">
+      <div class="ei-row1">
+        <div class="ei-from">${escHTML(m.from)}</div>
+        <div class="ei-time">${formatDate(m.date)}</div>
+      </div>
+      <div class="ei-subject">${escHTML(m.subject)}</div>
+      <div class="ei-preview">${escHTML(m.snippet)}</div>
+    </div>`).join('');
+}
+
+function escHTML(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function updateUnreadBadge(){
+  const cnt = ES.messages.filter(m=>m.unread).length;
+  const badge = document.getElementById('efUnreadCount');
+  badge.style.display = cnt>0?'inline':'none';
+  badge.textContent = cnt;
+}
+
+/* ── Search ── */
+window.emailSearch = function(q){
+  ES.searchQ = q.toLowerCase();
+  if(!q){ renderEmailList(ES.messages); return; }
+  const filtered = ES.messages.filter(m=>
+    m.from.toLowerCase().includes(ES.searchQ)||
+    m.subject.toLowerCase().includes(ES.searchQ)||
+    m.snippet.toLowerCase().includes(ES.searchQ)
+  );
+  renderEmailList(filtered);
+};
+
+/* ── Open message ── */
+window.emailOpenMessage = async function(id, el){
+  ES.currentId = id;
+  document.querySelectorAll('.email-item').forEach(x=>x.classList.remove('active'));
+  if(el) el.classList.add('active');
+  // mark as read in local cache
+  const cached = ES.messages.find(m=>m.id===id);
+  if(cached) cached.unread=false;
+  // show detail loading
+  document.getElementById('emailEmptyState').style.display='none';
+  document.getElementById('emailComposeView').style.display='none';
+  const dv = document.getElementById('emailDetailView');
+  dv.style.display='flex';
+  document.getElementById('edSubject').textContent='Loading…';
+  document.getElementById('edBodyText').textContent='';
+  document.getElementById('emailReplyBar').style.display='none';
+  try{
+    const msg = await gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=full`);
+    const h={};
+    (msg.payload?.headers||[]).forEach(x=>{ h[x.name]=x.value; });
+    const subject = h['Subject']||'(no subject)';
+    const fromRaw = h['From']||'';
+    const fromName = parseFrom(fromRaw);
+    const fromAddr = (fromRaw.match(/<([^>]+)>/)||[,''])[1]||fromRaw;
+    const dateStr  = h['Date']||'';
+    document.getElementById('edSubject').textContent = subject;
+    document.getElementById('edAvatar').textContent  = (fromName[0]||'?').toUpperCase();
+    document.getElementById('edFromName').textContent = fromName;
+    document.getElementById('edFromAddr').textContent = fromAddr;
+    document.getElementById('edDate').textContent     = new Date(dateStr).toLocaleString();
+    // body
+    const body = extractBody(msg.payload);
+    document.getElementById('edBodyText').textContent = body;
+    // store reply context
+    ES.replyTo = { to: fromAddr, subject: 'Re: '+subject };
+    // mark as read via API (best-effort)
+    gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}/modify`,{
+      method:'POST', body:JSON.stringify({removeLabelIds:['UNREAD']})
+    }).catch(()=>{});
+    updateUnreadBadge();
+  }catch(e){ document.getElementById('edBodyText').textContent='Error loading message: '+e.message; }
+};
+
+function extractBody(payload){
+  if(!payload) return '';
+  // plain text preferred
+  if(payload.mimeType==='text/plain' && payload.body?.data)
+    return atob(payload.body.data.replace(/-/g,'+').replace(/_/g,'/'));
+  if(payload.parts){
+    for(const p of payload.parts){
+      if(p.mimeType==='text/plain' && p.body?.data)
+        return atob(p.body.data.replace(/-/g,'+').replace(/_/g,'/'));
+    }
+    // fallback html
+    for(const p of payload.parts){
+      if(p.mimeType==='text/html' && p.body?.data){
+        const html2 = atob(p.body.data.replace(/-/g,'+').replace(/_/g,'/'));
+        return htmlToPlain(html2);
+      }
+    }
+  }
+  if(payload.mimeType==='text/html' && payload.body?.data){
+    return htmlToPlain(atob(payload.body.data.replace(/-/g,'+').replace(/_/g,'/')));
+  }
+  return '';
+}
+
+function htmlToPlain(h){
+  return h.replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>/gi,'\n\n')
+    .replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ')
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();
+}
+
+/* ── Reply ── */
+window.emailReply = function(){
+  if(!ES.replyTo) return;
+  document.getElementById('emailReplyBar').style.display='flex';
+  document.getElementById('emailReplyText').focus();
+};
+
+window.emailSendReply = async function(){
+  const body = document.getElementById('emailReplyText').value.trim();
+  if(!body||!ES.replyTo){ alert('Nothing to send.'); return; }
+  await sendGmail(ES.replyTo.to, ES.replyTo.subject, body);
+  document.getElementById('emailReplyText').value='';
+  document.getElementById('emailReplyBar').style.display='none';
+};
+
+window.emailForward = function(){
+  emailShowCompose();
+  document.getElementById('composeSubject').value = 'Fwd: '+(document.getElementById('edSubject').textContent||'');
+  document.getElementById('composeBody').value = '\n\n--- Forwarded message ---\n'+(document.getElementById('edBodyText').textContent||'');
+};
+
+/* ── Compose ── */
+window.emailShowCompose = function(){
+  document.getElementById('emailEmptyState').style.display='none';
+  document.getElementById('emailDetailView').style.display='none';
+  document.getElementById('emailComposeView').style.display='block';
+  document.getElementById('composeTo').value='';
+  document.getElementById('composeCC').value='';
+  document.getElementById('composeSubject').value='';
+  document.getElementById('composeBody').value='';
+  document.getElementById('composeTo').focus();
+};
+window.emailHideCompose = function(){
+  document.getElementById('emailComposeView').style.display='none';
+  document.getElementById('emailEmptyState').style.display='flex';
+};
+
+window.emailSendCompose = async function(){
+  const to      = document.getElementById('composeTo').value.trim();
+  const subject = document.getElementById('composeSubject').value.trim();
+  const body    = document.getElementById('composeBody').value.trim();
+  if(!to||!subject||!body){ alert('Please fill in To, Subject and message.'); return; }
+  await sendGmail(to, subject, body, document.getElementById('composeCC').value.trim());
+  emailHideCompose();
+};
+
+window.emailSaveDraft = async function(){
+  const to      = document.getElementById('composeTo').value.trim()||'';
+  const subject = document.getElementById('composeSubject').value.trim()||'(Draft)';
+  const body    = document.getElementById('composeBody').value.trim()||'';
+  const raw = buildRaw(to, '', subject, body);
+  try{
+    await gmailFetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts',{
+      method:'POST', body: JSON.stringify({message:{raw}})
+    });
+    alert('Draft saved.');
+  }catch(e){ alert('Could not save draft: '+e.message); }
+};
+
+async function sendGmail(to, subject, body, cc=''){
+  try{
+    const raw = buildRaw(to, cc, subject, body);
+    await gmailFetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{
+      method:'POST', body: JSON.stringify({raw})
+    });
+    alert('Email sent! ✓');
+  }catch(e){ alert('Send failed: '+e.message); }
+}
+
+function buildRaw(to, cc, subject, body){
+  const from  = ES.accountEmail;
+  const lines = [`From: ${from}`,`To: ${to}`];
+  if(cc) lines.push(`Cc: ${cc}`);
+  lines.push(`Subject: ${subject}`,'MIME-Version: 1.0','Content-Type: text/plain; charset=utf-8','','');
+  lines.push(body);
+  return btoa(unescape(encodeURIComponent(lines.join('\r\n')))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+/* ── Archive / Trash ── */
+window.emailArchive = async function(){
+  if(!ES.currentId) return;
+  try{
+    await gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${ES.currentId}/modify`,{
+      method:'POST', body:JSON.stringify({removeLabelIds:['INBOX']})
+    });
+    removeCurrentFromList();
+  }catch(e){ alert('Archive failed: '+e.message); }
+};
+
+window.emailTrash = async function(){
+  if(!ES.currentId) return;
+  if(!confirm('Move this email to trash?')) return;
+  try{
+    await gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${ES.currentId}/trash`,{method:'POST'});
+    removeCurrentFromList();
+  }catch(e){ alert('Move to trash failed: '+e.message); }
+};
+
+function removeCurrentFromList(){
+  ES.messages = ES.messages.filter(m=>m.id!==ES.currentId);
+  ES.currentId=null;
+  renderEmailList(ES.messages);
+  document.getElementById('emailDetailView').style.display='none';
+  document.getElementById('emailEmptyState').style.display='flex';
+}
+
+/* ── Refresh ── */
+window.emailRefresh = function(){
+  emailLoadFolder(ES.currentFolder, document.querySelector('.ef-item.active'));
+};
+
+/* ── Disconnect ── */
+window.emailDisconnect = function(){
+  if(!confirm('Disconnect your email account?')) return;
+  ES.accessToken=null; ES.tokenExpiry=0; ES.accountEmail=''; ES.messages=[]; ES.currentId=null;
+  document.getElementById('emailClient').style.display='none';
+  document.getElementById('emailConnectState').style.display='flex';
+  document.getElementById('emailRefreshBtn').style.display='none';
+  document.getElementById('emailDisconnectBtn').style.display='none';
+  document.getElementById('emailViewSub').textContent='Connect your email account to get started';
+  document.getElementById('emailSetupNote').style.display='none';
+  document.getElementById('yahooInfoNote').style.display='none';
+  if(window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(ES.accessToken||'',()=>{});
+};
+
+/* ── Hook into showView ── */
+const _origShowView = window.showView;
+window.showView = function(v){
+  _origShowView(v);
+  if(v==='email' && ES.accessToken && Date.now()<ES.tokenExpiry && !ES.messages.length){
+    emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
+  }
+};
+
+})();
+
 </script>
+
+<!-- KANBAN QUICK-ADD MODAL -->
+<div class="modal-overlay" id="kanbanModal">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <span class="modal-title">Add Lead to Board</span>
+      <button class="modal-close" onclick="closeModal('kanbanModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">First Name <span class="req">*</span></label>
+          <input class="form-input" id="kb-fname" placeholder="Maria"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name <span class="req">*</span></label>
+          <input class="form-input" id="kb-lname" placeholder="Garcia"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone <span class="req">*</span></label>
+          <input class="form-input" id="kb-phone" type="tel" placeholder="(661) 555-0000"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="kb-email" type="email" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Property Address</label>
+          <input class="form-input" id="kb-address" placeholder="123 Main St, Bakersfield CA"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Est. Value ($)</label>
+          <input class="form-input" id="kb-value" type="number" placeholder="280000"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lead Status</label>
+          <select class="form-select" id="kb-status">
+            <option value="warm">🌤 Warm</option>
+            <option value="hot">🔥 Hot</option>
+            <option value="cold">❄ Cold</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Schedule Day</label>
+          <select class="form-select" id="kb-day">
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="unscheduled">Unscheduled</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="kb-notes" placeholder="Quick note..." style="min-height:70px"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('kanbanModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveKanbanLead()">Add to Board →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTE MAP MODAL (view saved route) -->
+<div class="modal-overlay" id="routeDetailModal">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">
+      <span class="modal-title" id="rdm-title">Route Detail</span>
+      <button class="modal-close" onclick="closeModal('routeDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="rdm-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('routeDetailModal')">Close</button>
+      <button class="btn btn-primary" id="rdm-open-btn">Open in Google Maps ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ EMAIL VIEW ═══════════════════════════════════════ -->
+<div class="view" id="view-email">
+  <div class="view-header" style="margin-bottom:14px">
+    <div>
+      <h2 class="view-title">Email</h2>
+      <p class="view-sub" id="emailViewSub">Connect your email account to get started</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost btn-sm" onclick="emailRefresh()" id="emailRefreshBtn" style="display:none">↻ Refresh</button>
+      <button class="btn btn-ghost btn-sm" onclick="emailDisconnect()" id="emailDisconnectBtn" style="display:none" style="color:#ef4444">Disconnect</button>
+    </div>
+  </div>
+
+  <!-- CONNECT STATE -->
+  <div id="emailConnectState" class="email-connect-state">
+    <div class="email-connect-card">
+      <div style="font-size:2.4rem;margin-bottom:14px">✉️</div>
+      <h2>Connect Your Email</h2>
+      <p>Sign in with Gmail to read, send, and manage your emails right inside the CRM. Your credentials stay in your browser — nothing is stored on any server.</p>
+      <div class="email-provider-btns">
+        <button class="email-provider-btn" onclick="connectGmail()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.17L1.4 6.27C2.43 4.31 4.08 2.74 6.08 1.77L8.5 5.35C7.12 5.97 5.98 7.45 5.27 9.17z"/><path fill="#4285F4" d="M18.73 9.17c-.71-1.72-1.85-3.2-3.23-3.82L17.92 1.77c2 .97 3.65 2.54 4.68 4.5L18.73 9.17z"/><path fill="#FBBC05" d="M12 4.5c1.33 0 2.57.35 3.65.95L17.65 1.5C16.08.57 14.1 0 12 0S7.92.57 6.35 1.5L8.35 5.45C9.43 4.85 10.67 4.5 12 4.5z"/><path fill="#34A853" d="M5.27 14.83L1.4 17.73C2.43 19.69 4.08 21.26 6.08 22.23L8.5 18.65C7.12 18.03 5.98 16.55 5.27 14.83z"/><path fill="#EA4335" d="M12 19.5c-1.33 0-2.57-.35-3.65-.95L6.35 22.5C7.92 23.43 9.9 24 12 24s4.08-.57 5.65-1.5L15.65 18.55C14.57 19.15 13.33 19.5 12 19.5z"/><path fill="#4285F4" d="M18.73 14.83c-.71 1.72-1.85 3.2-3.23 3.82L17.92 22.23c2-.97 3.65-2.54 4.68-4.5L18.73 14.83z"/><path fill="#34A853" d="M19.5 12c0-.84-.12-1.65-.33-2.42l3.93-2.9c.56 1.65.87 3.4.87 5.32s-.31 3.67-.87 5.32l-3.93-2.9c.21-.77.33-1.58.33-2.42z"/><path fill="#FBBC05" d="M4.5 12c0 .84.12 1.65.33 2.42L.9 17.32C.34 15.67.03 13.92.03 12s.31-3.67.87-5.32l3.93 2.9C4.62 10.35 4.5 11.16 4.5 12z"/></svg>
+          Connect Gmail
+        </button>
+        <button class="email-provider-btn" onclick="showYahooInfo()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#6001D2" d="M0 0h24v24H0z"/><path fill="#fff" d="M13.9 13.1L16.8 6h2.6l-4.7 10.7c-.9 2.1-1.9 2.5-3.6 2.5H9.7V17h1c.8 0 1.4-.3 1.8-1.1L8 6h2.7l2.1 5.8.3.9.8.4zM9.3 6H6.7L4 13.2 1.3 6H-.4L3.3 15.4l-1.4 3.4h1.8z"/></svg>
+          Yahoo Mail
+        </button>
+      </div>
+      <div class="email-setup-note" id="emailSetupNote" style="display:none">
+        <strong style="color:var(--white)">Gmail Setup (one-time)</strong><br>
+        To connect Gmail you need a Google OAuth Client ID:<br><br>
+        1. Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → New Project<br>
+        2. Enable the Gmail API<br>
+        3. Credentials → Create OAuth Client ID → Web Application<br>
+        4. Add <strong style="color:var(--gold)" id="emailOriginHint"></strong> to Authorized JavaScript origins<br>
+        5. Copy the Client ID and paste below
+        <div class="email-client-id-row">
+          <input type="text" id="gmailClientIdInput" placeholder="xxxxxxxxxx.apps.googleusercontent.com" />
+          <button class="btn btn-primary btn-sm" onclick="saveGmailClientId()">Save & Connect</button>
+        </div>
+      </div>
+      <div id="yahooInfoNote" style="display:none;margin-top:16px" class="email-setup-note">
+        <strong style="color:var(--white)">Yahoo Mail</strong><br>
+        Yahoo Mail requires server-side OAuth which isn't supported in this browser-only CRM.<br><br>
+        <strong>Workaround:</strong> Use <a href="https://mail.yahoo.com" target="_blank">mail.yahoo.com</a> directly, or forward your Yahoo mail to Gmail and connect Gmail here.
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL CLIENT (shown once connected) -->
+  <div id="emailClient" style="display:none">
+    <div class="email-wrap">
+
+      <!-- LEFT: Folder panel -->
+      <div class="email-fp">
+        <button class="email-compose-btn" onclick="emailShowCompose()">✏ Compose</button>
+        <div class="email-account-chip">
+          <div class="ea-dot"></div>
+          <div class="ea-label" id="emailAccountLabel">account@gmail.com</div>
+          <button class="ea-disconnect" onclick="emailDisconnect()" title="Disconnect">✕</button>
+        </div>
+        <div class="email-folder-section">Mailboxes</div>
+        <div class="ef-item active" onclick="emailLoadFolder('INBOX',this)" data-label="INBOX">
+          📥 <span>Inbox</span><span class="ef-count" id="efUnreadCount" style="display:none">0</span>
+        </div>
+        <div class="ef-item" onclick="emailLoadFolder('STARRED',this)" data-label="STARRED">⭐ <span>Starred</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('SENT',this)" data-label="SENT">📤 <span>Sent</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('DRAFT',this)" data-label="DRAFT">📝 <span>Drafts</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('SPAM',this)" data-label="SPAM">🚫 <span>Spam</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('TRASH',this)" data-label="TRASH">🗑 <span>Trash</span></div>
+      </div>
+
+      <!-- MIDDLE: Email list -->
+      <div class="email-list-panel">
+        <div class="email-list-toolbar">
+          <input type="text" id="emailSearchInput" placeholder="Search emails…" oninput="emailSearch(this.value)" />
+        </div>
+        <div class="email-list-label">
+          <span id="emailFolderLabel">Inbox</span>
+          <button onclick="emailRefresh()">↻</button>
+        </div>
+        <div class="email-items-scroll" id="emailItemsScroll">
+          <div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Loading…</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Detail / Compose -->
+      <div class="email-detail-panel" id="emailDetailPanel">
+        <div class="email-empty-state" id="emailEmptyState">
+          <div class="ees-icon">✉️</div>
+          <p>Select an email to read it</p>
+        </div>
+
+        <!-- Email detail view -->
+        <div id="emailDetailView" style="display:none;flex-direction:column;height:100%">
+          <div class="email-detail-toolbar">
+            <button class="ed-btn" onclick="emailReply()">↩ Reply</button>
+            <button class="ed-btn" onclick="emailForward()">→ Forward</button>
+            <button class="ed-btn" onclick="emailArchive()" title="Archive">📦</button>
+            <button class="ed-btn" onclick="emailTrash()" title="Move to Trash" style="margin-left:auto">🗑</button>
+          </div>
+          <div class="email-detail-body">
+            <div class="ed-subject" id="edSubject"></div>
+            <div class="ed-meta">
+              <div class="ed-avatar" id="edAvatar"></div>
+              <div>
+                <div class="ed-from-name" id="edFromName"></div>
+                <div class="ed-from-addr" id="edFromAddr"></div>
+              </div>
+              <div class="ed-date-str" id="edDate"></div>
+            </div>
+            <div id="edBodyText" class="ed-body-text"></div>
+          </div>
+          <div class="email-reply-bar" id="emailReplyBar" style="display:none">
+            <textarea id="emailReplyText" placeholder="Write your reply…" rows="3"></textarea>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="btn btn-primary btn-sm" onclick="emailSendReply()">Send</button>
+              <button class="btn btn-ghost btn-sm" onclick="document.getElementById('emailReplyBar').style.display='none'">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compose view -->
+        <div id="emailComposeView" style="display:none;height:100%">
+          <div class="email-compose-panel">
+            <div class="compose-header">
+              New Message
+              <button class="ed-btn" onclick="emailHideCompose()">✕</button>
+            </div>
+            <div class="compose-field">
+              <label>To</label>
+              <input type="email" id="composeTo" placeholder="recipient@example.com" />
+            </div>
+            <div class="compose-field">
+              <label>CC</label>
+              <input type="email" id="composeCC" placeholder="cc@example.com (optional)" />
+            </div>
+            <div class="compose-field">
+              <label>Subj</label>
+              <input type="text" id="composeSubject" placeholder="Subject" />
+            </div>
+            <textarea class="compose-body-area" id="composeBody" placeholder="Write your message…"></textarea>
+            <div class="compose-toolbar-bar">
+              <button class="btn btn-primary" onclick="emailSendCompose()">📤 Send</button>
+              <button class="btn btn-ghost" onclick="emailSaveDraft()">💾 Save Draft</button>
+              <button class="btn btn-ghost" onclick="emailHideCompose()" style="margin-left:auto">Discard ✕</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /email-detail-panel -->
+    </div><!-- /email-wrap -->
+  </div><!-- /emailClient -->
+</div><!-- /view-email -->
+
 </body>
 </html>
