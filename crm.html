@@ -695,6 +695,13 @@ input,select,textarea{font-family:var(--font)}
 .sfb-new:hover{border-color:#22c55e;background:rgba(34,197,94,0.08)}
 .sfb-new.active{background:#22c55e!important;border-color:#22c55e!important;color:#0d0d0f!important}
 
+
+/* ═══ GOOGLE CALENDAR ══════════════════════════════════════════════════════ */
+.cal-event.gcal{background:rgba(66,133,244,0.18);color:#7ab3f8;border-left:3px solid #4285f4}
+.gcal-status-bar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.2);border-radius:8px;font-size:0.78rem;color:#7ab3f8;margin-bottom:12px}
+.gcal-dot{width:8px;height:8px;border-radius:50%;background:#4285f4;flex-shrink:0}
+.gcal-setup-step{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:0.78rem;color:var(--gray);line-height:1.5}
+.gcal-setup-step .step-num{width:18px;height:18px;border-radius:50%;background:var(--gold-dim);color:var(--gold);font-size:0.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 </style>
 </head>
 <body>
@@ -1168,6 +1175,10 @@ input,select,textarea{font-family:var(--font)}
   <div class="topbar">
     <div class="page-title">Calendar <span>& Events</span></div>
     <div class="topbar-actions">
+      <div id="gcal-cal-chip" style="display:none;align-items:center;gap:6px;padding:5px 10px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.3);border-radius:20px;font-size:0.75rem;color:#7ab3f8">
+        <div class="gcal-dot"></div><span id="gcal-cal-label">Google Calendar</span>
+      </div>
+      <button id="gcal-sync-btn" class="btn btn-ghost btn-sm" onclick="gcalSync()" style="display:none">🔄 Sync</button>
       <button class="btn btn-primary btn-sm" onclick="openAddEvent()">+ Add Event</button>
     </div>
   </div>
@@ -1305,6 +1316,7 @@ input,select,textarea{font-family:var(--font)}
       <div class="settings-nav-item" onclick="showSettingsPanel('notifications',this)">🔔 Notifications</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('users',this)">👥 Users</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('data',this)">💾 Data & Export</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('gcal',this)" id="gcal-nav-item">📅 Google Calendar</div>
     </div>
     <div>
       <div class="settings-panel active" id="sp-profile">
@@ -1357,6 +1369,64 @@ input,select,textarea{font-family:var(--font)}
           </div>
         </div>
       </div>
+
+      <!-- ── Google Calendar Panel ── -->
+      <div class="settings-panel" id="sp-gcal">
+
+        <!-- NOT CONNECTED STATE -->
+        <div id="gcal-connect-state">
+          <div class="settings-section">
+            <h3>📅 Google Calendar Sync</h3>
+            <p>Connect your Google Calendar so your events appear right inside the CRM calendar. Events sync automatically each time you open the calendar.</p>
+
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
+              <div style="font-size:0.82rem;font-weight:600;color:var(--white);margin-bottom:14px">Setup (one-time · 2 minutes)</div>
+              <div class="gcal-setup-step"><div class="step-num">1</div><span>Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">console.cloud.google.com</a> → your existing project</span></div>
+              <div class="gcal-setup-step"><div class="step-num">2</div><span>Search for <strong style="color:var(--white)">Google Calendar API</strong> → Enable it</span></div>
+              <div class="gcal-setup-step"><div class="step-num">3</div><span>Use the same OAuth Client ID you already created (or make a new one)</span></div>
+              <div class="gcal-setup-step"><div class="step-num">4</div><span>Make sure <strong style="color:var(--white)">cashfrontandback.vercel.app</strong> is in Authorized JavaScript origins</span></div>
+              <div class="gcal-setup-step"><div class="step-num">5</div><span>Paste your Client ID below and click Connect</span></div>
+            </div>
+
+            <div style="margin-bottom:16px">
+              <label class="form-label" style="margin-bottom:6px;display:block">Google OAuth Client ID</label>
+              <div style="display:flex;gap:8px">
+                <input class="form-input" id="gcal-client-id-input" placeholder="xxxxxxxxxx.apps.googleusercontent.com" style="flex:1"/>
+                <button class="btn btn-primary" onclick="gcalConnect()">Connect Calendar</button>
+              </div>
+              <div style="font-size:0.74rem;color:var(--gray);margin-top:6px">Already set up Gmail OAuth? You can use the exact same Client ID here.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONNECTED STATE -->
+        <div id="gcal-connected-state" style="display:none">
+          <div class="settings-section">
+            <h3>📅 Google Calendar Sync</h3>
+            <div class="gcal-status-bar">
+              <div class="gcal-dot"></div>
+              <span>Connected as <strong id="gcal-account-label">—</strong></span>
+              <button onclick="gcalDisconnect()" style="margin-left:auto;background:none;border:none;color:var(--gray);cursor:pointer;font-size:0.78rem">Disconnect</button>
+            </div>
+            <p>Your Google Calendar events are syncing into the CRM calendar automatically. They appear in blue so you can tell them apart from your CRM events.</p>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+              <button class="btn btn-primary" onclick="gcalSync()">🔄 Sync Now</button>
+              <button class="btn btn-ghost" onclick="showView('calendar')">📅 Open Calendar →</button>
+            </div>
+
+            <div style="margin-top:20px;padding:14px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+              <div style="font-size:0.78rem;font-weight:600;color:var(--white);margin-bottom:8px">Sync Settings</div>
+              <div class="toggle-row" style="margin-bottom:0">
+                <div class="toggle-info"><h4>Auto-sync on calendar open</h4><p>Fetch latest events each time you open the calendar</p></div>
+                <div class="toggle on" id="gcal-auto-toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sp-gcal -->
+
     </div>
   </div>
 </div>
@@ -1564,7 +1634,13 @@ function showView(v){
   if(v==='dashboard') renderDashboard();
   else if(v==='leads') renderLeads();
   else if(v==='kanban') renderKanban();
-  else if(v==='calendar') renderCalendar();
+  else if(v==='calendar'){
+    renderCalendar();
+    // Auto-sync gcal if connected and auto-toggle is on
+    if(window.GCal?.accessToken && document.getElementById('gcal-auto-toggle')?.classList.contains('on')){
+      gcalSync();
+    }
+  }
   else if(v==='daily') renderDaily();
   else if(v==='streetview') renderStreetViewLeads();
   else if(v==='routemap'){ renderRouteLeadPins(); showRouteTab('addresses'); }
@@ -1977,13 +2053,16 @@ function renderCalendar(){
     html+=`<div class="cal-day other-month"><div class="cal-day-num">${d.getDate()}</div></div>`;
   }
   const events=DB.events;
+  const gcalEvs=window.GCal?.cachedEvents||[];
   for(let d=1;d<=total;d++){
     const isToday=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
     const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dayEvs=events.filter(e=>e.date===dateStr);
+    const gcalDayEvs=gcalEvs.filter(e=>e.date===dateStr);
     html+=`<div class="cal-day${isToday?' today':''}" onclick="openAddEvent('${dateStr}')">
       <div class="cal-day-num">${d}</div>
       ${dayEvs.map(e=>`<div class="cal-event ${e.type}" title="${e.title}">${e.title}</div>`).join('')}
+      ${gcalDayEvs.map(e=>`<div class="cal-event gcal" title="${e.title}">📅 ${e.title}</div>`).join('')}
     </div>`;
   }
   grid.innerHTML=html;
@@ -2494,6 +2573,145 @@ function addLeadToRoute(addr){
   allStops[allStops.length-1].value=addr;
 }
 
+
+/* ══════════════════════════════════════════════════════
+   GOOGLE CALENDAR SYNC
+══════════════════════════════════════════════════════ */
+window.GCal = {
+  accessToken:  null,
+  tokenExpiry:  0,
+  accountEmail: '',
+  clientId:     localStorage.getItem('bchb_gcal_client_id') || '',
+  cachedEvents: [],
+  cachedMonth:  null,
+};
+
+const GCAL_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
+let gcalTokenClient = null;
+
+function gcalEnsureGSI(cb){
+  if(window.google?.accounts){ cb(); return; }
+  if(!document.getElementById('gsi-script')){
+    const s=document.createElement('script');
+    s.id='gsi-script'; s.src='https://accounts.google.com/gsi/client';
+    s.onload=cb; document.head.appendChild(s);
+  } else {
+    const iv=setInterval(()=>{ if(window.google?.accounts){ clearInterval(iv); cb(); } },100);
+  }
+}
+
+function gcalInitClient(){
+  if(!GCal.clientId){ alert('Paste your Google Client ID first.'); return false; }
+  gcalTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id: GCal.clientId,
+    scope: GCAL_SCOPE,
+    callback: gcalOnToken
+  });
+  return true;
+}
+
+function gcalOnToken(resp){
+  if(resp.error){ alert('Google Calendar auth error: '+resp.error); return; }
+  GCal.accessToken=resp.access_token;
+  GCal.tokenExpiry=Date.now()+(resp.expires_in-60)*1000;
+  fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
+    headers:{'Authorization':'Bearer '+GCal.accessToken}
+  }).then(r=>r.json()).then(info=>{
+    GCal.accountEmail=info.email||'Google Account';
+    gcalShowConnected();
+    gcalSync();
+  }).catch(()=>{ gcalShowConnected(); gcalSync(); });
+}
+
+window.gcalConnect = function(){
+  const inputEl=document.getElementById('gcal-client-id-input');
+  const val=(inputEl?.value||'').trim() || GCal.clientId;
+  if(!val){ alert('Please paste your Google OAuth Client ID first.'); return; }
+  GCal.clientId=val;
+  localStorage.setItem('bchb_gcal_client_id',val);
+  gcalEnsureGSI(()=>{
+    if(!gcalInitClient()) return;
+    gcalTokenClient.requestAccessToken({prompt:'select_account'});
+  });
+};
+
+function gcalShowConnected(){
+  const cs=document.getElementById('gcal-connect-state');
+  const cd=document.getElementById('gcal-connected-state');
+  if(cs) cs.style.display='none';
+  if(cd) cd.style.display='block';
+  const lbl=document.getElementById('gcal-account-label');
+  if(lbl) lbl.textContent=GCal.accountEmail||'Connected';
+  const chip=document.getElementById('gcal-cal-chip');
+  const syncBtn=document.getElementById('gcal-sync-btn');
+  if(chip){ chip.style.display='flex'; }
+  const calLbl=document.getElementById('gcal-cal-label');
+  if(calLbl) calLbl.textContent=GCal.accountEmail||'Google Calendar';
+  if(syncBtn) syncBtn.style.display='inline-flex';
+  const navItem=document.getElementById('gcal-nav-item');
+  if(navItem) navItem.textContent='📅 Google Calendar ✓';
+}
+
+window.gcalDisconnect = function(){
+  if(!confirm('Disconnect Google Calendar?')) return;
+  GCal.accessToken=null; GCal.tokenExpiry=0; GCal.accountEmail='';
+  GCal.cachedEvents=[]; GCal.cachedMonth=null;
+  localStorage.removeItem('bchb_gcal_client_id');
+  GCal.clientId='';
+  const cs=document.getElementById('gcal-connect-state');
+  const cd=document.getElementById('gcal-connected-state');
+  if(cs) cs.style.display='block';
+  if(cd) cd.style.display='none';
+  const chip=document.getElementById('gcal-cal-chip');
+  const syncBtn=document.getElementById('gcal-sync-btn');
+  if(chip) chip.style.display='none';
+  if(syncBtn) syncBtn.style.display='none';
+  const navItem=document.getElementById('gcal-nav-item');
+  if(navItem) navItem.textContent='📅 Google Calendar';
+  renderCalendar();
+  if(window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(GCal.accessToken||'',()=>{});
+};
+
+window.gcalSync = async function(){
+  if(!GCal.accessToken) return;
+  if(Date.now()>GCal.tokenExpiry){
+    if(gcalTokenClient){ gcalTokenClient.callback=gcalOnToken; gcalTokenClient.requestAccessToken({prompt:''}); }
+    return;
+  }
+  const syncBtn=document.getElementById('gcal-sync-btn');
+  if(syncBtn){ syncBtn.textContent='⏳'; syncBtn.disabled=true; }
+  try{
+    const y=calDate.getFullYear(), mo=calDate.getMonth();
+    const timeMin=new Date(y,mo,1).toISOString();
+    const timeMax=new Date(y,mo+1,0,23,59,59).toISOString();
+    const url='https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='
+      +encodeURIComponent(timeMin)+'&timeMax='+encodeURIComponent(timeMax)
+      +'&singleEvents=true&orderBy=startTime&maxResults=250';
+    const resp=await fetch(url,{headers:{'Authorization':'Bearer '+GCal.accessToken}});
+    if(!resp.ok) throw new Error(resp.status);
+    const data=await resp.json();
+    GCal.cachedEvents=(data.items||[]).map(ev=>({
+      id:ev.id,
+      title:ev.summary||'(no title)',
+      date:(ev.start?.date||ev.start?.dateTime||'').slice(0,10),
+      allDay:!!ev.start?.date,
+      link:ev.htmlLink||''
+    })).filter(e=>e.date);
+    GCal.cachedMonth=y+'-'+mo;
+    renderCalendar();
+  }catch(e){ console.error('GCal sync',e); }
+  if(syncBtn){ syncBtn.textContent='🔄 Sync'; syncBtn.disabled=false; }
+};
+
+// Init: restore Client ID input
+(function gcalInit(){
+  const saved=localStorage.getItem('bchb_gcal_client_id');
+  if(saved){
+    GCal.clientId=saved;
+    const inputEl=document.getElementById('gcal-client-id-input');
+    if(inputEl) inputEl.value=saved;
+  }
+})();
 
 /* ══════════════════════ EMAIL MODULE ══════════════════════════════════════ */
 (function(){
