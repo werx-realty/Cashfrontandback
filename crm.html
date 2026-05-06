@@ -989,9 +989,35 @@ input,select,textarea{font-family:var(--font)}
   font-size:0.75rem;color:var(--gray);margin-top:4px;display:block;
 }
 
+
+/* ── Calendar 2-col layout ──────────────────────────── */
+.cal-wrap{display:grid;grid-template-columns:1fr 320px;gap:0;height:calc(100vh - 140px);overflow:hidden}
+.cal-left{overflow-y:auto;padding-right:0;border-right:1px solid var(--border)}
+.cal-right{display:flex;flex-direction:column;overflow-y:auto;background:var(--surface)}
+.cal-upcoming-header{padding:20px 20px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cal-upcoming-date{font-size:1.1rem;font-weight:700;color:var(--white)}
+.cal-upcoming-sub{font-size:0.75rem;color:var(--gray);margin-top:2px}
+.cal-upcoming-list{flex:1;overflow-y:auto;padding:12px}
+.cal-upcoming-item{
+  padding:12px 14px;border-radius:10px;margin-bottom:8px;
+  border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;transition:border-color .15s;
+}
+.cal-upcoming-item:hover{border-color:var(--gold)}
+.cal-upcoming-item-title{font-size:0.85rem;font-weight:600;color:var(--white);margin-bottom:3px}
+.cal-upcoming-item-meta{font-size:0.73rem;color:var(--gray)}
+.cal-upcoming-item.gcal{border-left:3px solid #4285f4}
+.cal-upcoming-empty{text-align:center;color:var(--gray);font-size:0.82rem;padding:40px 20px}
+.cal-upcoming-add-btn{
+  margin:12px;padding:11px;border-radius:8px;
+  background:var(--gold);color:#0d0d0f;border:none;
+  font-weight:700;font-size:0.82rem;cursor:pointer;
+  width:calc(100% - 24px);transition:background .15s;
+}
+.cal-upcoming-add-btn:hover{background:#b8935c}
+.cal-upcoming-day-label{font-size:0.7rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin:10px 0 6px;padding:0 2px}
+
 </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -1491,15 +1517,29 @@ input,select,textarea{font-family:var(--font)}
       <button class="btn btn-primary btn-sm" onclick="openAddEvent()">+ Add Event</button>
     </div>
   </div>
-  <div class="cal-header">
-    <div class="cal-month-label" id="calMonthLabel"></div>
-    <div class="cal-nav">
-      <button class="btn btn-ghost btn-sm btn-icon" onclick="changeMonth(-1)">‹</button>
-      <button class="btn btn-ghost btn-sm" onclick="goToday()">Today</button>
-      <button class="btn btn-ghost btn-sm btn-icon" onclick="changeMonth(1)">›</button>
+  <div class="cal-wrap">
+    <!-- Left: monthly grid -->
+    <div class="cal-left">
+      <div class="cal-header">
+        <div class="cal-month-label" id="calMonthLabel"></div>
+        <div class="cal-nav">
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="changeMonth(-1)">‹</button>
+          <button class="btn btn-ghost btn-sm" onclick="goToday()">Today</button>
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="changeMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <!-- Right: upcoming events -->
+    <div class="cal-right">
+      <div class="cal-upcoming-header">
+        <div class="cal-upcoming-date" id="calUpcomingDate"></div>
+        <div class="cal-upcoming-sub" id="calUpcomingSub"></div>
+      </div>
+      <button class="cal-upcoming-add-btn" onclick="openAddEvent()">+ Create New Event</button>
+      <div class="cal-upcoming-list" id="calUpcomingList"></div>
     </div>
   </div>
-  <div class="cal-grid" id="calGrid"></div>
 </div>
 
 <!-- ══ DAILY SCHEDULE ════════════════════════════════════ -->
@@ -1826,19 +1866,15 @@ input,select,textarea{font-family:var(--font)}
           <button class="btn btn-ghost" style="width:100%" onclick="clearRoute()">✕ Clear All</button>
         </div>
       </div>
-      <!-- Right: Leaflet Map -->
+      <!-- Right: Google Maps iframe -->
       <div id="routeMapFrame" style="flex:1;min-height:500px;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--surface)">
-        <div id="rm-status-bar" class="rm-status" style="display:none">
-          <span id="rm-stop-count" class="rm-stop-badge mid">0 stops</span>
-          <span id="rm-route-info" style="color:var(--gray)"></span>
-          <span id="rm-geocode-log" class="rm-geocode-log"></span>
-        </div>
-        <div id="rm-leaflet" style="flex:1;min-height:0"></div>
-        <div id="rm-placeholder" class="sv-placeholder">
+        <div id="rm-placeholder" class="sv-placeholder" style="display:flex">
           <div class="sv-icon">🛣</div>
           <div style="font-size:1rem;font-weight:500">Route Map</div>
-          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then click Generate Best Route to map the route.</p>
+          <p style="font-size:0.85rem;text-align:center;max-width:280px">Enter a start address and stops, then hit Generate Best Route.</p>
+          <p id="rm-key-msg" style="font-size:0.76rem;color:var(--gold);text-align:center;max-width:280px;margin-top:8px;display:none">💡 Add a Maps API Key in Street View settings to enable Google Maps.</p>
         </div>
+        <iframe id="rm-gmap-frame" style="display:none;flex:1;width:100%;border:none" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
   </div>
@@ -2496,6 +2532,59 @@ function renderCalendar(){
     </div>`;
   }
   grid.innerHTML=html;
+  renderUpcoming();
+}
+
+function renderUpcoming(){
+  const today = new Date();
+  const dateEl = document.getElementById('calUpcomingDate');
+  const subEl  = document.getElementById('calUpcomingSub');
+  const listEl = document.getElementById('calUpcomingList');
+  if(!dateEl||!listEl) return;
+
+  // Header
+  const dateStr = today.toLocaleDateString('en-US',{month:'long',day:'2-digit',year:'numeric'});
+  const dayStr  = today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  dateEl.textContent = dateStr;
+  subEl.textContent  = 'Today is '+dayStr;
+
+  // Gather next 30 days of events
+  const allEvs = DB.events || [];
+  const gcalEvs = window.GCal?.cachedEvents || [];
+  const todayStr = today.toISOString().split('T')[0];
+
+  // Combine and filter upcoming (today + future)
+  const combined = [
+    ...allEvs.map(e=>({...e,isGcal:false})),
+    ...gcalEvs.map(e=>({...e,isGcal:true}))
+  ].filter(e=>e.date >= todayStr)
+   .sort((a,b)=> a.date===b.date ? (a.time||'')>(b.time||'') ? 1:-1 : a.date>b.date?1:-1)
+   .slice(0,20);
+
+  if(!combined.length){
+    listEl.innerHTML='<div class="cal-upcoming-empty">📅 No upcoming events</div>';
+    return;
+  }
+
+  // Group by date
+  const groups={};
+  combined.forEach(e=>{ if(!groups[e.date]) groups[e.date]=[]; groups[e.date].push(e); });
+
+  let out='';
+  Object.keys(groups).sort().forEach(date=>{
+    const d = new Date(date+'T12:00:00');
+    const isToday = date===todayStr;
+    const label = isToday ? 'Today' : d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    out += '<div class="cal-upcoming-day-label">'+label+'</div>';
+    groups[date].forEach(e=>{
+      const timeLabel = e.time ? new Date('1970-01-01T'+e.time).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}) : '';
+      out += "<div class=\"cal-upcoming-item"+(e.isGcal?' gcal':'')+'" onclick="openAddEvent(\''+date+'\')">'
+           + '<div class="cal-upcoming-item-title">'+(e.isGcal?'📅 ':'')+e.title+'</div>'
+           + '<div class="cal-upcoming-item-meta">'+(timeLabel?timeLabel+' · ':'')+' '+(e.linkedLead||'')+'</div>'
+           +'</div>';
+    });
+  });
+  listEl.innerHTML=out;
 }
 
 let dailyDate=new Date();
@@ -2874,161 +2963,51 @@ function getRouteAddresses(){
   return {start, stops};
 }
 
-/* ── Route Map — Google Maps Embed ── */
+/* ── Route Map — Google Maps Embed API v1 ── */
 
 function generateRoute(){
   const {start, stops}=getRouteAddresses();
   if(!start){ alert('Please enter a start address.'); return; }
   if(!stops.length){ alert('Please add at least one stop.'); return; }
 
+  const key=localStorage.getItem('bchb_maps_key')||'';
+  if(!key){
+    document.getElementById('rm-key-msg').style.display='block';
+    document.getElementById('rm-placeholder').style.display='flex';
+    document.getElementById('rm-gmap-frame').style.display='none';
+    return;
+  }
+  document.getElementById('rm-key-msg').style.display='none';
+
+  const origin=encodeURIComponent(start);
+  const destination=encodeURIComponent(stops[stops.length-1]);
+  const midpoints=stops.slice(0,-1);
+  const waypointStr=midpoints.length ? '&waypoints='+midpoints.map(s=>encodeURIComponent(s)).join('|') : '';
+
+  const src='https://www.google.com/maps/embed/v1/directions'
+    +'?key='+key
+    +'&origin='+origin
+    +'&destination='+destination
+    +waypointStr
+    +'&mode=driving';
+
+  const frame=document.getElementById('rm-gmap-frame');
+  frame.src=src;
+  frame.style.display='block';
   document.getElementById('rm-placeholder').style.display='none';
-  document.getElementById('rm-status-bar').style.display='flex';
-  document.getElementById('rm-geocode-log').textContent='Locating addresses…';
-  document.getElementById('rm-stop-count').textContent='Loading…';
-
-  rmInitMap();
-  rmClearLayers();
-  setTimeout(()=>_rm.map.invalidateSize(),50);
-
-  const all=[start,...stops];
-  (async()=>{
-    const coords=[];
-    for(let i=0;i<all.length;i++){
-      document.getElementById('rm-geocode-log').textContent='Finding '+(i+1)+' of '+all.length+': '+all[i].split(',')[0]+'…';
-      const c=await rmGeocode(all[i]);
-      if(!c){ alert('Could not locate: '+all[i]+'\nTry adding city/state.'); document.getElementById('rm-geocode-log').textContent=''; return; }
-      coords.push(c);
-      await new Promise(r=>setTimeout(r,300));
-    }
-
-    document.getElementById('rm-geocode-log').textContent='Drawing route…';
-
-    coords.forEach((c,i)=>{
-      const type=i===0?'start':(i===all.length-1?'end':'stop');
-      const label=i===0?'S':(i===all.length-1?'E':i);
-      rmAddMarker(c,all[i],label,type);
-    });
-
-    try{
-      const osrmCoords=coords.map(c=>c[1]+','+c[0]).join(';');
-      const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+osrmCoords+'?overview=full&geometries=geojson');
-      const d=await r.json();
-      if(d.routes&&d.routes[0]){
-        const line=L.geoJSON(d.routes[0].geometry,{style:{color:'var(--gold)',weight:4,opacity:0.85}}).addTo(_rm.map);
-        _rm.layers.push(line);
-        const dist=(d.routes[0].distance/1609.34).toFixed(1);
-        const dur=Math.round(d.routes[0].duration/60);
-        document.getElementById('rm-route-info').textContent=dist+' mi · ~'+dur+' min';
-      }
-    }catch(e){ console.warn('OSRM routing failed',e); }
-
-    const bounds=L.latLngBounds(coords);
-    _rm.map.fitBounds(bounds,{padding:[40,40]});
-    document.getElementById('rm-stop-count').textContent=all.length+' stop'+(all.length>1?'s':'');
-    document.getElementById('rm-geocode-log').textContent='Click any pin for notes';
-    document.getElementById('rm-stop-count').className='rm-stop-badge mid';
-  })();
-}
-
-/* ── Leaflet core ── */
-let _rm={map:null,layers:[],markers:[]};
-
-function rmInitMap(){
-  if(_rm.map) return;
-  const el=document.getElementById('rm-leaflet');
-  if(!el) return;
-  _rm.map=L.map(el,{center:[35.3733,-119.0187],zoom:12,zoomControl:true});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>'
-  }).addTo(_rm.map);
-}
-
-function rmClearLayers(){
-  _rm.layers.forEach(l=>_rm.map.removeLayer(l));
-  _rm.markers.forEach(m=>_rm.map.removeLayer(m));
-  _rm.layers=[];_rm.markers=[];
-}
-
-async function rmGeocode(addr){
-  const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr)+'&format=json&limit=1&countrycodes=us';
-  const r=await fetch(url,{headers:{'Accept-Language':'en-US'}});
-  const d=await r.json();
-  if(!d.length) return null;
-  return [parseFloat(d[0].lat),parseFloat(d[0].lon)];
-}
-
-function rmMakeIcon(label,type){
-  const colors={start:'#22c55e',stop:'#C9A96E',end:'#ef4444'};
-  const c=colors[type]||colors.stop;
-  return L.divIcon({
-    className:'',iconSize:[34,44],iconAnchor:[17,44],popupAnchor:[0,-46],
-    html:'<div class="rm-pin-wrap"><div class="rm-pin-body '+type+'"><span class="rm-pin-num">'+label+'</span></div></div>'
-  });
-}
-
-function savePinNote(addr,val){
-  const notes=JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}');
-  notes[addr]=val;localStorage.setItem('bchb_pin_notes',JSON.stringify(notes));
-  const el=document.getElementById('pn-saved-'+btoa(unescape(encodeURIComponent(addr))).replace(/[^a-z0-9]/gi,'').slice(0,12));
-  if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1500);}
-}
-
-function getPinNote(addr){
-  return (JSON.parse(localStorage.getItem('bchb_pin_notes')||'{}')||{})[addr]||'';
-}
-
-function rmAddMarker(latlng,addr,label,type){
-  const icon=rmMakeIcon(label,type);
-  const safeId=btoa(unescape(encodeURIComponent(addr))).replace(/[^a-z0-9]/gi,'').slice(0,12);
-  const note=getPinNote(addr);
-  const typeLabel={start:'Starting Point',stop:'Stop '+label,end:'Final Stop'}[type]||'Stop';
-
-  // Build popup content via DOM to avoid quote escaping issues
-  const wrap=document.createElement('div');
-  wrap.style.cssText='background:#1a1a1f;border-radius:12px;padding:14px;min-width:220px';
-  const addrEl=document.createElement('div');
-  addrEl.style.cssText='font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:2px';
-  addrEl.textContent=addr;
-  const typeEl=document.createElement('div');
-  typeEl.style.cssText='font-size:0.7rem;color:#888;margin-bottom:10px';
-  typeEl.textContent=typeLabel;
-  const ta=document.createElement('textarea');
-  ta.id='pn-ta-'+safeId;
-  ta.placeholder='Add notes for this stop…';
-  ta.value=note;
-  ta.style.cssText='width:100%;background:#111;border:1px solid rgba(201,169,110,.3);border-radius:6px;color:#fff;font-size:0.78rem;padding:6px 8px;resize:vertical;outline:none;box-sizing:border-box;min-height:60px';
-  ta.addEventListener('input',function(){ savePinNote(addr,this.value); });
-  const saved=document.createElement('div');
-  saved.id='pn-saved-'+safeId;
-  saved.style.cssText='font-size:0.68rem;color:#22c55e;opacity:0;margin-top:4px;transition:opacity .3s';
-  saved.textContent='✓ Saved';
-  wrap.appendChild(addrEl);
-  wrap.appendChild(typeEl);
-  wrap.appendChild(ta);
-  wrap.appendChild(saved);
-
-  const popup=L.popup({closeButton:true,maxWidth:280,minWidth:240,autoClose:false,closeOnClick:false})
-    .setContent(wrap);
-  const marker=L.marker(latlng,{icon}).addTo(_rm.map);
-  marker.bindPopup(popup);
-  marker.on('click',function(){ if(this.isPopupOpen()) this.closePopup(); else this.openPopup(); });
-  _rm.markers.push(marker);
-  return marker;
 }
 
 function clearRoute(){
   document.getElementById('rt-start').value='';
   document.querySelectorAll('.rt-stop-row input').forEach(i=>i.value='');
-  if(_rm.map) rmClearLayers();
+  document.getElementById('rm-gmap-frame').src='about:blank';
+  document.getElementById('rm-gmap-frame').style.display='none';
   document.getElementById('rm-placeholder').style.display='flex';
-  document.getElementById('rm-status-bar').style.display='none';
-  document.getElementById('rm-route-info').textContent='';
-  document.getElementById('rm-geocode-log').textContent='';
 }
 
 function saveCurrentRoute(){
   const {start,stops}=getRouteAddresses();
-  if(!start||stops.length===0){ alert('Generate a route first.'); return; }
+  if(!start||!stops.length){ alert('Generate a route first.'); return; }
   const name=prompt('Name this route:','Route '+new Date().toLocaleDateString());
   if(!name) return;
   const routes=RouteDB.routes;
@@ -3050,7 +3029,6 @@ function loadSavedRouteEmbed(id){
   });
   generateRoute();
 }
-
 
 function renderSavedRoutes(){
   const routes=RouteDB.routes;
