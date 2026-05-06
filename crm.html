@@ -2320,7 +2320,11 @@ function doLogout(){
    SEED DEMO DATA
 ══════════════════════════════════════════════════════ */
 function seedDemoData(){
-  if(DB.leads.length>0) return;
+  if(DB.leads.length>0){
+    // Still seed PI demo data if missing (catches existing installs)
+    _seedPIDemoData();
+    return;
+  }
   const demo=[
     {id:uid(),fname:'Maria',lname:'Garcia',phone:'(661)555-0100',email:'mgarcia@email.com',address:'1428 Oak St, Bakersfield CA 93301',value:285000,type:'Single Family',status:'hot',callstatus:'called',source:'website',situation:'Foreclosure',kanbanDay:'monday',notes:[],timeline:[],created:Date.now()-8*86400000,lastContact:Date.now()-86400000},
     {id:uid(),fname:'James',lname:'Turner',phone:'(661)555-0200',email:'jturner@email.com',address:'3311 Rosedale Hwy, Bakersfield CA 93308',value:340000,type:'Single Family',status:'warm',callstatus:'willcall',source:'zillow',situation:'Inherited',kanbanDay:'tuesday',notes:[],timeline:[],created:Date.now()-5*86400000,lastContact:null},
@@ -2333,6 +2337,24 @@ function seedDemoData(){
   logActivity('CRM initialized with demo data','var(--gold)');
   logActivity('6 sample leads imported','var(--green)');
   logActivity('Webhook endpoint configured','var(--cold)');
+
+  _seedPIDemoData();
+}
+
+function _seedPIDemoData(){
+  try {
+    const existing = JSON.parse(localStorage.getItem('bchb_pi_props')||'[]');
+    if(existing.length > 0) return; // already has data
+    const demoPIProps = [
+      {id:'pi-d1',addr:'1203 Baker St',city:'Bakersfield',state:'CA',zip:'93305',ownerName:'RODRIGUEZ, CARLOS A',apn:'171-042-15',assessedTotal:148000,estimatedValue:195000,equity:195000,equityPct:100,lienAmount:0,stage:'nod',nodDate:'2025-11-12',trusteeSaleDate:'2026-02-10',notes:'',addedToCRM:false,created:Date.now()-3*86400000,score:75},
+      {id:'pi-d2',addr:'4417 Panorama Dr',city:'Bakersfield',state:'CA',zip:'93306',ownerName:'PATEL, SUNITA',apn:'387-110-08',assessedTotal:225000,estimatedValue:310000,equity:310000,equityPct:100,lienAmount:0,stage:'pre_nod',nodDate:null,trusteeSaleDate:null,notes:'',addedToCRM:false,created:Date.now()-6*86400000,score:55},
+      {id:'pi-d3',addr:'8822 White Lane',city:'Bakersfield',state:'CA',zip:'93309',ownerName:'THOMPSON, MARK R',apn:'499-021-33',assessedTotal:178000,estimatedValue:240000,equity:195000,equityPct:81,lienAmount:45000,stage:'notice_sale',nodDate:'2025-10-04',trusteeSaleDate:'2026-01-15',notes:'',addedToCRM:false,created:Date.now()-10*86400000,score:88},
+      {id:'pi-d4',addr:'331 Niles St',city:'Bakersfield',state:'CA',zip:'93305',ownerName:'NGUYEN, LINDA T',apn:'014-070-22',assessedTotal:112000,estimatedValue:148000,equity:148000,equityPct:100,lienAmount:0,stage:'normal',nodDate:null,trusteeSaleDate:null,notes:'',addedToCRM:false,created:Date.now()-14*86400000,score:32},
+      {id:'pi-d5',addr:'2956 Oswell St',city:'Bakersfield',state:'CA',zip:'93306',ownerName:'JOHNSON, DWAYNE L',apn:'405-180-07',assessedTotal:202000,estimatedValue:265000,equity:218000,equityPct:82,lienAmount:47000,stage:'reo',nodDate:'2025-09-20',trusteeSaleDate:'2025-12-05',notes:'Bank-owned',addedToCRM:false,created:Date.now()-20*86400000,score:68},
+    ];
+    localStorage.setItem('bchb_pi_props', JSON.stringify(demoPIProps));
+    localStorage.setItem('bchb_pi_sync', new Date(Date.now()-3600000).toISOString());
+  } catch(e){ console.warn('[PI] seed:', e); }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -4498,10 +4520,13 @@ function piCalcEquity(prop){
 }
 
 /* ── API Fetch ── */
-// Use Vercel proxy to avoid CORS — falls back to direct if running locally
-const PI_PROXY = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-  ? null  // local: try direct (may still fail CORS)
-  : '/api/kern-proxy';  // production: route through Vercel serverless proxy
+// Use Vercel proxy on production; direct (or null) when running locally or from file://
+const PI_PROXY = (
+  location.hostname === 'localhost' ||
+  location.hostname === '127.0.0.1' ||
+  location.hostname === '' ||          // file:// protocol
+  location.protocol === 'file:'
+) ? null : '/api/kern-proxy';
 const PI_BASE = 'https://maps.co.kern.ca.us/arcgis/rest/services';
 
 // Cached working service path (discovered at runtime)
@@ -5177,15 +5202,19 @@ function piExportCSV(){
   window.showView = function(v){
     _prev(v);
     if(v==='propintel'){
-      piUpdateSyncBar();
-      piUpdateKPIs();
-      piTab(piCurrentTab);
-      // Auto-sync if stale
-      const last = PropIntelDB.lastSync;
-      const hrs = PropIntelDB.settings.interval || 12;
-      if(!last || (Date.now()-new Date(last).getTime())/3600000 >= hrs){
-        setTimeout(piSync, 800);
-      }
+      try{ piUpdateSyncBar(); }catch(e){ console.warn('[PI] syncBar:',e); }
+      try{ piUpdateKPIs(); }catch(e){ console.warn('[PI] kpis:',e); }
+      try{ piTab(piCurrentTab || 'all'); }catch(e){ console.warn('[PI] tab:',e); }
+      // Auto-sync only on production (proxy available) and only if stale
+      try{
+        if(PI_PROXY){
+          const last = PropIntelDB.lastSync;
+          const hrs = PropIntelDB.settings.interval || 12;
+          if(!last || (Date.now()-new Date(last).getTime())/3600000 >= hrs){
+            setTimeout(piSync, 1200);
+          }
+        }
+      }catch(e){ console.warn('[PI] auto-sync check:',e); }
     }
   };
 })();
