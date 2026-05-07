@@ -3875,15 +3875,21 @@ async function fetchProfile(){
   try{
     const r = await gmailFetch('https://gmail.googleapis.com/gmail/v1/users/me/profile');
     ES.accountEmail = r.emailAddress || 'Gmail Account';
-    document.getElementById('emailAccountLabel').textContent = ES.accountEmail;
-    document.getElementById('emailViewSub').textContent = ES.accountEmail;
-    // show email client
-    document.getElementById('emailConnectState').style.display='none';
-    document.getElementById('emailClient').style.display='block';
-    document.getElementById('emailRefreshBtn').style.display='inline-flex';
-    document.getElementById('emailDisconnectBtn').style.display='inline-flex';
+    // Persist so we auto-reconnect next load
+    localStorage.setItem('bchb_gmail_email', ES.accountEmail);
+    localStorage.setItem('bchb_gmail_connected', '1');
+    _emailShowConnected();
     emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
-  }catch(e){ console.error(e); alert('Could not fetch Gmail profile. Check your Client ID and try again.'); }
+  }catch(e){ console.error(e); showToast('Gmail profile error — check your Client ID.'); }
+}
+
+function _emailShowConnected(){
+  document.getElementById('emailAccountLabel').textContent = ES.accountEmail;
+  document.getElementById('emailViewSub').textContent = ES.accountEmail;
+  document.getElementById('emailConnectState').style.display='none';
+  document.getElementById('emailClient').style.display='block';
+  document.getElementById('emailRefreshBtn').style.display='inline-flex';
+  document.getElementById('emailDisconnectBtn').style.display='inline-flex';
 }
 
 /* ── API helper ── */
@@ -3918,10 +3924,17 @@ window.emailLoadFolder = async function(labelId, el){
     const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=40&labelIds=${labelId}`;
     const data = await gmailFetch(url);
     if(!data.messages||!data.messages.length){ showListEmpty(); return; }
-    // batch fetch headers
-    const details = await Promise.all(data.messages.slice(0,40).map(m=>
-      gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`)
-    ));
+    // batch fetch headers in groups of 5 to avoid 429 rate limit
+    const msgIds = data.messages.slice(0, 25);
+    const details = [];
+    for(let i=0; i<msgIds.length; i+=5){
+      const chunk = msgIds.slice(i,i+5);
+      const chunkResults = await Promise.all(chunk.map(m=>
+        gmailFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`)
+      ));
+      details.push(...chunkResults);
+      if(i+5 < msgIds.length) await new Promise(r=>setTimeout(r,120));
+    }
     ES.messages = details.map(msg=>{
       const h = {};
       (msg.payload?.headers||[]).forEach(x=>{ h[x.name]=x.value; });
@@ -4196,7 +4209,11 @@ window.emailDisconnect = function(){
   crmConfirm('Disconnect email?','You will need to reconnect Gmail to use email.',()=>_emailDoDisconnect()); return;
 }
 function _emailDoDisconnect(){
+  const tok = ES.accessToken;
   ES.accessToken=null; ES.tokenExpiry=0; ES.accountEmail=''; ES.messages=[]; ES.currentId=null;
+  // Clear persistent flags
+  localStorage.removeItem('bchb_gmail_connected');
+  localStorage.removeItem('bchb_gmail_email');
   document.getElementById('emailClient').style.display='none';
   document.getElementById('emailConnectState').style.display='flex';
   document.getElementById('emailRefreshBtn').style.display='none';
@@ -4204,17 +4221,68 @@ function _emailDoDisconnect(){
   document.getElementById('emailViewSub').textContent='Connect your email account to get started';
   document.getElementById('emailSetupNote').style.display='none';
   document.getElementById('yahooInfoNote').style.display='none';
-  if(window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(ES.accessToken||'',()=>{});
+  if(window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(tok||'',()=>{});
 };
 
 /* ── Hook into showView ── */
 const _origShowView = window.showView;
 window.showView = function(v){
   _origShowView(v);
-  if(v==='email' && ES.accessToken && Date.now()<ES.tokenExpiry && !ES.messages.length){
-    emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
+  if(v==='email'){
+    if(ES.accessToken && Date.now()<ES.tokenExpiry){
+      if(!ES.messages.length) emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
+    } else if(localStorage.getItem('bchb_gmail_connected') && ES.clientId && !ES._reconnecting){
+      // Token expired but was connected before — silently refresh
+      _emailSilentReconnect();
+    }
   }
 };
+
+/* ── Auto-reconnect on load ── */
+function _emailSilentReconnect(){
+  if(ES._reconnecting) return;
+  ES._reconnecting = true;
+  const savedEmail = localStorage.getItem('bchb_gmail_email') || '';
+  if(savedEmail){
+    // Show connected state immediately with stored email while token refreshes
+    ES.accountEmail = savedEmail;
+    _emailShowConnected();
+    // Show subtle "refreshing" indicator
+    document.getElementById('emailItemsScroll').innerHTML =
+      '<div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Reconnecting…</span></div>';
+  }
+  ensureGSI(()=>{
+    try{
+      initTokenClient();
+      tokenClient.callback = function(resp){
+        ES._reconnecting = false;
+        if(resp.error){ 
+          // Silent auth failed — show connect screen again
+          _emailDoDisconnect();
+          return;
+        }
+        ES.accessToken = resp.access_token;
+        ES.tokenExpiry = Date.now()+(resp.expires_in-60)*1000;
+        if(!savedEmail){
+          fetchProfile();
+        } else {
+          ES.accountEmail = savedEmail;
+          _emailShowConnected();
+          emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
+        }
+      };
+      tokenClient.requestAccessToken({prompt:''});
+    }catch(e){ ES._reconnecting=false; console.warn('[Email] Silent reconnect failed:',e); }
+  });
+}
+
+// Attempt auto-reconnect on page load if previously connected
+(function(){
+  if(localStorage.getItem('bchb_gmail_connected') && localStorage.getItem('bchb_gmail_client_id')){
+    // Delay slightly to let DOM settle
+    setTimeout(_emailSilentReconnect, 800);
+  }
+})();
 
 })();
 
