@@ -764,6 +764,12 @@ input,select,textarea{font-family:var(--font)}
 .np-thumb-margin{position:absolute;left:14px;top:0;bottom:0;width:1.5px;background:rgba(200,50,50,.35)}
 .np-thumb-text{font-size:0.38rem;color:#444;line-height:11px;padding-left:18px;word-break:break-all;overflow:hidden;max-height:100%;white-space:pre-wrap}
 .np-thumb-num{position:absolute;bottom:4px;right:5px;font-size:0.5rem;color:#aaa;font-weight:600}
+.np-thumb-label{background:#1c1c1c;padding:3px 6px;display:flex;align-items:center;justify-content:space-between;gap:4px;cursor:pointer;min-height:18px}
+.np-thumb-label:hover{background:#2a2a2a}
+.np-thumb-label-text{font-size:0.52rem;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;font-weight:500}
+.np-thumb-edit-icon{font-size:0.5rem;color:#888;opacity:0;transition:opacity .15s;flex-shrink:0}
+.np-thumb-label:hover .np-thumb-edit-icon{opacity:1}
+.np-thumb-rename-input{font-size:0.52rem;background:#333;border:1px solid var(--gold);border-radius:2px;color:#fff;padding:1px 4px;width:100%;outline:none}
 .np-del-btn{position:absolute;top:3px;right:3px;width:14px;height:14px;border-radius:50%;background:rgba(239,68,68,.85);border:none;color:#fff;font-size:0.5rem;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;z-index:10}
 .np-thumb:hover .np-del-btn{display:flex}
 
@@ -4708,6 +4714,45 @@ function npSaveTitle(val){
   const pn = document.getElementById('npPageNum');
   if(pn) pn.textContent = 'Page '+(idx+1)+' of '+pages.length;
   npRenderSidebar();
+}
+
+function npRenameThumb(id, labelEl){
+  // Inline rename on the thumbnail label
+  const pages = NotepadDB.pages;
+  const page = pages.find(p=>p.id===id);
+  if(!page) return;
+  const currentTitle = page.title || '';
+  const labelText = labelEl.querySelector('.np-thumb-label-text');
+  if(!labelText) return;
+
+  // Replace label text with an input
+  const input = document.createElement('input');
+  input.className = 'np-thumb-rename-input';
+  input.value = currentTitle;
+  input.maxLength = 40;
+  labelEl.innerHTML = '';
+  labelEl.appendChild(input);
+  input.focus();
+  input.select();
+
+  function saveRename(){
+    const newTitle = input.value.trim() || 'Page '+(pages.findIndex(p=>p.id===id)+1);
+    page.title = newTitle;
+    NotepadDB.pages = pages;
+    // If this is the active page, update the title input too
+    if(id === npCurrentId){
+      const ti = document.getElementById('npTitleInput');
+      if(ti) ti.value = newTitle;
+    }
+    npRenderSidebar();
+    showToast('Page renamed to "'+newTitle+'"');
+  }
+
+  input.addEventListener('blur', saveRename);
+  input.addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); input.blur(); }
+    if(e.key==='Escape'){ input.removeEventListener('blur', saveRename); npRenderSidebar(); }
+  });
 }
 
 function npAddPage(){
