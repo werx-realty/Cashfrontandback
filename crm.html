@@ -1821,9 +1821,35 @@ input,select,textarea{font-family:var(--font)}
       </div>
       <div class="settings-panel" id="sp-users">
         <div class="settings-section">
-          <h3>Team Members</h3><p>Manage who has access to this CRM.</p>
-          <div id="users-list" style="margin-bottom:20px"></div>
-          <button class="btn btn-primary btn-sm" onclick="addUserPrompt()">+ Invite User</button>
+          <h3>👥 Team Members</h3>
+          <p>Invite your team. They'll receive an email with their login credentials.</p>
+          <div id="users-list" style="margin-bottom:24px"></div>
+        </div>
+
+        <!-- Invite Form -->
+        <div class="settings-section" style="border:1px solid var(--border);border-radius:12px;padding:20px">
+          <h4 style="margin-bottom:4px">✉️ Invite a New User</h4>
+          <p style="font-size:0.82rem;color:var(--gray);margin-bottom:16px">Fill in their details — we'll generate a password and open your email app with everything ready to send.</p>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input class="form-input" id="invite-name" placeholder="Jane Smith"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input class="form-input" id="invite-email" type="email" placeholder="jane@example.com"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Role</label>
+              <select class="form-input" id="invite-role">
+                <option value="Agent">Agent</option>
+                <option value="Manager">Manager</option>
+                <option value="Super Admin">Super Admin</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="inviteUser()">✉️ Send Invite</button>
+          <div id="invite-status" style="font-size:0.78rem;margin-top:10px;display:none"></div>
         </div>
       </div>
       <div class="settings-panel" id="sp-data">
@@ -2544,7 +2570,10 @@ let currentUser = null;
 function doLogin(){
   const u = (document.getElementById('loginUser').value||'').trim();
   const p = document.getElementById('loginPass').value||'';
-  if(CREDS[u] && CREDS[u]===p){
+  // Merge static creds with any invited user creds stored in localStorage
+  const storedCreds = JSON.parse(localStorage.getItem('bchb_creds')||'{}');
+  const allCreds = Object.assign({}, CREDS, storedCreds);
+  if(allCreds[u] && allCreds[u]===p){
     currentUser = u;
     // Hide login, show app
     document.getElementById('login-screen').style.display='none';
@@ -3362,16 +3391,14 @@ function loadStreetView(addr){
         </iframe>
       </div>`;
   } else {
-    // No API key — show map embed with street view layer + instructions
+    // No API key — show basic map embed, no instructions (key is in Settings)
     const mapUrl='https://maps.google.com/maps?q='+enc+'&output=embed&z=16';
     frame.innerHTML=`
       <div style="display:flex;flex-direction:column;height:100%">
         <div style="background:var(--surface2);padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap">
           <span style="font-size:1rem">📍</span>
           <span style="font-size:0.82rem;color:var(--white);font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a}</span>
-        </div>
-        <div style="background:rgba(201,169,110,0.08);border-bottom:1px solid rgba(201,169,110,0.2);padding:8px 16px;font-size:0.76rem;color:var(--gold);flex-shrink:0">
-          ⚠️ Add a free Maps API key in the sidebar to unlock the draggable 🧍 pegman & full Street View.
+          <button onclick="showView('settings');setTimeout(()=>showSettingsPanel('apikeys',null),100)" style="font-size:0.72rem;background:none;border:1px solid var(--border);color:var(--gray);border-radius:6px;padding:3px 8px;cursor:pointer">🔑 Add Maps Key</button>
         </div>
         <iframe id="sv-iframe"
           src="${mapUrl}"
@@ -3534,19 +3561,112 @@ function showSettingsPanel(id,el){
 function renderUsers(){
   const el=document.getElementById('users-list');
   if(!el)return;
-  el.innerHTML=DB.users.map(u=>`
-    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:8px">
-      <div class="user-avatar" style="width:36px;height:36px;font-size:0.85rem">${u.initials}</div>
-      <div style="flex:1"><div style="font-size:0.85rem;font-weight:500">${u.name}</div><div style="font-size:0.75rem;color:var(--gray)">${u.email} · ${u.role}</div></div>
-    </div>`).join('');
+  const users = DB.users;
+  if(!users.length){ el.innerHTML='<div style="font-size:0.82rem;color:var(--gray)">No team members yet.</div>'; return; }
+  el.innerHTML = users.map((u,i)=>{
+    const statusColor = u.status==='invited' ? '#f59e0b' : '#22c55e';
+    const statusLabel = u.status==='invited' ? '📨 Invite Sent' : '✅ Active';
+    const isAdmin = u.role==='Super Admin' && i===0;
+    return `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">
+      <div class="user-avatar" style="width:38px;height:38px;font-size:0.9rem;flex-shrink:0">${u.initials||u.name[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:0.88rem;font-weight:600;color:var(--white)">${u.name}</div>
+        <div style="font-size:0.75rem;color:var(--gray);margin-top:1px">${u.email} &nbsp;·&nbsp; ${u.role}</div>
+      </div>
+      <div style="font-size:0.72rem;color:${statusColor};white-space:nowrap">${statusLabel}</div>
+      ${!isAdmin ? `<button onclick="removeUser(${i})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:0.78rem;padding:4px 6px;border-radius:4px" title="Remove user">✕</button>` : ''}
+    </div>`;
+  }).join('');
 }
-function addUserPrompt(){
-  const name=prompt('New user full name:'); if(!name)return;
-  const email=prompt('Email:'); if(!email)return;
-  const users=DB.users;
-  users.push({name,email,role:'Agent',initials:name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)});
-  DB.users=users; renderUsers();
+
+function removeUser(idx){
+  const users = DB.users;
+  if(idx===0){ showToast('Cannot remove the primary admin.'); return; }
+  crmConfirm('Remove this user?','They will no longer be able to log in.', ()=>{
+    // Also remove their stored credentials
+    const storedCreds = JSON.parse(localStorage.getItem('bchb_creds')||'{}');
+    delete storedCreds[users[idx].email];
+    localStorage.setItem('bchb_creds', JSON.stringify(storedCreds));
+    users.splice(idx,1);
+    DB.users = users;
+    renderUsers();
+    showToast('User removed.');
+  });
 }
+
+function _genPassword(){
+  const chars='ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#';
+  let p='';
+  for(let i=0;i<10;i++) p+=chars[Math.floor(Math.random()*chars.length)];
+  return p;
+}
+
+function inviteUser(){
+  const name  = (document.getElementById('invite-name').value||'').trim();
+  const email = (document.getElementById('invite-email').value||'').trim();
+  const role  = document.getElementById('invite-role').value;
+  const st    = document.getElementById('invite-status');
+
+  if(!name){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='Please enter a full name.'; return; }
+  if(!email || !email.includes('@')){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='Please enter a valid email.'; return; }
+
+  // Check for duplicate
+  const existing = DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase());
+  if(existing){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='A user with that email already exists.'; return; }
+
+  const password = _genPassword();
+  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const crmUrl   = window.location.origin + window.location.pathname;
+
+  // Save user to DB
+  const users = DB.users;
+  users.push({ name, email, role, initials, status:'invited', created: Date.now() });
+  DB.users = users;
+
+  // Save credentials to localStorage
+  const storedCreds = JSON.parse(localStorage.getItem('bchb_creds')||'{}');
+  storedCreds[email] = password;
+  localStorage.setItem('bchb_creds', JSON.stringify(storedCreds));
+
+  // Build mailto link
+  const subject = encodeURIComponent("You've been invited to BCHB CRM");
+  const body = encodeURIComponent(
+`Hi ${name},
+
+You've been invited to access the Bakersfield Cash Home Buyers CRM as a ${role}.
+
+Here are your login credentials:
+
+  CRM URL:   ${crmUrl}
+  Username:  ${email}
+  Password:  ${password}
+
+Log in at the link above and change your password after your first login.
+
+— BCHB Team`
+  );
+
+  // Clear form
+  document.getElementById('invite-name').value='';
+  document.getElementById('invite-email').value='';
+  document.getElementById('invite-role').value='Agent';
+
+  // Show success
+  st.style.display='block'; st.style.color='var(--green)';
+  st.textContent=`✓ Credentials created for ${name}. Opening your email app…`;
+
+  renderUsers();
+
+  // Open mailto after short delay
+  setTimeout(()=>{
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+  }, 400);
+
+  showToast(`✅ Invite ready for ${name}!`);
+}
+
+function addUserPrompt(){ /* legacy — now using inviteUser() */ }
 function exportCSV(){
   const rows=[['Name','Phone','Email','Address','Value','Status','Call Status','Source','Created'],...DB.leads.map(l=>[`${l.fname} ${l.lname}`,l.phone,l.email,l.address,l.value,l.status,l.callstatus,l.source,new Date(l.created).toLocaleDateString()])];
   const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
