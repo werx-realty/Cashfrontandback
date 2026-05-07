@@ -257,6 +257,7 @@ input,select,textarea{font-family:var(--font)}
 .badge-warm{background:rgba(245,166,35,0.15);color:var(--warm)}
 .badge-cold{background:rgba(90,180,255,0.15);color:var(--cold)}
 .badge-closed{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-escrow{background:rgba(167,139,250,0.15);color:#a78bfa}
 .badge-archive{background:rgba(136,136,136,0.15);color:var(--archive)}
 .badge-called{background:rgba(74,222,128,0.15);color:var(--green)}
 .badge-notcalled{background:rgba(248,113,113,0.15);color:var(--red)}
@@ -711,6 +712,10 @@ input,select,textarea{font-family:var(--font)}
 .sfb-closed{color:#22c55e;border-color:rgba(34,197,94,0.35)}
 .sfb-closed:hover{border-color:#22c55e;background:rgba(34,197,94,0.08)}
 .sfb-closed.active{background:#22c55e!important;border-color:#22c55e!important;color:#0d0d0f!important}
+.sfb-escrow{color:#a78bfa;border-color:rgba(167,139,250,0.35)}
+.sfb-escrow:hover{border-color:#a78bfa;background:rgba(167,139,250,0.08)}
+.sfb-escrow.active{background:#a78bfa!important;border-color:#a78bfa!important;color:#0d0d0f!important}
+.badge-escrow{background:rgba(167,139,250,0.15);color:#a78bfa}
 
 
 /* ═══ GOOGLE CALENDAR ══════════════════════════════════════════════════════ */
@@ -880,6 +885,36 @@ input,select,textarea{font-family:var(--font)}
   border:1px solid var(--border);font-size:0.83rem;cursor:pointer;
 }
 .np-attach-cancel-btn:hover{color:var(--white);}
+
+/* ── Lead Documents ─────────────────────────────────────────── */
+.doc-dropzone{border:2px dashed var(--border);border-radius:10px;padding:22px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:14px}
+.doc-dropzone:hover,.doc-dropzone.drag-over{border-color:var(--gold);background:var(--gold-glow)}
+.doc-dropzone-icon{font-size:1.8rem;margin-bottom:6px}
+.doc-dropzone-text{font-size:0.8rem;color:var(--gray)}
+.doc-dropzone-text strong{color:var(--white)}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px}
+.doc-card{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:transform .15s,border-color .15s}
+.doc-card:hover{transform:translateY(-2px);border-color:rgba(201,169,110,.4)}
+.doc-preview{width:100%;aspect-ratio:8.5/11;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;position:relative}
+.doc-preview img{width:100%;height:100%;object-fit:cover}
+.doc-preview iframe{width:200%;height:200%;transform:scale(0.5);transform-origin:top left;pointer-events:none;border:none}
+.doc-preview-icon{font-size:2.4rem;display:flex;flex-direction:column;align-items:center;gap:4px}
+.doc-preview-icon span{font-size:0.55rem;color:#666;font-weight:700;text-transform:uppercase}
+.doc-card-footer{padding:5px 7px;background:var(--surface)}
+.doc-card-name{font-size:0.68rem;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.doc-card-size{font-size:0.6rem;color:var(--gray)}
+.doc-del-btn{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:0.6rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2}
+.doc-card:hover .doc-del-btn{display:flex}
+/* Doc lightbox */
+.doc-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9000;display:none;align-items:center;justify-content:center;flex-direction:column}
+.doc-lightbox.open{display:flex}
+.doc-lightbox-inner{background:var(--surface);border-radius:12px;overflow:hidden;max-width:90vw;max-height:90vh;width:700px;display:flex;flex-direction:column}
+.doc-lightbox-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.doc-lightbox-title{font-size:0.9rem;font-weight:600;color:var(--white)}
+.doc-lightbox-close{background:none;border:none;color:var(--gray);font-size:1.2rem;cursor:pointer;padding:0 4px}
+.doc-lightbox-body{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;min-height:0;padding:16px}
+.doc-lightbox-body img{max-width:100%;max-height:70vh;border-radius:6px}
+.doc-lightbox-body iframe{width:100%;height:70vh;border:none;border-radius:6px}
 
 /* ── Attached notes grid (under Activity Timeline) ──────────── */
 .attached-notes-section{margin-top:16px;}
@@ -1289,6 +1324,7 @@ input,select,textarea{font-family:var(--font)}
         <button class="sfb sfb-warm"   data-filter="warm"   onclick="setLeadsFilter('warm',this)">🌤 Warm</button>
         <button class="sfb sfb-cold"   data-filter="cold"   onclick="setLeadsFilter('cold',this)">❄ Cold</button>
         <button class="sfb sfb-closed" data-filter="closed" onclick="setLeadsFilter('closed',this)">✅ Closed</button>
+        <button class="sfb sfb-escrow" data-filter="escrow" onclick="setLeadsFilter('escrow',this)">🏡 In Escrow</button>
       </div>
       <button class="btn btn-primary btn-sm" onclick="showView('add-lead')">+ Add Lead</button>
     </div>
@@ -1373,7 +1409,7 @@ input,select,textarea{font-family:var(--font)}
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Estimated Property Value</label>
+          <label class="form-label">List Price</label>
           <input class="form-input" id="af-value" type="number" placeholder="280000" oninput="updateEstimate()"/>
         </div>
         <div class="form-group">
@@ -1480,7 +1516,7 @@ input,select,textarea{font-family:var(--font)}
             <input class="form-input" id="d-address"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Est. Property Value ($)</label>
+            <label class="form-label">List Price ($)</label>
             <input class="form-input" id="d-value" type="number"/>
           </div>
           <div class="form-group">
@@ -1497,6 +1533,7 @@ input,select,textarea{font-family:var(--font)}
               <option value="hot">🔥 Hot</option>
               <option value="warm">🌤 Warm</option>
               <option value="cold">❄ Cold</option>
+              <option value="escrow">🏡 In Escrow</option>
               <option value="closed">✅ Closed</option>
               <option value="archive">📦 Archived</option>
             </select>
@@ -1516,6 +1553,14 @@ input,select,textarea{font-family:var(--font)}
               <option>Foreclosure</option><option>Inherited</option>
               <option>Relocating</option><option>Rental Issues</option>
               <option>Divorce</option><option>Downsizing</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <select class="form-select" id="d-role">
+              <option value="">—</option>
+              <option value="seller">Seller</option>
+              <option value="buyer">Buyer</option>
             </select>
           </div>
         </div>
@@ -1553,7 +1598,7 @@ input,select,textarea{font-family:var(--font)}
         <div class="detail-section-title">Lead Summary</div>
         <div style="text-align:center;padding:16px 0">
           <div style="font-family:var(--serif);font-size:2rem;color:var(--gold)" id="d-value-display">—</div>
-          <div style="font-size:0.75rem;color:var(--gray);margin-top:4px">Estimated Property Value</div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-top:4px">List Price</div>
           <div style="font-family:var(--serif);font-size:1.2rem;color:var(--green);margin-top:12px" id="d-offer-display">—</div>
           <div style="font-size:0.75rem;color:var(--gray);margin-top:4px">Est. Cash Offer Range</div>
         </div>
@@ -1580,7 +1625,34 @@ input,select,textarea{font-family:var(--font)}
         <div class="detail-section-title">Attached Notes</div>
         <div class="attached-notes-grid" id="attachedNotesGrid"></div>
       </div>
+
+      <!-- Lead Documents -->
+      <div>
+        <div class="detail-section-title">📄 Documents</div>
+        <div class="doc-dropzone" id="docDropzone"
+          onclick="docPickFile()"
+          ondragover="docDragOver(event)"
+          ondragleave="docDragLeave(event)"
+          ondrop="docDrop(event)">
+          <div class="doc-dropzone-icon">📂</div>
+          <div class="doc-dropzone-text"><strong>Click to upload</strong> or drag &amp; drop</div>
+          <div class="doc-dropzone-text" style="margin-top:4px;font-size:0.72rem">PDF, JPG, PNG, DOCX — up to 5MB each</div>
+        </div>
+        <input type="file" id="docFileInput" style="display:none" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.docx,.doc,.txt" onchange="docHandleFiles(this.files)"/>
+        <div class="doc-grid" id="docGrid"></div>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Doc Lightbox -->
+<div class="doc-lightbox" id="docLightbox" onclick="docCloseLightbox(event)">
+  <div class="doc-lightbox-inner" onclick="event.stopPropagation()">
+    <div class="doc-lightbox-header">
+      <span class="doc-lightbox-title" id="docLightboxTitle"></span>
+      <button class="doc-lightbox-close" onclick="docCloseLightbox()">✕</button>
+    </div>
+    <div class="doc-lightbox-body" id="docLightboxBody"></div>
   </div>
 </div>
 
@@ -2283,21 +2355,6 @@ input,select,textarea{font-family:var(--font)}
     <div class="topbar-actions">
       <span class="np-save-dot" id="npSaveDot"></span>
       <span class="np-meta" id="npSaveMeta">Auto-saved</span>
-      <div style="display:flex;align-items:center;gap:6px">
-        <label style="font-size:0.75rem;color:var(--gray);white-space:nowrap">Font</label>
-        <select id="npFontSelect" onchange="npSetFont(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:5px 8px;font-size:0.78rem;cursor:pointer;outline:none">
-          <option value="'Georgia', serif">Georgia</option>
-          <option value="'Palatino Linotype', serif">Palatino</option>
-          <option value="'Courier New', monospace">Courier New</option>
-          <option value="'Arial', sans-serif">Arial</option>
-          <option value="'Helvetica Neue', sans-serif">Helvetica</option>
-          <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
-          <option value="'Times New Roman', serif">Times New Roman</option>
-          <option value="'Verdana', sans-serif">Verdana</option>
-          <option value="'Comic Sans MS', cursive">Comic Sans</option>
-          <option value="'Lucida Console', monospace">Lucida Console</option>
-        </select>
-      </div>
       <button class="np-attach-btn" onclick="naOpenDropdown()">📎 Attach to Lead</button>
     </div>
   </div>
@@ -2314,6 +2371,21 @@ input,select,textarea{font-family:var(--font)}
       <div class="np-title-row">
         <input class="np-title-input" id="npTitleInput" placeholder="Page title…"
           oninput="npSaveTitle(this.value)" />
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <label style="font-size:0.75rem;color:var(--gray);white-space:nowrap">🔤 Font</label>
+          <select id="npFontSelect" onchange="npSetFont(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:4px 8px;font-size:0.78rem;cursor:pointer;outline:none">
+            <option value="Georgia">Georgia</option>
+            <option value="Palatino Linotype">Palatino</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Arial">Arial</option>
+            <option value="Helvetica Neue">Helvetica</option>
+            <option value="Trebuchet MS">Trebuchet</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Comic Sans MS">Comic Sans</option>
+            <option value="Lucida Console">Lucida Console</option>
+          </select>
+        </div>
         <span class="np-meta" id="npPageNum"></span>
       </div>
       <div class="np-paper">
@@ -2933,6 +3005,7 @@ function openLead(id){
   document.getElementById('d-status').value=lead.status;
   document.getElementById('d-callstatus').value=lead.callstatus;
   document.getElementById('d-situation').value=lead.situation||'';
+  document.getElementById('d-role').value=lead.role||'';
   // summary
   const v=Number(lead.value)||0;
   document.getElementById('d-value-display').textContent=fmtMoney(v);
@@ -3000,6 +3073,7 @@ function saveLeadDetail(){
   l.status=document.getElementById('d-status').value;
   l.callstatus=document.getElementById('d-callstatus').value;
   l.situation=document.getElementById('d-situation').value;
+  l.role=document.getElementById('d-role').value;
   l.timeline.push({type:'updated',msg:`Lead info updated`,ts:Date.now(),color:'var(--blue)'});
   DB.leads=leads;
   logActivity(`Updated lead: ${l.fname} ${l.lname}`, 'var(--blue)');
@@ -3700,6 +3774,130 @@ function exportJSON(){
   const a=document.createElement('a'); a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(DB.leads,null,2)); a.download='bchb_leads.json'; a.click();
 }
 function clearAllLeads(){ localStorage.removeItem('bchb_leads'); localStorage.removeItem('bchb_activity'); location.reload(); }
+
+/* ══════════════════════════════════════════════════════
+   LEAD DOCUMENTS
+══════════════════════════════════════════════════════ */
+function docGetLeadId(){ return currentLeadId; }
+
+function docGetDocs(){
+  const id = docGetLeadId(); if(!id) return [];
+  const all = JSON.parse(localStorage.getItem('bchb_docs')||'{}');
+  return all[id] || [];
+}
+
+function docSaveDocs(docs){
+  const id = docGetLeadId(); if(!id) return;
+  const all = JSON.parse(localStorage.getItem('bchb_docs')||'{}');
+  all[id] = docs;
+  localStorage.setItem('bchb_docs', JSON.stringify(all));
+}
+
+function docRender(){
+  const grid = document.getElementById('docGrid');
+  if(!grid) return;
+  const docs = docGetDocs();
+  if(!docs.length){ grid.innerHTML = ''; return; }
+  grid.innerHTML = docs.map((d,i) => {
+    let preview = '';
+    if(d.type && d.type.startsWith('image/')){
+      preview = `<img src="${d.data}" alt="${d.name}"/>`;
+    } else if(d.type === 'application/pdf'){
+      preview = `<iframe src="${d.data}#toolbar=0&navpanes=0&scrollbar=0" tabindex="-1"></iframe>`;
+    } else {
+      const ext = (d.name.split('.').pop()||'').toUpperCase();
+      const icons = {PDF:'📄',DOC:'📝',DOCX:'📝',TXT:'📋',JPG:'🖼️',PNG:'🖼️',GIF:'🖼️'};
+      preview = `<div class="doc-preview-icon">${icons[ext]||'📎'}<span>${ext}</span></div>`;
+    }
+    return `
+    <div class="doc-card" onclick="docOpenLightbox(${i})">
+      <button class="doc-del-btn" onclick="event.stopPropagation();docDelete(${i})" title="Remove">✕</button>
+      <div class="doc-preview">${preview}</div>
+      <div class="doc-card-footer">
+        <div class="doc-card-name" title="${d.name}">${d.name}</div>
+        <div class="doc-card-size">${d.sizeLabel||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function docPickFile(){
+  document.getElementById('docFileInput').click();
+}
+
+function docHandleFiles(files){
+  if(!files || !files.length) return;
+  const MAX = 5 * 1024 * 1024; // 5MB
+  let queued = 0;
+  Array.from(files).forEach(file => {
+    if(file.size > MAX){ showToast(`"${file.name}" is over 5MB — skipped.`); return; }
+    queued++;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const docs = docGetDocs();
+      const kb = (file.size/1024);
+      const sizeLabel = kb >= 1024 ? (kb/1024).toFixed(1)+' MB' : Math.round(kb)+' KB';
+      // Ask for a name
+      const customName = prompt(`Name this document:`, file.name.replace(/\.[^.]+$/,'')) || file.name;
+      const ext = file.name.split('.').pop();
+      const finalName = customName.includes('.') ? customName : customName + '.' + ext;
+      docs.push({ name: finalName, type: file.type, data: e.target.result, sizeLabel, added: Date.now() });
+      docSaveDocs(docs);
+      docRender();
+      showToast(`✅ "${finalName}" uploaded!`);
+      queued--;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function docDragOver(e){
+  e.preventDefault();
+  document.getElementById('docDropzone').classList.add('drag-over');
+}
+function docDragLeave(e){
+  document.getElementById('docDropzone').classList.remove('drag-over');
+}
+function docDrop(e){
+  e.preventDefault();
+  document.getElementById('docDropzone').classList.remove('drag-over');
+  docHandleFiles(e.dataTransfer.files);
+}
+
+function docDelete(idx){
+  crmConfirm('Remove this document?','It will be permanently deleted from this lead.', ()=>{
+    const docs = docGetDocs();
+    docs.splice(idx,1);
+    docSaveDocs(docs);
+    docRender();
+    showToast('Document removed.');
+  });
+}
+
+function docOpenLightbox(idx){
+  const docs = docGetDocs();
+  const d = docs[idx]; if(!d) return;
+  document.getElementById('docLightboxTitle').textContent = d.name;
+  const body = document.getElementById('docLightboxBody');
+  if(d.type && d.type.startsWith('image/')){
+    body.innerHTML = `<img src="${d.data}" alt="${d.name}" style="max-width:100%;max-height:70vh;border-radius:6px"/>`;
+  } else if(d.type === 'application/pdf'){
+    body.innerHTML = `<iframe src="${d.data}" style="width:100%;height:70vh;border:none;border-radius:6px"></iframe>`;
+  } else {
+    body.innerHTML = `<div style="text-align:center;padding:40px">
+      <div style="font-size:4rem;margin-bottom:16px">📎</div>
+      <div style="font-size:0.9rem;color:var(--white);margin-bottom:20px">${d.name}</div>
+      <a href="${d.data}" download="${d.name}" class="btn btn-primary" style="text-decoration:none">⬇ Download File</a>
+    </div>`;
+  }
+  document.getElementById('docLightbox').classList.add('open');
+}
+
+function docCloseLightbox(e){
+  if(e && e.target !== document.getElementById('docLightbox')) return;
+  document.getElementById('docLightbox').classList.remove('open');
+  document.getElementById('docLightboxBody').innerHTML = '';
+}
 
 /* ══════════════════════════════════════════════════════
    MODAL
@@ -4778,8 +4976,7 @@ function npSetFont(fontVal){
 }
 
 function npRestoreFont(){
-  const saved = localStorage.getItem('bchb_np_font');
-  if(!saved) return;
+  const saved = localStorage.getItem('bchb_np_font') || 'Georgia';
   const ta = document.getElementById('npTextarea');
   if(ta) ta.style.fontFamily = saved;
   const sel = document.getElementById('npFontSelect');
