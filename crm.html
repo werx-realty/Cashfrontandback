@@ -2219,6 +2219,162 @@ input,select,textarea{font-family:var(--font)}
   </div>
 </div>
 
+
+<!-- ═══════════════════════ EMAIL VIEW ═══════════════════════════════════════ -->
+<div class="view" id="view-email">
+  <div class="view-header" style="margin-bottom:14px">
+    <div>
+      <h2 class="view-title">Email</h2>
+      <p class="view-sub" id="emailViewSub">Connect your email account to get started</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost btn-sm" onclick="emailRefresh()" id="emailRefreshBtn" style="display:none">↻ Refresh</button>
+      <button class="btn btn-ghost btn-sm" onclick="emailDisconnect()" id="emailDisconnectBtn" style="display:none" style="color:#ef4444">Disconnect</button>
+    </div>
+  </div>
+
+  <!-- CONNECT STATE -->
+  <div id="emailConnectState" class="email-connect-state">
+    <div class="email-connect-card">
+      <div style="font-size:2.4rem;margin-bottom:14px">✉️</div>
+      <h2>Connect Your Email</h2>
+      <p>Sign in with Gmail to read, send, and manage your emails right inside the CRM. Your credentials stay in your browser — nothing is stored on any server.</p>
+      <div class="email-provider-btns">
+        <button class="email-provider-btn" onclick="connectGmail()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.17L1.4 6.27C2.43 4.31 4.08 2.74 6.08 1.77L8.5 5.35C7.12 5.97 5.98 7.45 5.27 9.17z"/><path fill="#4285F4" d="M18.73 9.17c-.71-1.72-1.85-3.2-3.23-3.82L17.92 1.77c2 .97 3.65 2.54 4.68 4.5L18.73 9.17z"/><path fill="#FBBC05" d="M12 4.5c1.33 0 2.57.35 3.65.95L17.65 1.5C16.08.57 14.1 0 12 0S7.92.57 6.35 1.5L8.35 5.45C9.43 4.85 10.67 4.5 12 4.5z"/><path fill="#34A853" d="M5.27 14.83L1.4 17.73C2.43 19.69 4.08 21.26 6.08 22.23L8.5 18.65C7.12 18.03 5.98 16.55 5.27 14.83z"/><path fill="#EA4335" d="M12 19.5c-1.33 0-2.57-.35-3.65-.95L6.35 22.5C7.92 23.43 9.9 24 12 24s4.08-.57 5.65-1.5L15.65 18.55C14.57 19.15 13.33 19.5 12 19.5z"/><path fill="#4285F4" d="M18.73 14.83c-.71 1.72-1.85 3.2-3.23 3.82L17.92 22.23c2-.97 3.65-2.54 4.68-4.5L18.73 14.83z"/><path fill="#34A853" d="M19.5 12c0-.84-.12-1.65-.33-2.42l3.93-2.9c.56 1.65.87 3.4.87 5.32s-.31 3.67-.87 5.32l-3.93-2.9c.21-.77.33-1.58.33-2.42z"/><path fill="#FBBC05" d="M4.5 12c0 .84.12 1.65.33 2.42L.9 17.32C.34 15.67.03 13.92.03 12s.31-3.67.87-5.32l3.93 2.9C4.62 10.35 4.5 11.16 4.5 12z"/></svg>
+          Connect Gmail
+        </button>
+        <button class="email-provider-btn" onclick="showYahooInfo()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#6001D2" d="M0 0h24v24H0z"/><path fill="#fff" d="M13.9 13.1L16.8 6h2.6l-4.7 10.7c-.9 2.1-1.9 2.5-3.6 2.5H9.7V17h1c.8 0 1.4-.3 1.8-1.1L8 6h2.7l2.1 5.8.3.9.8.4zM9.3 6H6.7L4 13.2 1.3 6H-.4L3.3 15.4l-1.4 3.4h1.8z"/></svg>
+          Yahoo Mail
+        </button>
+      </div>
+      <div class="email-setup-note" id="emailSetupNote" style="display:none">
+        <strong style="color:var(--white)">Gmail Setup (one-time)</strong><br>
+        To connect Gmail you need a Google OAuth Client ID:<br><br>
+        1. Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → New Project<br>
+        2. Enable the Gmail API<br>
+        3. Credentials → Create OAuth Client ID → Web Application<br>
+        4. Add <strong style="color:var(--gold)" id="emailOriginHint"></strong> to Authorized JavaScript origins<br>
+        5. Copy the Client ID and paste below
+        <div class="email-client-id-row">
+          <input type="text" id="gmailClientIdInput" placeholder="xxxxxxxxxx.apps.googleusercontent.com" />
+          <button class="btn btn-primary btn-sm" onclick="saveGmailClientId()">Save & Connect</button>
+        </div>
+      </div>
+      <div id="yahooInfoNote" style="display:none;margin-top:16px" class="email-setup-note">
+        <strong style="color:var(--white)">Yahoo Mail</strong><br>
+        Yahoo Mail requires server-side OAuth which isn't supported in this browser-only CRM.<br><br>
+        <strong>Workaround:</strong> Use <a href="https://mail.yahoo.com" target="_blank">mail.yahoo.com</a> directly, or forward your Yahoo mail to Gmail and connect Gmail here.
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL CLIENT (shown once connected) -->
+  <div id="emailClient" style="display:none">
+    <div class="email-wrap">
+
+      <!-- LEFT: Folder panel -->
+      <div class="email-fp">
+        <button class="email-compose-btn" onclick="emailShowCompose()">✏ Compose</button>
+        <div class="email-account-chip">
+          <div class="ea-dot"></div>
+          <div class="ea-label" id="emailAccountLabel">account@gmail.com</div>
+          <button class="ea-disconnect" onclick="emailDisconnect()" title="Disconnect">✕</button>
+        </div>
+        <div class="email-folder-section">Mailboxes</div>
+        <div class="ef-item active" onclick="emailLoadFolder('INBOX',this)" data-label="INBOX">
+          📥 <span>Inbox</span><span class="ef-count" id="efUnreadCount" style="display:none">0</span>
+        </div>
+        <div class="ef-item" onclick="emailLoadFolder('STARRED',this)" data-label="STARRED">⭐ <span>Starred</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('SENT',this)" data-label="SENT">📤 <span>Sent</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('DRAFT',this)" data-label="DRAFT">📝 <span>Drafts</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('SPAM',this)" data-label="SPAM">🚫 <span>Spam</span></div>
+        <div class="ef-item" onclick="emailLoadFolder('TRASH',this)" data-label="TRASH">🗑 <span>Trash</span></div>
+      </div>
+
+      <!-- MIDDLE: Email list -->
+      <div class="email-list-panel">
+        <div class="email-list-toolbar">
+          <input type="text" id="emailSearchInput" placeholder="Search emails…" oninput="emailSearch(this.value)" />
+        </div>
+        <div class="email-list-label">
+          <span id="emailFolderLabel">Inbox</span>
+          <button onclick="emailRefresh()">↻</button>
+        </div>
+        <div class="email-items-scroll" id="emailItemsScroll">
+          <div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Loading…</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Detail / Compose -->
+      <div class="email-detail-panel" id="emailDetailPanel">
+        <div class="email-empty-state" id="emailEmptyState">
+          <div class="ees-icon">✉️</div>
+          <p>Select an email to read it</p>
+        </div>
+
+        <!-- Email detail view -->
+        <div id="emailDetailView" style="display:none;flex-direction:column;height:100%">
+          <div class="email-detail-toolbar">
+            <button class="ed-btn" onclick="emailReply()">↩ Reply</button>
+            <button class="ed-btn" onclick="emailForward()">→ Forward</button>
+            <button class="ed-btn" onclick="emailArchive()" title="Archive">📦</button>
+            <button class="ed-btn" onclick="emailTrash()" title="Move to Trash" style="margin-left:auto">🗑</button>
+          </div>
+          <div class="email-detail-body">
+            <div class="ed-subject" id="edSubject"></div>
+            <div class="ed-meta">
+              <div class="ed-avatar" id="edAvatar"></div>
+              <div>
+                <div class="ed-from-name" id="edFromName"></div>
+                <div class="ed-from-addr" id="edFromAddr"></div>
+              </div>
+              <div class="ed-date-str" id="edDate"></div>
+            </div>
+            <div id="edBodyText" class="ed-body-text"></div>
+          </div>
+          <div class="email-reply-bar" id="emailReplyBar" style="display:none">
+            <textarea id="emailReplyText" placeholder="Write your reply…" rows="3"></textarea>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="btn btn-primary btn-sm" onclick="emailSendReply()">Send</button>
+              <button class="btn btn-ghost btn-sm" onclick="document.getElementById('emailReplyBar').style.display='none'">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compose view -->
+        <div id="emailComposeView" style="display:none;height:100%">
+          <div class="email-compose-panel">
+            <div class="compose-header">
+              New Message
+              <button class="ed-btn" onclick="emailHideCompose()">✕</button>
+            </div>
+            <div class="compose-field">
+              <label>To</label>
+              <input type="email" id="composeTo" placeholder="recipient@example.com" />
+            </div>
+            <div class="compose-field">
+              <label>CC</label>
+              <input type="email" id="composeCC" placeholder="cc@example.com (optional)" />
+            </div>
+            <div class="compose-field">
+              <label>Subj</label>
+              <input type="text" id="composeSubject" placeholder="Subject" />
+            </div>
+            <textarea class="compose-body-area" id="composeBody" placeholder="Write your message…"></textarea>
+            <div class="compose-toolbar-bar">
+              <button class="btn btn-primary" onclick="emailSendCompose()">📤 Send</button>
+              <button class="btn btn-ghost" onclick="emailSaveDraft()">💾 Save Draft</button>
+              <button class="btn btn-ghost" onclick="emailHideCompose()" style="margin-left:auto">Discard ✕</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /email-detail-panel -->
+    </div><!-- /email-wrap -->
+  </div><!-- /emailClient -->
+</div><!-- /view-email -->
 </main>
 </div>
 </div>
@@ -5393,161 +5549,6 @@ function piExportCSV(){
   </div>
 </div>
 
-<!-- ═══════════════════════ EMAIL VIEW ═══════════════════════════════════════ -->
-<div class="view" id="view-email">
-  <div class="view-header" style="margin-bottom:14px">
-    <div>
-      <h2 class="view-title">Email</h2>
-      <p class="view-sub" id="emailViewSub">Connect your email account to get started</p>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <button class="btn btn-ghost btn-sm" onclick="emailRefresh()" id="emailRefreshBtn" style="display:none">↻ Refresh</button>
-      <button class="btn btn-ghost btn-sm" onclick="emailDisconnect()" id="emailDisconnectBtn" style="display:none" style="color:#ef4444">Disconnect</button>
-    </div>
-  </div>
-
-  <!-- CONNECT STATE -->
-  <div id="emailConnectState" class="email-connect-state">
-    <div class="email-connect-card">
-      <div style="font-size:2.4rem;margin-bottom:14px">✉️</div>
-      <h2>Connect Your Email</h2>
-      <p>Sign in with Gmail to read, send, and manage your emails right inside the CRM. Your credentials stay in your browser — nothing is stored on any server.</p>
-      <div class="email-provider-btns">
-        <button class="email-provider-btn" onclick="connectGmail()">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.17L1.4 6.27C2.43 4.31 4.08 2.74 6.08 1.77L8.5 5.35C7.12 5.97 5.98 7.45 5.27 9.17z"/><path fill="#4285F4" d="M18.73 9.17c-.71-1.72-1.85-3.2-3.23-3.82L17.92 1.77c2 .97 3.65 2.54 4.68 4.5L18.73 9.17z"/><path fill="#FBBC05" d="M12 4.5c1.33 0 2.57.35 3.65.95L17.65 1.5C16.08.57 14.1 0 12 0S7.92.57 6.35 1.5L8.35 5.45C9.43 4.85 10.67 4.5 12 4.5z"/><path fill="#34A853" d="M5.27 14.83L1.4 17.73C2.43 19.69 4.08 21.26 6.08 22.23L8.5 18.65C7.12 18.03 5.98 16.55 5.27 14.83z"/><path fill="#EA4335" d="M12 19.5c-1.33 0-2.57-.35-3.65-.95L6.35 22.5C7.92 23.43 9.9 24 12 24s4.08-.57 5.65-1.5L15.65 18.55C14.57 19.15 13.33 19.5 12 19.5z"/><path fill="#4285F4" d="M18.73 14.83c-.71 1.72-1.85 3.2-3.23 3.82L17.92 22.23c2-.97 3.65-2.54 4.68-4.5L18.73 14.83z"/><path fill="#34A853" d="M19.5 12c0-.84-.12-1.65-.33-2.42l3.93-2.9c.56 1.65.87 3.4.87 5.32s-.31 3.67-.87 5.32l-3.93-2.9c.21-.77.33-1.58.33-2.42z"/><path fill="#FBBC05" d="M4.5 12c0 .84.12 1.65.33 2.42L.9 17.32C.34 15.67.03 13.92.03 12s.31-3.67.87-5.32l3.93 2.9C4.62 10.35 4.5 11.16 4.5 12z"/></svg>
-          Connect Gmail
-        </button>
-        <button class="email-provider-btn" onclick="showYahooInfo()">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#6001D2" d="M0 0h24v24H0z"/><path fill="#fff" d="M13.9 13.1L16.8 6h2.6l-4.7 10.7c-.9 2.1-1.9 2.5-3.6 2.5H9.7V17h1c.8 0 1.4-.3 1.8-1.1L8 6h2.7l2.1 5.8.3.9.8.4zM9.3 6H6.7L4 13.2 1.3 6H-.4L3.3 15.4l-1.4 3.4h1.8z"/></svg>
-          Yahoo Mail
-        </button>
-      </div>
-      <div class="email-setup-note" id="emailSetupNote" style="display:none">
-        <strong style="color:var(--white)">Gmail Setup (one-time)</strong><br>
-        To connect Gmail you need a Google OAuth Client ID:<br><br>
-        1. Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → New Project<br>
-        2. Enable the Gmail API<br>
-        3. Credentials → Create OAuth Client ID → Web Application<br>
-        4. Add <strong style="color:var(--gold)" id="emailOriginHint"></strong> to Authorized JavaScript origins<br>
-        5. Copy the Client ID and paste below
-        <div class="email-client-id-row">
-          <input type="text" id="gmailClientIdInput" placeholder="xxxxxxxxxx.apps.googleusercontent.com" />
-          <button class="btn btn-primary btn-sm" onclick="saveGmailClientId()">Save & Connect</button>
-        </div>
-      </div>
-      <div id="yahooInfoNote" style="display:none;margin-top:16px" class="email-setup-note">
-        <strong style="color:var(--white)">Yahoo Mail</strong><br>
-        Yahoo Mail requires server-side OAuth which isn't supported in this browser-only CRM.<br><br>
-        <strong>Workaround:</strong> Use <a href="https://mail.yahoo.com" target="_blank">mail.yahoo.com</a> directly, or forward your Yahoo mail to Gmail and connect Gmail here.
-      </div>
-    </div>
-  </div>
-
-  <!-- EMAIL CLIENT (shown once connected) -->
-  <div id="emailClient" style="display:none">
-    <div class="email-wrap">
-
-      <!-- LEFT: Folder panel -->
-      <div class="email-fp">
-        <button class="email-compose-btn" onclick="emailShowCompose()">✏ Compose</button>
-        <div class="email-account-chip">
-          <div class="ea-dot"></div>
-          <div class="ea-label" id="emailAccountLabel">account@gmail.com</div>
-          <button class="ea-disconnect" onclick="emailDisconnect()" title="Disconnect">✕</button>
-        </div>
-        <div class="email-folder-section">Mailboxes</div>
-        <div class="ef-item active" onclick="emailLoadFolder('INBOX',this)" data-label="INBOX">
-          📥 <span>Inbox</span><span class="ef-count" id="efUnreadCount" style="display:none">0</span>
-        </div>
-        <div class="ef-item" onclick="emailLoadFolder('STARRED',this)" data-label="STARRED">⭐ <span>Starred</span></div>
-        <div class="ef-item" onclick="emailLoadFolder('SENT',this)" data-label="SENT">📤 <span>Sent</span></div>
-        <div class="ef-item" onclick="emailLoadFolder('DRAFT',this)" data-label="DRAFT">📝 <span>Drafts</span></div>
-        <div class="ef-item" onclick="emailLoadFolder('SPAM',this)" data-label="SPAM">🚫 <span>Spam</span></div>
-        <div class="ef-item" onclick="emailLoadFolder('TRASH',this)" data-label="TRASH">🗑 <span>Trash</span></div>
-      </div>
-
-      <!-- MIDDLE: Email list -->
-      <div class="email-list-panel">
-        <div class="email-list-toolbar">
-          <input type="text" id="emailSearchInput" placeholder="Search emails…" oninput="emailSearch(this.value)" />
-        </div>
-        <div class="email-list-label">
-          <span id="emailFolderLabel">Inbox</span>
-          <button onclick="emailRefresh()">↻</button>
-        </div>
-        <div class="email-items-scroll" id="emailItemsScroll">
-          <div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Loading…</span></div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Detail / Compose -->
-      <div class="email-detail-panel" id="emailDetailPanel">
-        <div class="email-empty-state" id="emailEmptyState">
-          <div class="ees-icon">✉️</div>
-          <p>Select an email to read it</p>
-        </div>
-
-        <!-- Email detail view -->
-        <div id="emailDetailView" style="display:none;flex-direction:column;height:100%">
-          <div class="email-detail-toolbar">
-            <button class="ed-btn" onclick="emailReply()">↩ Reply</button>
-            <button class="ed-btn" onclick="emailForward()">→ Forward</button>
-            <button class="ed-btn" onclick="emailArchive()" title="Archive">📦</button>
-            <button class="ed-btn" onclick="emailTrash()" title="Move to Trash" style="margin-left:auto">🗑</button>
-          </div>
-          <div class="email-detail-body">
-            <div class="ed-subject" id="edSubject"></div>
-            <div class="ed-meta">
-              <div class="ed-avatar" id="edAvatar"></div>
-              <div>
-                <div class="ed-from-name" id="edFromName"></div>
-                <div class="ed-from-addr" id="edFromAddr"></div>
-              </div>
-              <div class="ed-date-str" id="edDate"></div>
-            </div>
-            <div id="edBodyText" class="ed-body-text"></div>
-          </div>
-          <div class="email-reply-bar" id="emailReplyBar" style="display:none">
-            <textarea id="emailReplyText" placeholder="Write your reply…" rows="3"></textarea>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <button class="btn btn-primary btn-sm" onclick="emailSendReply()">Send</button>
-              <button class="btn btn-ghost btn-sm" onclick="document.getElementById('emailReplyBar').style.display='none'">✕</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Compose view -->
-        <div id="emailComposeView" style="display:none;height:100%">
-          <div class="email-compose-panel">
-            <div class="compose-header">
-              New Message
-              <button class="ed-btn" onclick="emailHideCompose()">✕</button>
-            </div>
-            <div class="compose-field">
-              <label>To</label>
-              <input type="email" id="composeTo" placeholder="recipient@example.com" />
-            </div>
-            <div class="compose-field">
-              <label>CC</label>
-              <input type="email" id="composeCC" placeholder="cc@example.com (optional)" />
-            </div>
-            <div class="compose-field">
-              <label>Subj</label>
-              <input type="text" id="composeSubject" placeholder="Subject" />
-            </div>
-            <textarea class="compose-body-area" id="composeBody" placeholder="Write your message…"></textarea>
-            <div class="compose-toolbar-bar">
-              <button class="btn btn-primary" onclick="emailSendCompose()">📤 Send</button>
-              <button class="btn btn-ghost" onclick="emailSaveDraft()">💾 Save Draft</button>
-              <button class="btn btn-ghost" onclick="emailHideCompose()" style="margin-left:auto">Discard ✕</button>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /email-detail-panel -->
-    </div><!-- /email-wrap -->
-  </div><!-- /emailClient -->
-</div><!-- /view-email -->
 
 
 </body>
