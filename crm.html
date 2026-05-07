@@ -1709,22 +1709,7 @@ input,select,textarea{font-family:var(--font)}
         <div class="detail-section-title">Quick — Lead Addresses</div>
         <div id="sv-lead-list" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
       </div>
-      <div class="card" style="padding:16px;background:var(--gold-glow);border-color:rgba(201,169,110,0.2)">
-        <div style="font-size:0.75rem;color:var(--gold);margin-bottom:8px">🔑 Enable Full Street View (Pegman)</div>
-        <p style="font-size:0.76rem;color:var(--gray);line-height:1.55;margin-bottom:10px">Add a free Google Maps API key to unlock the draggable pegman and full Street View experience.</p>
-        <div style="font-size:0.7rem;color:var(--gray);margin-bottom:6px;line-height:1.5">
-          1. <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">console.cloud.google.com</a><br>
-          2. Enable <strong style="color:var(--white)">Maps Embed API</strong><br>
-          3. Credentials → Create API Key<br>
-          4. Restrict to: <strong style="color:var(--white)">cashfrontandback.vercel.app</strong>
-        </div>
-        <div style="display:flex;gap:6px;margin-top:8px">
-          <input id="sv-api-key-input" type="text" placeholder="Paste API key here…"
-            style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 9px;color:var(--white);font-size:0.75rem;outline:none"/>
-          <button onclick="saveSvApiKey()" style="padding:6px 10px;background:var(--gold);color:#0d0d0f;border:none;border-radius:6px;font-size:0.75rem;font-weight:700;cursor:pointer">Save</button>
-        </div>
-        <div id="sv-key-status" style="font-size:0.72rem;margin-top:6px;display:none"></div>
-      </div>
+
     </div>
     <div class="sv-frame" id="svFrame">
       <div class="sv-placeholder">
@@ -1797,6 +1782,7 @@ input,select,textarea{font-family:var(--font)}
       <div class="settings-nav-item" onclick="showSettingsPanel('users',this)">👥 Users</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('data',this)">💾 Data & Export</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('gcal',this)" id="gcal-nav-item">📅 Google Calendar</div>
+      <div class="settings-nav-item" onclick="showSettingsPanel('apikeys',this)">🔑 API Keys</div>
       <div class="settings-nav-item" onclick="showSettingsPanel('appearance',this)">🎨 Appearance</div>
     </div>
     <div>
@@ -1907,6 +1893,57 @@ input,select,textarea{font-family:var(--font)}
         </div>
 
       </div><!-- /sp-gcal -->
+
+      <div class="settings-panel" id="sp-apikeys">
+        <div class="settings-section">
+          <h3>🔑 API Keys & Integrations</h3>
+          <p>All your API keys in one place. Set them once — the CRM remembers them permanently.</p>
+        </div>
+
+        <!-- Google Maps API Key -->
+        <div class="settings-section" style="border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
+          <h4 style="margin-bottom:4px;display:flex;align-items:center;gap:8px">🗺️ Google Maps API Key <span id="maps-key-badge" style="display:none;font-size:0.72rem;background:rgba(34,197,94,0.15);color:#22c55e;padding:2px 8px;border-radius:20px;font-weight:500">✓ Saved</span></h4>
+          <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px">Unlocks the draggable 🧍 Pegman and full Street View on the Street View Explorer page.</p>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;font-size:0.78rem;color:var(--gray);line-height:1.7">
+            1. Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">console.cloud.google.com</a> → your project<br>
+            2. Enable <strong style="color:var(--white)">Maps Embed API</strong><br>
+            3. Credentials → Create API Key<br>
+            4. Restrict to: <strong style="color:var(--white)">cashfrontandback.vercel.app</strong>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="form-input" id="settings-maps-key-input" placeholder="AIza…" style="flex:1;font-family:monospace;font-size:0.82rem"/>
+            <button class="btn btn-primary" onclick="settingsSaveMapsKey()">Save Key</button>
+            <button class="btn btn-ghost btn-sm" id="settings-maps-clear-btn" onclick="settingsClearMapsKey()" style="display:none;color:#ef4444">Clear</button>
+          </div>
+          <div id="settings-maps-status" style="font-size:0.75rem;margin-top:6px;display:none"></div>
+        </div>
+
+        <!-- Gmail OAuth Client ID -->
+        <div class="settings-section" style="border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
+          <h4 style="margin-bottom:4px;display:flex;align-items:center;gap:8px">📧 Gmail OAuth Client ID <span id="gmail-key-badge" style="display:none;font-size:0.72rem;background:rgba(34,197,94,0.15);color:#22c55e;padding:2px 8px;border-radius:20px;font-weight:500">✓ Saved</span></h4>
+          <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px">Required to connect Gmail on the Email page. Set it here once — you'll never need to enter it again.</p>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;font-size:0.78rem;color:var(--gray);line-height:1.7">
+            1. Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">console.cloud.google.com</a> → New Project<br>
+            2. Enable <strong style="color:var(--white)">Gmail API</strong><br>
+            3. Credentials → Create OAuth Client ID → Web Application<br>
+            4. Add <strong style="color:var(--gold)" id="settings-origin-hint"></strong> to Authorized JavaScript origins<br>
+            5. Paste your Client ID below
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="form-input" id="settings-gmail-client-id" placeholder="xxxxxxxxxx.apps.googleusercontent.com" style="flex:1;font-family:monospace;font-size:0.82rem"/>
+            <button class="btn btn-primary" onclick="settingsSaveGmailId()">Save</button>
+            <button class="btn btn-ghost btn-sm" id="settings-gmail-clear-btn" onclick="settingsClearGmailId()" style="display:none;color:#ef4444">Clear</button>
+          </div>
+          <div id="settings-gmail-status" style="font-size:0.75rem;margin-top:6px;display:none"></div>
+        </div>
+
+        <!-- Google Calendar -->
+        <div class="settings-section" style="border:1px solid var(--border);border-radius:12px;padding:20px">
+          <h4 style="margin-bottom:4px;display:flex;align-items:center;gap:8px">📅 Google Calendar <span id="gcal-key-badge" style="font-size:0.72rem;background:rgba(34,197,94,0.15);color:#22c55e;padding:2px 8px;border-radius:20px;font-weight:500;display:none">✓ Connected</span></h4>
+          <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px">Sync your Google Calendar events into the CRM. Uses the same OAuth Client ID as Gmail.</p>
+          <button class="btn btn-primary" onclick="showSettingsPanel('gcal', document.querySelector('[onclick*=gcal]'))">Open Google Calendar Settings →</button>
+        </div>
+      </div><!-- /sp-apikeys -->
 
       <div class="settings-panel" id="sp-appearance">
         <div class="settings-section">
@@ -2278,6 +2315,9 @@ input,select,textarea{font-family:var(--font)}
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.17L1.4 6.27C2.43 4.31 4.08 2.74 6.08 1.77L8.5 5.35C7.12 5.97 5.98 7.45 5.27 9.17z"/><path fill="#4285F4" d="M18.73 9.17c-.71-1.72-1.85-3.2-3.23-3.82L17.92 1.77c2 .97 3.65 2.54 4.68 4.5L18.73 9.17z"/><path fill="#FBBC05" d="M12 4.5c1.33 0 2.57.35 3.65.95L17.65 1.5C16.08.57 14.1 0 12 0S7.92.57 6.35 1.5L8.35 5.45C9.43 4.85 10.67 4.5 12 4.5z"/><path fill="#34A853" d="M5.27 14.83L1.4 17.73C2.43 19.69 4.08 21.26 6.08 22.23L8.5 18.65C7.12 18.03 5.98 16.55 5.27 14.83z"/><path fill="#EA4335" d="M12 19.5c-1.33 0-2.57-.35-3.65-.95L6.35 22.5C7.92 23.43 9.9 24 12 24s4.08-.57 5.65-1.5L15.65 18.55C14.57 19.15 13.33 19.5 12 19.5z"/><path fill="#4285F4" d="M18.73 14.83c-.71 1.72-1.85 3.2-3.23 3.82L17.92 22.23c2-.97 3.65-2.54 4.68-4.5L18.73 14.83z"/><path fill="#34A853" d="M19.5 12c0-.84-.12-1.65-.33-2.42l3.93-2.9c.56 1.65.87 3.4.87 5.32s-.31 3.67-.87 5.32l-3.93-2.9c.21-.77.33-1.58.33-2.42z"/><path fill="#FBBC05" d="M4.5 12c0 .84.12 1.65.33 2.42L.9 17.32C.34 15.67.03 13.92.03 12s.31-3.67.87-5.32l3.93 2.9C4.62 10.35 4.5 11.16 4.5 12z"/></svg>
           Connect Gmail
         </button>
+        <div id="email-no-client-id-hint" style="display:none;font-size:0.75rem;color:var(--gray);margin-top:10px;text-align:center">
+          No Client ID set. <button onclick="showView('settings');setTimeout(()=>showSettingsPanel('apikeys',null),100)" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.75rem;text-decoration:underline;padding:0">Add it in Settings → API Keys</button>
+        </div>
         <button class="email-provider-btn" onclick="showYahooInfo()">
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#6001D2" d="M0 0h24v24H0z"/><path fill="#fff" d="M13.9 13.1L16.8 6h2.6l-4.7 10.7c-.9 2.1-1.9 2.5-3.6 2.5H9.7V17h1c.8 0 1.4-.3 1.8-1.1L8 6h2.7l2.1 5.8.3.9.8.4zM9.3 6H6.7L4 13.2 1.3 6H-.4L3.3 15.4l-1.4 3.4h1.8z"/></svg>
           Yahoo Mail
@@ -3214,11 +3254,75 @@ function saveEvent(){
    STREET VIEW
 ══════════════════════════════════════════════════════ */
 function saveSvApiKey(){
-  const val=document.getElementById('sv-api-key-input').value.trim();
-  const st=document.getElementById('sv-key-status');
-  if(!val){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='Please paste your API key first.'; return; }
+  // Legacy — route to new settings save
+  settingsSaveMapsKey();
+}
+function settingsSaveMapsKey(){
+  const input = document.getElementById('settings-maps-key-input');
+  const st = document.getElementById('settings-maps-status');
+  const val = input ? input.value.trim() : '';
+  if(!val){
+    if(st){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='Please paste your API key first.'; }
+    return;
+  }
   localStorage.setItem('bchb_maps_key', val);
-  st.style.display='block'; st.style.color='var(--green)'; st.textContent='✓ Key saved! Enter an address and click Open Street View.';
+  if(st){ st.style.display='block'; st.style.color='var(--green)'; st.textContent='✓ Key saved! Street View will use it automatically.'; }
+  _refreshApiKeyBadges();
+  showToast('✅ Maps API key saved!');
+}
+function settingsClearMapsKey(){
+  localStorage.removeItem('bchb_maps_key');
+  const input = document.getElementById('settings-maps-key-input');
+  if(input) input.value = '';
+  _refreshApiKeyBadges();
+  showToast('Maps API key cleared.');
+}
+function settingsSaveGmailId(){
+  const input = document.getElementById('settings-gmail-client-id');
+  const st = document.getElementById('settings-gmail-status');
+  const val = input ? input.value.trim() : '';
+  if(!val){
+    if(st){ st.style.display='block'; st.style.color='#ef4444'; st.textContent='Please paste your Client ID first.'; }
+    return;
+  }
+  localStorage.setItem('bchb_gmail_client_id', val);
+  // Also update the email state object if it exists
+  if(typeof ES !== 'undefined') ES.clientId = val;
+  if(st){ st.style.display='block'; st.style.color='var(--green)'; st.textContent='✓ Saved! Go to the Email page and click Connect Gmail.'; }
+  _refreshApiKeyBadges();
+  showToast('✅ Gmail Client ID saved!');
+}
+function settingsClearGmailId(){
+  localStorage.removeItem('bchb_gmail_client_id');
+  const input = document.getElementById('settings-gmail-client-id');
+  if(input) input.value = '';
+  _refreshApiKeyBadges();
+  showToast('Gmail Client ID cleared.');
+}
+function _refreshApiKeyBadges(){
+  const mapsKey = localStorage.getItem('bchb_maps_key') || '';
+  const gmailId = localStorage.getItem('bchb_gmail_client_id') || '';
+  const gcalId  = localStorage.getItem('bchb_gcal_client_id') || '';
+  // Maps badge
+  const mapsBadge = document.getElementById('maps-key-badge');
+  const mapsInput = document.getElementById('settings-maps-key-input');
+  const mapsClear = document.getElementById('settings-maps-clear-btn');
+  if(mapsBadge) mapsBadge.style.display = mapsKey ? 'inline-block' : 'none';
+  if(mapsInput && mapsKey && !mapsInput.value) mapsInput.value = mapsKey;
+  if(mapsClear) mapsClear.style.display = mapsKey ? 'inline-flex' : 'none';
+  // Gmail badge
+  const gmailBadge = document.getElementById('gmail-key-badge');
+  const gmailInput = document.getElementById('settings-gmail-client-id');
+  const gmailClear = document.getElementById('settings-gmail-clear-btn');
+  if(gmailBadge) gmailBadge.style.display = gmailId ? 'inline-block' : 'none';
+  if(gmailInput && gmailId && !gmailInput.value) gmailInput.value = gmailId;
+  if(gmailClear) gmailClear.style.display = gmailId ? 'inline-flex' : 'none';
+  // GCal badge
+  const gcalBadge = document.getElementById('gcal-key-badge');
+  if(gcalBadge) gcalBadge.style.display = gcalId ? 'inline-block' : 'none';
+  // Set origin hint
+  const hint = document.getElementById('settings-origin-hint');
+  if(hint) hint.textContent = window.location.origin;
 }
 
 function loadStreetView(addr){
@@ -3228,10 +3332,6 @@ function loadStreetView(addr){
   const full=a.includes('Bakersfield')?a:a+', Bakersfield CA';
   const enc=encodeURIComponent(full);
   const apiKey=localStorage.getItem('bchb_maps_key')||'';
-
-  // Populate API key input if already saved
-  const keyInput=document.getElementById('sv-api-key-input');
-  if(keyInput && apiKey && !keyInput.value) keyInput.value=apiKey;
 
   if(apiKey){
     // Full Street View with draggable pegman via Maps Embed API v1
@@ -3421,9 +3521,15 @@ function revealApiKey(btn){ document.getElementById('apiKeyDisplay').textContent
 ══════════════════════════════════════════════════════ */
 function showSettingsPanel(id,el){
   document.querySelectorAll('.settings-panel').forEach(p=>p.classList.remove('active'));
+  if(id==='apikeys') setTimeout(_refreshApiKeyBadges, 50);
   document.querySelectorAll('.settings-nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('sp-'+id)?.classList.add('active');
-  el.classList.add('active');
+  // el can be null when called programmatically — find the nav item by data if needed
+  if(el) el.classList.add('active');
+  else {
+    const navItems = document.querySelectorAll('.settings-nav-item');
+    navItems.forEach(n=>{ if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active'); });
+  }
 }
 function renderUsers(){
   const el=document.getElementById('users-list');
@@ -4300,21 +4406,25 @@ function _emailSilentReconnect(){
   ES._reconnecting = true;
   const savedEmail = localStorage.getItem('bchb_gmail_email') || '';
   if(savedEmail){
-    // Show connected state immediately with stored email while token refreshes
     ES.accountEmail = savedEmail;
     _emailShowConnected();
-    // Show subtle "refreshing" indicator
     document.getElementById('emailItemsScroll').innerHTML =
       '<div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Reconnecting…</span></div>';
   }
+  // Safety timeout — if Google auth hangs >12s, show reconnect button
+  const reconnectTimeout = setTimeout(()=>{
+    if(ES._reconnecting){
+      ES._reconnecting = false;
+      _emailShowReconnectPrompt();
+    }
+  }, 12000);
   ensureGSI(()=>{
     try{
       initTokenClient();
       tokenClient.callback = function(resp){
+        clearTimeout(reconnectTimeout);
         ES._reconnecting = false;
-        if(resp.error){ 
-          // Silent auth failed — show simple one-click reconnect screen (keeps client ID)
-          ES._reconnecting = false;
+        if(resp.error){
           _emailShowReconnectPrompt();
           return;
         }
@@ -4329,7 +4439,11 @@ function _emailSilentReconnect(){
         }
       };
       tokenClient.requestAccessToken({prompt:''});
-    }catch(e){ ES._reconnecting=false; console.warn('[Email] Silent reconnect failed:',e); }
+    }catch(e){
+      clearTimeout(reconnectTimeout);
+      ES._reconnecting=false;
+      _emailShowReconnectPrompt();
+    }
   });
 }
 
