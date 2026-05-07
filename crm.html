@@ -2321,7 +2321,7 @@ input,select,textarea{font-family:var(--font)}
 
 
 <!-- ═══════════════════════ EMAIL VIEW ═══════════════════════════════════════ -->
-<div class="view" id="view-email">
+<div class="view" id="view-email" style="position:relative">
   <div class="view-header" style="margin-bottom:14px">
     <div>
       <h2 class="view-title">Email</h2>
@@ -2334,7 +2334,7 @@ input,select,textarea{font-family:var(--font)}
   </div>
 
   <!-- CONNECT STATE -->
-  <div id="emailConnectState" class="email-connect-state">
+  <div id="emailConnectState" class="email-connect-state" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;background:var(--bg);">
     <div class="email-connect-card">
       <div style="font-size:2.4rem;margin-bottom:14px">✉️</div>
       <h2>Connect Your Email</h2>
@@ -2374,7 +2374,7 @@ input,select,textarea{font-family:var(--font)}
   </div>
 
   <!-- RECONNECT STATE (token expired, but was previously set up) -->
-  <div id="emailReconnectState" style="display:none" class="email-connect-state">
+  <div id="emailReconnectState" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;background:var(--bg);" class="email-connect-state">
     <div class="email-connect-card">
       <div style="font-size:2.4rem;margin-bottom:14px">🔄</div>
       <h2 style="margin-bottom:8px">Reconnect Gmail</h2>
@@ -4196,6 +4196,7 @@ function _emailShowConnected(){
   document.getElementById('emailAccountLabel').textContent = ES.accountEmail;
   document.getElementById('emailViewSub').textContent = ES.accountEmail;
   document.getElementById('emailConnectState').style.display='none';
+  document.getElementById('emailReconnectState').style.display='none';
   document.getElementById('emailClient').style.display='block';
   document.getElementById('emailRefreshBtn').style.display='inline-flex';
   document.getElementById('emailDisconnectBtn').style.display='inline-flex';
