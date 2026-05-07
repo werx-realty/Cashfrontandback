@@ -2283,6 +2283,21 @@ input,select,textarea{font-family:var(--font)}
     <div class="topbar-actions">
       <span class="np-save-dot" id="npSaveDot"></span>
       <span class="np-meta" id="npSaveMeta">Auto-saved</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <label style="font-size:0.75rem;color:var(--gray);white-space:nowrap">Font</label>
+        <select id="npFontSelect" onchange="npSetFont(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:5px 8px;font-size:0.78rem;cursor:pointer;outline:none">
+          <option value="'Georgia', serif">Georgia</option>
+          <option value="'Palatino Linotype', serif">Palatino</option>
+          <option value="'Courier New', monospace">Courier New</option>
+          <option value="'Arial', sans-serif">Arial</option>
+          <option value="'Helvetica Neue', sans-serif">Helvetica</option>
+          <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Verdana', sans-serif">Verdana</option>
+          <option value="'Comic Sans MS', cursive">Comic Sans</option>
+          <option value="'Lucida Console', monospace">Lucida Console</option>
+        </select>
+      </div>
       <button class="np-attach-btn" onclick="naOpenDropdown()">📎 Attach to Lead</button>
     </div>
   </div>
@@ -4635,6 +4650,7 @@ function npInit(){
   }
   npOpenPage(pages[0].id);
   npRenderSidebar();
+  setTimeout(npRestoreFont, 100);
 }
 
 function npRenderSidebar(){
@@ -4753,6 +4769,21 @@ function npRenameThumb(id, labelEl){
     if(e.key==='Enter'){ e.preventDefault(); input.blur(); }
     if(e.key==='Escape'){ input.removeEventListener('blur', saveRename); npRenderSidebar(); }
   });
+}
+
+function npSetFont(fontVal){
+  const ta = document.getElementById('npTextarea');
+  if(ta) ta.style.fontFamily = fontVal;
+  localStorage.setItem('bchb_np_font', fontVal);
+}
+
+function npRestoreFont(){
+  const saved = localStorage.getItem('bchb_np_font');
+  if(!saved) return;
+  const ta = document.getElementById('npTextarea');
+  if(ta) ta.style.fontFamily = saved;
+  const sel = document.getElementById('npFontSelect');
+  if(sel) sel.value = saved;
 }
 
 function npAddPage(){
