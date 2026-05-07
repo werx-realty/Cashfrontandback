@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BCHB CRM — Bakersfield Cash Home Buyers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -4137,17 +4140,45 @@ function _emailShowReconnectPrompt(){
 }
 
 function _emailOneClickReconnect(){
-  // One-click reconnect using saved client ID — no popup, just re-auth
+  // User clicked reconnect manually — use select_account prompt so Google popup actually fires
   document.getElementById('emailReconnectState').style.display = 'none';
-  document.getElementById('emailReconnectMsg').textContent = 'Your session expired. Click below to reconnect your Gmail account — no setup needed.';
-  // Show the inbox area with a loading state while we reconnect
   document.getElementById('emailConnectState').style.display = 'none';
   document.getElementById('emailClient').style.display = 'block';
   document.getElementById('emailItemsScroll').innerHTML =
-    '<div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Reconnecting…</span></div>';
+    '<div class="email-loading"><div class="email-spinner"></div><span style="font-size:.8rem">Signing in…</span></div>';
   const savedEmail = localStorage.getItem('bchb_gmail_email') || '';
   if(savedEmail){ ES.accountEmail = savedEmail; _emailShowConnected(); }
-  _emailSilentReconnect();
+  ES._reconnecting = true;
+  const reconnectTimeout = setTimeout(()=>{
+    if(ES._reconnecting){ ES._reconnecting=false; _emailShowReconnectPrompt(); }
+  }, 30000);
+  ensureGSI(()=>{
+    try{
+      initTokenClient();
+      tokenClient.callback = function(resp){
+        clearTimeout(reconnectTimeout);
+        ES._reconnecting = false;
+        if(resp.error){ _emailShowReconnectPrompt(); return; }
+        ES.accessToken = resp.access_token;
+        ES.tokenExpiry = Date.now()+(resp.expires_in-60)*1000;
+        const em = localStorage.getItem('bchb_gmail_email') || '';
+        if(!em){ fetchProfile(); }
+        else {
+          ES.accountEmail = em;
+          localStorage.setItem('bchb_gmail_connected','1');
+          _emailShowConnected();
+          emailLoadFolder('INBOX', document.querySelector('.ef-item[data-label="INBOX"]'));
+        }
+      };
+      // Use empty prompt first; if it fails silent re-auth will handle fallback
+      tokenClient.requestAccessToken({prompt:'', hint: savedEmail || ''});
+    }catch(e){
+      clearTimeout(reconnectTimeout);
+      ES._reconnecting = false;
+      // Fall back to consent prompt if silent fails
+      try{ tokenClient.requestAccessToken({prompt:'consent'}); }catch(e2){ _emailShowReconnectPrompt(); }
+    }
+  });
 }
 
 function _emailShowFullSetup(){
